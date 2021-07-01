@@ -49,23 +49,28 @@ class CustomCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  name,
-                  style: blackTextStyle.copyWith(
-                    fontWeight: medium,
+                Container(
+                  margin: EdgeInsets.only(top: 10),
+                  child: Text(
+                    name,
+                    style: blackTextStyle.copyWith(
+                      fontWeight: bold,
+                      fontSize: 15,
+                    ),
                   ),
                 ),
                 SizedBox(
-                  height: 7,
+                  height: 2,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'IDR $price',
+                      (price > -1 ? ('IDR ' + price.toString()) : '')
+                          .toString(),
                       style: blackTextStyle.copyWith(
-                        fontWeight: semiBold,
+                        fontWeight: medium,
                       ),
                     ),
                     Container(

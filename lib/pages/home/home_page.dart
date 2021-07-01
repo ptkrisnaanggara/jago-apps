@@ -127,6 +127,75 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  Widget buildPlanCard() {
+    return Container(
+      margin: EdgeInsets.only(top: 30),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Plan Ahead',
+                style: blackTextStyle.copyWith(
+                  fontWeight: semiBold,
+                ),
+              ),
+            ],
+          ),
+          Container(
+            margin: EdgeInsets.only(top: 20),
+            padding: EdgeInsets.all(30),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(defaultRadius),
+              color: kLightGreyColor,
+              border: Border.all(color: Colors.black12)
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 50,
+                  height: 50,
+                  margin: EdgeInsets.only(right: 18),
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: AssetImage('assets/tasks.png'),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Sering lupa bayar tagihan?',
+                        style: blackTextStyle.copyWith(
+                          fontWeight: medium,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 7,
+                      ),
+                      Text(
+                        'Buat Rencana Pembayaran',
+                        style: blackTextStyle.copyWith(
+                          fontWeight: semiBold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
   Widget buildPopularFood() {
     return Container(
       margin: EdgeInsets.only(top: 30),
@@ -174,26 +243,13 @@ class HomePage extends StatelessWidget {
           CustomCard(
             name: 'Kantong Utama',
             price: 1000,
-            imageUrl: 'assets/wallet.png' ,
+            imageUrl: 'assets/wallet.png',
           ),
-          //   price: 49.999,
-          //   imageUrl: 'assets/image_pizza.png',),
-
-          // FoodCard(
-          //   name: 'Pizza',
-          //   price: 49.999,
-          //   imageUrl: 'assets/image_pizza.png',
-          // ),
-          // FoodCard(
-          //   name: 'Hamburger',
-          //   price: 59.999,
-          //   imageUrl: 'assets/image_hamburger.png',
-          // ),
-          // FoodCard(
-          //   name: 'Double Hot Dog',
-          //   price: 34.999,
-          //   imageUrl: 'assets/image_hotdog.png',
-          // ),
+          CustomCard(
+            name: 'Kirim & Bayar',
+            price: -1,
+            imageUrl: 'assets/transaction.png',
+          ),
         ],
       ),
     );
@@ -300,6 +356,7 @@ class HomePage extends StatelessWidget {
           buildAppBar(),
           buildSearchBar(),
           buildTabBar(),
+          buildPlanCard(),
           buildPopularFood(),
           SizedBox(
             height: 140,

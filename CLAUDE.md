@@ -13,6 +13,12 @@ text is in Indonesian (e.g. `Cari Kontak & Tagihan`, `Kantong Utama`,
 - SDK constraint: Dart `>=2.12.0 <3.0.0` (null-safety enabled).
 - Dependencies: only `cupertino_icons` and `google_fonts` (Poppins font).
 
+> **Where the product is headed:** see [`PRD.md`](PRD.md) for the full product
+> scope (onboarding, auth, Kantong, Transfer, etc.) and the Flutter
+> best-practices / architecture standard to follow when building it out.
+> New work should align with the target layered, feature-first structure
+> described there rather than extending the current single-file mockup.
+
 ## Commands
 
 ```bash

@@ -9,6 +9,7 @@ import 'l10n/app_localizations.dart';
 import 'features/auth/data/repositories/auth_repository.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/bills/data/repositories/bills_repository.dart';
+import 'features/cards/data/repositories/cards_repository.dart';
 import 'features/home/data/repositories/account_repository.dart';
 import 'features/kantong/data/repositories/pocket_repository.dart';
 import 'features/settings/presentation/bloc/settings_bloc.dart';
@@ -67,6 +68,9 @@ class _JagoAppState extends State<JagoApp> {
         ),
         RepositoryProvider<BillsRepository>(
           create: (_) => MockBillsRepository(),
+        ),
+        RepositoryProvider<CardsRepository>(
+          create: (_) => MockCardsRepository(),
         ),
       ],
       child: MultiBlocProvider(

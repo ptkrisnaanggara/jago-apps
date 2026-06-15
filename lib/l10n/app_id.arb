@@ -109,5 +109,18 @@
   "chooseAppearance": "Pilih Tampilan",
   "appearanceSystem": "Ikuti Sistem",
   "appearanceLight": "Terang",
-  "appearanceDark": "Gelap"
+  "appearanceDark": "Gelap",
+
+  "navCards": "Kartu",
+  "cardsTitle": "Kartu Saya",
+  "cardVirtual": "Virtual",
+  "cardPhysical": "Fisik",
+  "cardFreeze": "Bekukan",
+  "cardUnfreeze": "Aktifkan",
+  "cardFrozen": "Kartu dibekukan",
+  "cardShowDetails": "Lihat detail",
+  "cardHideDetails": "Sembunyikan",
+  "cardHolder": "Pemegang Kartu",
+  "cardExpiry": "Berlaku s.d",
+  "cardCvv": "CVV"
 }

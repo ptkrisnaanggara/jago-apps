@@ -10,6 +10,7 @@ import '../../features/bills/data/repositories/bills_repository.dart';
 import '../../features/bills/presentation/bloc/bills_bloc.dart';
 import '../../features/bills/presentation/pages/bills_page.dart';
 import '../../features/bills/presentation/pages/create_payment_plan_page.dart';
+import '../../features/cards/presentation/pages/cards_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/kantong/presentation/pages/kantong_page.dart';
 import '../../features/onboarding/presentation/pages/onboarding_page.dart';
@@ -36,6 +37,7 @@ class AppRouter {
   static const String home = '/home';
   static const String kantong = '/kantong';
   static const String transactions = '/transactions';
+  static const String cards = '/cards';
   static const String profile = '/profile';
   static const String transfer = '/transfer';
   static const String transferAmount = '/transfer/amount';
@@ -96,6 +98,9 @@ class AppRouter {
                 path: transactions,
                 builder: (_, __) => const TransactionsPage(),
               ),
+            ]),
+            StatefulShellBranch(routes: [
+              GoRoute(path: cards, builder: (_, __) => const CardsPage()),
             ]),
             StatefulShellBranch(routes: [
               GoRoute(path: profile, builder: (_, __) => const ProfilePage()),

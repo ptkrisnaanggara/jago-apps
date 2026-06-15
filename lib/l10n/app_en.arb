@@ -121,5 +121,18 @@
   "chooseAppearance": "Choose Appearance",
   "appearanceSystem": "Follow System",
   "appearanceLight": "Light",
-  "appearanceDark": "Dark"
+  "appearanceDark": "Dark",
+
+  "navCards": "Cards",
+  "cardsTitle": "My Cards",
+  "cardVirtual": "Virtual",
+  "cardPhysical": "Physical",
+  "cardFreeze": "Freeze",
+  "cardUnfreeze": "Unfreeze",
+  "cardFrozen": "Card frozen",
+  "cardShowDetails": "Show details",
+  "cardHideDetails": "Hide details",
+  "cardHolder": "Cardholder",
+  "cardExpiry": "Valid thru",
+  "cardCvv": "CVV"
 }

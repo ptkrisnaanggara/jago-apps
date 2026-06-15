@@ -52,7 +52,15 @@ lib/
 ```
 
 Features today: `onboarding`, `auth`, `home`, `kantong`, `transfer`,
-`bills`, `transactions`, `profile`, `settings`.
+`bills`, `transactions`, `cards`, `profile`, `settings`.
+
+### Cards (Kartu)
+- `features/cards`: a bottom-nav tab listing the user's cards as gradient
+  visuals with working controls — **freeze/unfreeze** (via `CardsBloc`, mock
+  holds a mutable list so it persists) and **show/hide details** (local widget
+  state revealing full PAN + CVV; presentation-only).
+- Lives **inside** the `StatefulShellRoute` as the 4th branch (Home, Kantong,
+  Transaksi, Kartu, Profil). Nav-item order must match branch order.
 
 ### Settings (language + theme)
 - `SettingsBloc` (in `features/settings`) holds `locale` + `themeMode`,

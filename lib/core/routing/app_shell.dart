@@ -41,6 +41,11 @@ class AppShell extends StatelessWidget {
             label: l10n.navTransactions,
           ),
           BottomNavigationBarItem(
+            icon: const Icon(Icons.credit_card_outlined),
+            activeIcon: const Icon(Icons.credit_card_rounded),
+            label: l10n.navCards,
+          ),
+          BottomNavigationBarItem(
             icon: const Icon(Icons.person_outline_rounded),
             activeIcon: const Icon(Icons.person_rounded),
             label: l10n.navProfile,

@@ -107,7 +107,7 @@ class _HomeContent extends StatelessWidget {
               contentPadding: EdgeInsets.zero,
               leading: CircleAvatar(
                 backgroundColor: tx.isIncome
-                    ? AppColors.success.withOpacity(0.12)
+                    ? AppColors.success.withValues(alpha: 0.12)
                     : AppColors.primaryLight,
                 child: Icon(
                   tx.isIncome

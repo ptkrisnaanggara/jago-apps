@@ -32,7 +32,7 @@ class BalanceCard extends StatelessWidget {
             style: Theme.of(context)
                 .textTheme
                 .bodyMedium
-                ?.copyWith(color: AppColors.white.withOpacity(0.85)),
+                ?.copyWith(color: AppColors.white.withValues(alpha: 0.85)),
           ),
           const SizedBox(height: 8),
           Text(

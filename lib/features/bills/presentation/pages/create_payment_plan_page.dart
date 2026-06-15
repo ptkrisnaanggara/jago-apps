@@ -94,7 +94,7 @@ class _CreatePaymentPlanPageState extends State<CreatePaymentPlanPage> {
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                value: _category,
+                initialValue: _category,
                 decoration: InputDecoration(
                   labelText: l10n.categoryLabel,
                   border: const OutlineInputBorder(),
@@ -136,7 +136,7 @@ class _CreatePaymentPlanPageState extends State<CreatePaymentPlanPage> {
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<BillRecurrence>(
-                value: _recurrence,
+                initialValue: _recurrence,
                 decoration: InputDecoration(
                   labelText: l10n.recurrenceLabel,
                   border: const OutlineInputBorder(),

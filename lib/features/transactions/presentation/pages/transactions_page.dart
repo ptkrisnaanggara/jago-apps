@@ -72,7 +72,7 @@ class _TransactionTile extends StatelessWidget {
       contentPadding: EdgeInsets.zero,
       leading: CircleAvatar(
         backgroundColor: item.isIncome
-            ? AppColors.success.withOpacity(0.12)
+            ? AppColors.success.withValues(alpha: 0.12)
             : AppColors.primaryLight,
         child: Icon(
           item.isIncome ? Icons.south_west_rounded : Icons.north_east_rounded,

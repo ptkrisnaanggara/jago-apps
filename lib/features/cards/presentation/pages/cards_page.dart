@@ -220,7 +220,7 @@ class _CardVisual extends StatelessWidget {
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  color: Colors.black.withOpacity(0.45),
+                  color: Colors.black.withValues(alpha: 0.45),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -259,7 +259,7 @@ class _CardField extends StatelessWidget {
         Text(
           label.toUpperCase(),
           style: TextStyle(
-            color: AppColors.white.withOpacity(0.75),
+            color: AppColors.white.withValues(alpha: 0.75),
             fontSize: 9,
             letterSpacing: 0.5,
           ),
@@ -287,7 +287,7 @@ class _GlassChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: AppColors.white.withOpacity(0.22),
+        color: AppColors.white.withValues(alpha: 0.22),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jago/features/notifications/presentation/bloc/notifications_bloc.dart';
 import 'package:jago/l10n/app_localizations.dart';
 
 import '../../../../core/constants/app_assets.dart';
@@ -139,11 +140,49 @@ class _AppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final unread =
+        context.select((NotificationsBloc bloc) => bloc.state.unreadCount);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Image.asset(AppAssets.logo, width: 100, height: 30),
-        Image.asset(AppAssets.iconNotification, width: 28, height: 28),
+        InkWell(
+          onTap: () => context.push(AppRouter.notifications),
+          customBorder: const CircleBorder(),
+          child: Padding(
+            padding: const EdgeInsets.all(4),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Image.asset(AppAssets.iconNotification, width: 28, height: 28),
+                if (unread > 0)
+                  Positioned(
+                    right: -4,
+                    top: -4,
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      constraints:
+                          const BoxConstraints(minWidth: 18, minHeight: 18),
+                      decoration: const BoxDecoration(
+                        color: AppColors.error,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        unread > 9 ? '9+' : '$unread',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: AppColors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          height: 1,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }

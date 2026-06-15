@@ -122,5 +122,9 @@
   "cardHideDetails": "Sembunyikan",
   "cardHolder": "Pemegang Kartu",
   "cardExpiry": "Berlaku s.d",
-  "cardCvv": "CVV"
+  "cardCvv": "CVV",
+
+  "notificationsTitle": "Notifikasi",
+  "notificationsEmpty": "Belum ada notifikasi.",
+  "notificationsMarkAllRead": "Tandai semua dibaca"
 }

@@ -52,7 +52,15 @@ lib/
 ```
 
 Features today: `onboarding`, `auth`, `home`, `kantong`, `transfer`,
-`bills`, `transactions`, `cards`, `profile`, `settings`.
+`bills`, `transactions`, `cards`, `notifications`, `profile`, `settings`.
+
+### Notifications
+- `features/notifications`: an in-app notification center with read/unread
+  styling, tap-to-read, and "mark all read". The mock holds a **mutable list**
+  so read-state persists for the session.
+- `NotificationsBloc` is created **app-wide** in `main.dart` (like Auth/Settings)
+  so the Home app-bar bell shows a **live unread badge** (`unreadCount`) and the
+  `/notifications` page (a full-screen route outside the shell) share one state.
 
 ### Cards (Kartu)
 - `features/cards`: a bottom-nav tab listing the user's cards as gradient

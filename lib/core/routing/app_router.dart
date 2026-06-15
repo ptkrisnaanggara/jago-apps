@@ -13,6 +13,7 @@ import '../../features/bills/presentation/pages/create_payment_plan_page.dart';
 import '../../features/cards/presentation/pages/cards_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/kantong/presentation/pages/kantong_page.dart';
+import '../../features/notifications/presentation/pages/notifications_page.dart';
 import '../../features/onboarding/presentation/pages/onboarding_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/transactions/presentation/pages/transactions_page.dart';
@@ -44,6 +45,7 @@ class AppRouter {
   static const String transferReceipt = '/transfer/receipt';
   static const String bills = '/bills';
   static const String billNew = '/bills/new';
+  static const String notifications = '/notifications';
 
   static const Set<String> _authFlow = {
     splash,
@@ -144,6 +146,12 @@ class AppRouter {
               builder: (_, __) => const CreatePaymentPlanPage(),
             ),
           ],
+        ),
+        // Notification center — full-screen over the shell; reads the app-level
+        // NotificationsBloc (provided in main.dart).
+        GoRoute(
+          path: notifications,
+          builder: (_, __) => const NotificationsPage(),
         ),
       ],
     );

@@ -12,6 +12,8 @@ import 'features/bills/data/repositories/bills_repository.dart';
 import 'features/cards/data/repositories/cards_repository.dart';
 import 'features/home/data/repositories/account_repository.dart';
 import 'features/kantong/data/repositories/pocket_repository.dart';
+import 'features/notifications/data/repositories/notifications_repository.dart';
+import 'features/notifications/presentation/bloc/notifications_bloc.dart';
 import 'features/settings/presentation/bloc/settings_bloc.dart';
 import 'features/transactions/data/repositories/transaction_repository.dart';
 import 'features/transfer/data/repositories/transfer_repository.dart';
@@ -34,18 +36,25 @@ class _JagoAppState extends State<JagoApp> {
   // Mock repositories are wired here. Swap these for real, API-backed
   // implementations without touching the UI (see PRD §5).
   final AuthRepository _authRepository = MockAuthRepository();
+  final NotificationsRepository _notificationsRepository =
+      MockNotificationsRepository();
 
   // AuthBloc and the router are created once and kept stable for the app's
   // lifetime so redirects react to auth changes without rebuilding the router.
   late final AuthBloc _authBloc =
       AuthBloc(repository: _authRepository)..add(const AuthStarted());
   final SettingsBloc _settingsBloc = SettingsBloc();
+  // App-level so the Home bell badge + notifications page share one state.
+  late final NotificationsBloc _notificationsBloc =
+      NotificationsBloc(repository: _notificationsRepository)
+        ..add(const NotificationsStarted());
   late final GoRouter _router = AppRouter.build(_authBloc);
 
   @override
   void dispose() {
     _authBloc.close();
     _settingsBloc.close();
+    _notificationsBloc.close();
     super.dispose();
   }
 
@@ -72,11 +81,15 @@ class _JagoAppState extends State<JagoApp> {
         RepositoryProvider<CardsRepository>(
           create: (_) => MockCardsRepository(),
         ),
+        RepositoryProvider<NotificationsRepository>.value(
+          value: _notificationsRepository,
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider<AuthBloc>.value(value: _authBloc),
           BlocProvider<SettingsBloc>.value(value: _settingsBloc),
+          BlocProvider<NotificationsBloc>.value(value: _notificationsBloc),
         ],
         // Rebuilds locale + theme when the user changes them in Settings.
         child: BlocBuilder<SettingsBloc, SettingsState>(

@@ -134,5 +134,9 @@
   "cardHideDetails": "Hide details",
   "cardHolder": "Cardholder",
   "cardExpiry": "Valid thru",
-  "cardCvv": "CVV"
+  "cardCvv": "CVV",
+
+  "notificationsTitle": "Notifications",
+  "notificationsEmpty": "No notifications yet.",
+  "notificationsMarkAllRead": "Mark all read"
 }

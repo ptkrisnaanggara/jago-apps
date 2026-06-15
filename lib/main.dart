@@ -1,49 +1,52 @@
 import 'package:flutter/material.dart';
-import 'package:jago/pages/home/home_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
-class TutorialHome extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    // Scaffold is a layout for
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.menu),
-          tooltip: 'Navigation menu',
-          onPressed: null,
-        ),
-        title: Text('Example title'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.search),
-            tooltip: 'Search',
-            onPressed: null
-          ),
-        ],
-      ),
-      // body is the majority of the screen.
-      body: Center(
-        child: Text('Hello, world!'),
-      ),
-      floatingActionButton: FloatingActionButton(
-        tooltip: 'Add', // used by assistive technologies
-        child: Icon(Icons.add),
-        onPressed: null,
-      ),
-    );
-  }
+import 'core/routing/app_router.dart';
+import 'core/theme/app_theme.dart';
+import 'features/home/data/repositories/account_repository.dart';
+import 'features/kantong/data/repositories/pocket_repository.dart';
+import 'features/transactions/data/repositories/transaction_repository.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Required for Indonesian number/date formatting (NumberFormat, DateFormat).
+  await initializeDateFormatting('id_ID');
+  runApp(const JagoApp());
 }
 
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class JagoApp extends StatelessWidget {
+  const JagoApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: HomePage(),
+    // Mock repositories are wired here. Swap these for real, API-backed
+    // implementations without touching the UI (see PRD §5).
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider<AccountRepository>(
+          create: (_) => MockAccountRepository(),
+        ),
+        RepositoryProvider<TransactionRepository>(
+          create: (_) => MockTransactionRepository(),
+        ),
+        RepositoryProvider<PocketRepository>(
+          create: (_) => MockPocketRepository(),
+        ),
+      ],
+      child: MaterialApp.router(
+        title: 'JAGO',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.light,
+        routerConfig: AppRouter.router,
+        supportedLocales: const [Locale('id'), Locale('en')],
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+      ),
     );
   }
 }

@@ -4,73 +4,95 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-`jago` is a single-screen Flutter mobile app — a UI mockup of an Indonesian
-digital-banking / e-wallet home screen (logo "Jago"). It is essentially a static
-layout demo: there is no state management, networking, or persistence. Most UI
-text is in Indonesian (e.g. `Cari Kontak & Tagihan`, `Kantong Utama`,
-`Kirim & Bayar`).
+`jago` is a Flutter **digital banking / e-wallet** app (Indonesian market, logo
+"Jago"). It is being built out from an original single-screen mockup toward the
+scope in [`PRD.md`](PRD.md), following a layered, feature-first BLoC
+architecture. Most UI text is in Bahasa Indonesia (e.g. `Cari Kontak & Tagihan`,
+`Kantong Utama`, `Kirim & Bayar`, `Transaksi`).
 
-- SDK constraint: Dart `>=2.12.0 <3.0.0` (null-safety enabled).
-- Dependencies: only `cupertino_icons` and `google_fonts` (Poppins font).
+- SDK: Dart `>=3.0.0 <4.0.0`.
+- State management: **BLoC** (`flutter_bloc` + `equatable`).
+- Navigation: **`go_router`** with a persistent bottom-nav shell.
+- Data: **mock repositories** for now (no real backend yet); swap-in behind
+  repository interfaces — see "Data layer" below.
+- Other deps: `google_fonts` (Poppins), `intl` (Rupiah / date formatting).
 
-> **Where the product is headed:** see [`PRD.md`](PRD.md) for the full product
-> scope (onboarding, auth, Kantong, Transfer, etc.) and the Flutter
-> best-practices / architecture standard to follow when building it out.
-> New work should align with the target layered, feature-first structure
-> described there rather than extending the current single-file mockup.
+> See [`PRD.md`](PRD.md) for full product scope and the Flutter best-practices
+> standard. New work should extend this structure, not regress to the old
+> single-file mockup.
 
 ## Commands
 
 ```bash
 flutter pub get          # install dependencies (run after editing pubspec.yaml)
 flutter run              # run on a connected device / emulator
-flutter analyze          # static analysis / lint
+flutter analyze          # static analysis / lint (flutter_lints + analysis_options.yaml)
 flutter test             # run all tests
-flutter test test/widget_test.dart --plain-name "Counter increments smoke test"  # single test
+flutter test test/features/home/home_bloc_test.dart   # run a single test file
 flutter build apk        # Android release build
 flutter build ios        # iOS release build
 ```
 
 ## Architecture
 
-The app is intentionally small. Key files in `lib/`:
+Layered, **feature-first**. Each feature is a vertical slice:
 
-- `main.dart` — entry point. `main()` runs `MyApp`, whose `home` is `HomePage()`.
-  Note: this file also defines a `TutorialHome` widget that is **dead code** —
-  it is the leftover Flutter starter scaffold and is not referenced anywhere.
-- `theme.dart` — the **design-token system** for the whole app. Defines global
-  top-level constants used everywhere: `defaultMargin`/`defaultRadius`, color
-  constants (`kBlackColor`, `kGreenColor` — note the green is actually the orange
-  `0xfffdae27`, `kLightGreyColor`, etc.), Poppins `TextStyle`s (`blackTextStyle`,
-  `greyTextStyle`, `greenTextStyle`, `whiteTextStyle`), and named `FontWeight`
-  aliases (`thin` … `black`). Styling convention everywhere: start from a base
-  text style and override with `.copyWith(fontWeight: ..., fontSize: ...)`.
-- `pages/home/home_page.dart` — the only real screen. `HomePage` is a
-  `StatelessWidget` that composes the screen from private `buildXxx()` helper
-  methods (`buildAppBar`, `buildSearchBar`, `buildTabBar`, `buildPlanCard`,
-  `buildPopularFood`, `buildBottomNav`), assembled in a `ListView` inside
-  `build()`. The bottom nav is rendered via `floatingActionButton` +
-  `FloatingActionButtonLocation.centerFloat` rather than a real `BottomNavigationBar`.
-- `widgets/` — reusable cards. `CustomCard` (name/price/imageUrl) is the one in
-  use; a `price` of `-1` is a sentinel meaning "hide the price". `FoodCard` is an
-  older variant that is **currently unused** (its import in `home_page.dart` is
-  commented out).
+```
+lib/
+  main.dart                     # JagoApp: MultiRepositoryProvider (mocks) + MaterialApp.router
+  core/
+    theme/        app_colors.dart (Jago palette), app_theme.dart (ThemeData)
+    routing/      app_router.dart (go_router), app_shell.dart (bottom nav)
+    constants/    app_assets.dart (typed asset paths)
+    utils/        currency_formatter.dart (Rupiah via intl)
+  features/<name>/
+    data/         models/ (Equatable), repositories/ (abstract + Mock impl)
+    presentation/ bloc/ (event/state/bloc), pages/, widgets/
+  shared/widgets/ # cross-feature widgets (e.g. shortcut_card.dart)
+```
+
+Features today: `home`, `kantong`, `transactions`, `profile`.
+
+### Data layer (mock-backed)
+- Each repository is an **abstract interface** with a `Mock…Repository`
+  implementation returning hardcoded data after a simulated `Future.delayed`
+  latency. UI/BLoC depend on the interface, never the implementation.
+- Mocks are wired once in `main.dart` via `RepositoryProvider`. To add a real
+  backend, write a new implementation of the same interface and swap it there —
+  no UI changes needed.
+
+### BLoC conventions
+- One bloc per feature, split across `*_bloc.dart` / `*_event.dart` /
+  `*_state.dart` using `part`/`part of`.
+- Events are a **sealed class** hierarchy; the load event is `…Started`.
+- State is a single immutable class with a `status` enum
+  (`initial / loading / success / failure`) + a `copyWith`. Always handle all
+  four states in the UI (loading spinner, error+retry, empty, success).
+- Blocs are created in the page via `BlocProvider`, reading repositories from
+  `context.read<T>()`; the bloc adds its `…Started` event on creation.
+
+### Theming & design tokens
+- `core/theme/app_colors.dart` holds the **Jago brand palette**: `primary` is
+  Jago orange (`0xFFFF6B00`); `pocketAccents` is the multi-color list cycled for
+  Kantong tiles via `AppColors.pocketAccent(index)`.
+- `core/theme/app_theme.dart` exposes a single `ThemeData` (`AppTheme.light`)
+  built from a Poppins `TextTheme` + seeded `ColorScheme`. Consume styles via
+  `Theme.of(context)` — **do not** reintroduce global mutable color/style
+  variables. Layout constants live as `AppTheme.defaultMargin` / `defaultRadius`.
 
 ### Conventions
+- Imports use the package form `package:jago/...` for cross-feature references;
+  relative imports within a feature are fine.
+- `assets/` is registered wholesale in `pubspec.yaml`, but reference assets via
+  `AppAssets` constants, not raw strings. Re-run `flutter pub get` / hot-restart
+  after adding a new asset file.
+- Indonesian number/date formatting requires locale data: `main()` calls
+  `initializeDateFormatting('id_ID')` before `runApp`. Tests that format dates
+  must do the same in `setUpAll`.
 
-- Layout is built almost entirely from `Container` + `BoxDecoration` with
-  `DecorationImage(AssetImage(...))`, rather than `Image` widgets or icon fonts.
-  Icons/illustrations are PNG assets in `assets/`.
-- `assets/` is registered wholesale in `pubspec.yaml` (`- assets/`), so any new
-  file dropped in that folder is available without editing pubspec — but you must
-  re-run `flutter pub get` / hot-restart for new assets to load.
-- New screens go under `lib/pages/<feature>/`; shared widgets under `lib/widgets/`.
-- Imports use the package form `package:jago/...`, not relative paths.
+## Testing
 
-## Testing caveat
-
-`test/widget_test.dart` is the **stale default Flutter counter template** and
-does not match the actual app — it asserts on a counter (`find.text('0')`, tapping
-`Icons.add`) that `MyApp`/`HomePage` does not have, so `flutter test` will fail
-until this test is rewritten. Replace it with tests against the real `HomePage`
-when adding test coverage.
+- Tests live under `test/features/<name>/` mirroring `lib/`.
+- Bloc behaviour is tested with `bloc_test` against the mock repositories (see
+  `test/features/home/home_bloc_test.dart`). Because mocks use a ~600ms delay,
+  `blocTest` needs a `wait:` longer than that.

@@ -96,7 +96,7 @@ class _BillsContent extends StatelessWidget {
         ),
         const SizedBox(height: 24),
         if (upcoming.isEmpty)
-          _EmptyHint(
+          const _EmptyHint(
             icon: Icons.check_circle_outline_rounded,
             text: 'Tidak ada tagihan yang akan datang.',
           )

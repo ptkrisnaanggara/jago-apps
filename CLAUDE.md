@@ -52,7 +52,17 @@ lib/
 ```
 
 Features today: `onboarding`, `auth`, `home`, `kantong`, `transfer`,
-`transactions`, `profile`.
+`bills`, `transactions`, `profile`.
+
+### Bills & Payment Plans
+- `features/bills`: upcoming/overdue + paid bills with quick "Bayar", plus a
+  "Rencana Baru" form to schedule a (recurring) bill. Reachable from the Home
+  "Plan Ahead" card.
+- Like Transfer, the list + create routes (`/bills`, `/bills/new`) sit **outside
+  the bottom-nav shell** under a `ShellRoute` that provides one `BillsBloc`, so a
+  scheduled bill shows up when you pop back to the list.
+- The mock `BillsRepository` keeps a **mutable in-memory list** so pay/schedule
+  mutations persist for the session (the only stateful mock so far).
 
 ### Transfer & Pay (Kirim & Bayar)
 - Multi-step flow (`features/transfer`): pick contact → enter amount + note →

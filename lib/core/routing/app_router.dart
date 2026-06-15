@@ -7,6 +7,10 @@ import '../../features/auth/presentation/pages/otp_page.dart';
 import '../../features/auth/presentation/pages/sign_in_page.dart';
 import '../../features/auth/presentation/pages/sign_up_page.dart';
 import '../../features/auth/presentation/pages/splash_page.dart';
+import '../../features/bills/data/repositories/bills_repository.dart';
+import '../../features/bills/presentation/bloc/bills_bloc.dart';
+import '../../features/bills/presentation/pages/bills_page.dart';
+import '../../features/bills/presentation/pages/create_payment_plan_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/kantong/presentation/pages/kantong_page.dart';
 import '../../features/onboarding/presentation/pages/onboarding_page.dart';
@@ -37,6 +41,8 @@ class AppRouter {
   static const String transfer = '/transfer';
   static const String transferAmount = '/transfer/amount';
   static const String transferReceipt = '/transfer/receipt';
+  static const String bills = '/bills';
+  static const String billNew = '/bills/new';
 
   static const Set<String> _authFlow = {
     splash,
@@ -115,6 +121,23 @@ class AppRouter {
             GoRoute(
               path: transferReceipt,
               builder: (_, __) => const TransferReceiptPage(),
+            ),
+          ],
+        ),
+        // Bills & Payment Plans flow — full-screen over the shell, sharing one
+        // BillsBloc so the list reflects bills scheduled on the create page.
+        ShellRoute(
+          builder: (context, state, child) => BlocProvider(
+            create: (ctx) => BillsBloc(
+              repository: ctx.read<BillsRepository>(),
+            )..add(const BillsStarted()),
+            child: child,
+          ),
+          routes: [
+            GoRoute(path: bills, builder: (_, __) => const BillsPage()),
+            GoRoute(
+              path: billNew,
+              builder: (_, __) => const CreatePaymentPlanPage(),
             ),
           ],
         ),

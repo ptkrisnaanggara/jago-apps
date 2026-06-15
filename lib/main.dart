@@ -8,6 +8,7 @@ import 'core/routing/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/data/repositories/auth_repository.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'features/bills/data/repositories/bills_repository.dart';
 import 'features/home/data/repositories/account_repository.dart';
 import 'features/kantong/data/repositories/pocket_repository.dart';
 import 'features/transactions/data/repositories/transaction_repository.dart';
@@ -60,6 +61,9 @@ class _JagoAppState extends State<JagoApp> {
         ),
         RepositoryProvider<TransferRepository>(
           create: (_) => MockTransferRepository(),
+        ),
+        RepositoryProvider<BillsRepository>(
+          create: (_) => MockBillsRepository(),
         ),
       ],
       child: BlocProvider<AuthBloc>.value(

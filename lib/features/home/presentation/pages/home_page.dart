@@ -192,38 +192,42 @@ class _PlanAheadCard extends StatelessWidget {
           style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 16),
-        Container(
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppTheme.defaultRadius),
-            color: AppColors.lightGrey,
-            border: Border.all(color: AppColors.border),
-          ),
-          child: Row(
-            children: [
-              Image.asset(AppAssets.tasks, width: 50, height: 50),
-              const SizedBox(width: 18),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Sering lupa bayar tagihan?',
-                      style: textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w500,
+        InkWell(
+          onTap: () => context.push(AppRouter.bills),
+          borderRadius: BorderRadius.circular(AppTheme.defaultRadius),
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(AppTheme.defaultRadius),
+              color: AppColors.lightGrey,
+              border: Border.all(color: AppColors.border),
+            ),
+            child: Row(
+              children: [
+                Image.asset(AppAssets.tasks, width: 50, height: 50),
+                const SizedBox(width: 18),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Sering lupa bayar tagihan?',
+                        style: textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 7),
-                    Text(
-                      'Buat Rencana Pembayaran',
-                      style: textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
+                      const SizedBox(height: 7),
+                      Text(
+                        'Buat Rencana Pembayaran',
+                        style: textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ],

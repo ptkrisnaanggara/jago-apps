@@ -5,6 +5,8 @@ import 'package:jago/features/notifications/presentation/bloc/notifications_bloc
 import 'package:jago/l10n/app_localizations.dart';
 
 import '../../../../core/constants/app_assets.dart';
+import '../../../../core/errors/app_failure.dart';
+import '../../../../core/errors/failure_l10n.dart';
 import '../../../../core/routing/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -45,7 +47,8 @@ class _HomeView extends StatelessWidget {
                 return const Center(child: CircularProgressIndicator());
               case HomeStatus.failure:
                 return _ErrorView(
-                  message: state.errorMessage ?? 'Terjadi kesalahan.',
+                  message: failureText(
+                      context, state.failure ?? AppFailure.generic),
                   onRetry: () =>
                       context.read<HomeBloc>().add(const HomeStarted()),
                 );

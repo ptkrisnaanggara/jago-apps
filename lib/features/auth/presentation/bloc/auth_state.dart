@@ -16,14 +16,14 @@ class AuthState extends Equatable {
   final String? pendingPhone;
   final String? pendingName;
   final AuthUser? user;
-  final String? errorMessage;
+  final AppFailure? failure;
 
   const AuthState({
     this.status = AuthStatus.unknown,
     this.pendingPhone,
     this.pendingName,
     this.user,
-    this.errorMessage,
+    this.failure,
   });
 
   AuthState copyWith({
@@ -31,20 +31,20 @@ class AuthState extends Equatable {
     String? pendingPhone,
     String? pendingName,
     AuthUser? user,
-    String? errorMessage,
+    AppFailure? failure,
   }) {
     return AuthState(
       status: status ?? this.status,
       pendingPhone: pendingPhone ?? this.pendingPhone,
       pendingName: pendingName ?? this.pendingName,
       user: user ?? this.user,
-      // errorMessage is intentionally not carried over: each transition
-      // sets it explicitly (or leaves it null) so stale errors don't linger.
-      errorMessage: errorMessage,
+      // failure is intentionally not carried over: each transition sets it
+      // explicitly (or leaves it null) so stale errors don't linger.
+      failure: failure,
     );
   }
 
   @override
   List<Object?> get props =>
-      [status, pendingPhone, pendingName, user, errorMessage];
+      [status, pendingPhone, pendingName, user, failure];
 }

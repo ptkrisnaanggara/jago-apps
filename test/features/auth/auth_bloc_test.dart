@@ -54,7 +54,7 @@ void main() {
             .having((s) => s.status, 'status', AuthStatus.verifying),
         isA<AuthState>()
             .having((s) => s.status, 'status', AuthStatus.otpSent)
-            .having((s) => s.errorMessage, 'errorMessage', isNotNull),
+            .having((s) => s.failure, 'failure', isNotNull),
       ],
     );
   });

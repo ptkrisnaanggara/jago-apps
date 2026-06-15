@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/errors/app_failure.dart';
 import '../../data/models/bill.dart';
 import '../../data/repositories/bills_repository.dart';
 
@@ -26,7 +27,7 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
     } catch (_) {
       emit(state.copyWith(
         status: BillsStatus.failure,
-        errorMessage: 'Gagal memuat tagihan. Coba lagi.',
+        failure: AppFailure.loadBillsFailed,
       ));
     }
   }
@@ -37,7 +38,7 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
       final bills = await _repository.payBill(event.id);
       emit(state.copyWith(status: BillsStatus.success, bills: bills));
     } catch (_) {
-      emit(state.copyWith(errorMessage: 'Pembayaran gagal. Coba lagi.'));
+      emit(state.copyWith(failure: AppFailure.payBillFailed));
     }
   }
 
@@ -49,7 +50,7 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
       final bills = await _repository.scheduleBill(event.bill);
       emit(state.copyWith(status: BillsStatus.success, bills: bills));
     } catch (_) {
-      emit(state.copyWith(errorMessage: 'Gagal menyimpan rencana. Coba lagi.'));
+      emit(state.copyWith(failure: AppFailure.scheduleBillFailed));
     }
   }
 }

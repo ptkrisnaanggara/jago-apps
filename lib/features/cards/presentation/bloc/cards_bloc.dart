@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/errors/app_failure.dart';
 import '../../data/models/payment_card.dart';
 import '../../data/repositories/cards_repository.dart';
 
@@ -25,7 +26,7 @@ class CardsBloc extends Bloc<CardsEvent, CardsState> {
     } catch (_) {
       emit(state.copyWith(
         status: CardsStatus.failure,
-        errorMessage: 'Gagal memuat kartu. Coba lagi.',
+        failure: AppFailure.loadCardsFailed,
       ));
     }
   }
@@ -40,7 +41,7 @@ class CardsBloc extends Bloc<CardsEvent, CardsState> {
           await _repository.setFrozen(event.id, frozen: event.frozen);
       emit(state.copyWith(status: CardsStatus.success, cards: cards));
     } catch (_) {
-      emit(state.copyWith(errorMessage: 'Gagal memperbarui kartu. Coba lagi.'));
+      emit(state.copyWith(failure: AppFailure.updateCardFailed));
     }
   }
 }

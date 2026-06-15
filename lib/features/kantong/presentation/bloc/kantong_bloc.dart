@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/errors/app_failure.dart';
 import '../../data/models/pocket.dart';
 import '../../data/repositories/pocket_repository.dart';
 
@@ -27,7 +28,7 @@ class KantongBloc extends Bloc<KantongEvent, KantongState> {
     } catch (e) {
       emit(state.copyWith(
         status: KantongStatus.failure,
-        errorMessage: 'Gagal memuat Kantong. Coba lagi.',
+        failure: AppFailure.loadPocketsFailed,
       ));
     }
   }

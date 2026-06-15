@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/errors/app_failure.dart';
 import '../../data/models/account.dart';
 import '../../data/models/shortcut.dart';
 import '../../data/repositories/account_repository.dart';
@@ -44,7 +45,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } catch (e) {
       emit(state.copyWith(
         status: HomeStatus.failure,
-        errorMessage: 'Gagal memuat data. Coba lagi.',
+        failure: AppFailure.loadAccountFailed,
       ));
     }
   }

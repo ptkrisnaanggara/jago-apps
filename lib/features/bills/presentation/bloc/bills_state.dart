@@ -8,13 +8,13 @@ class BillsState extends Equatable {
 
   /// Id of the bill currently being paid (drives a per-tile spinner).
   final String? payingId;
-  final String? errorMessage;
+  final AppFailure? failure;
 
   const BillsState({
     this.status = BillsStatus.initial,
     this.bills = const [],
     this.payingId,
-    this.errorMessage,
+    this.failure,
   });
 
   /// Unpaid bills, earliest due first (overdue naturally sort to the top).
@@ -33,17 +33,17 @@ class BillsState extends Equatable {
     BillsStatus? status,
     List<Bill>? bills,
     String? payingId,
-    String? errorMessage,
+    AppFailure? failure,
   }) {
     return BillsState(
       status: status ?? this.status,
       bills: bills ?? this.bills,
-      // payingId and errorMessage reset each transition unless set explicitly.
+      // payingId and failure reset each transition unless set explicitly.
       payingId: payingId,
-      errorMessage: errorMessage,
+      failure: failure,
     );
   }
 
   @override
-  List<Object?> get props => [status, bills, payingId, errorMessage];
+  List<Object?> get props => [status, bills, payingId, failure];
 }

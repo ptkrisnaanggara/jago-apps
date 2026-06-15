@@ -164,9 +164,12 @@ Features today: `onboarding`, `auth`, `home`, `kantong`, `transfer`,
   language toggle (P2 #10). Bahasa is the source of truth for copy.
 - Boundaries: **mock data values** (contact names, biller names) and
   **category enum-strings** (`'Listrik'`, matched by `_iconFor`) stay as data,
-  not l10n. Bloc-emitted `errorMessage` strings are a known follow-up (blocs
-  shouldn't hold display text — proper fix is error codes mapped in the UI).
-  Enum display labels go through helpers like `presentation/recurrence_l10n.dart`.
+  not l10n. Enum display labels go through helpers like
+  `presentation/recurrence_l10n.dart`.
+- **Errors**: blocs never hold display text — they emit `AppFailure` codes
+  (`core/errors/app_failure.dart`); the UI resolves them via
+  `failureText(context, failure)` (`core/errors/failure_l10n.dart`). State
+  fields are `AppFailure? failure`, not `String? errorMessage`.
 
 ## Testing
 

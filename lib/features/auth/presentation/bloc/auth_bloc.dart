@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/errors/app_failure.dart';
 import '../../data/models/auth_user.dart';
 import '../../data/repositories/auth_repository.dart';
 
@@ -43,7 +44,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } catch (_) {
       emit(state.copyWith(
         status: AuthStatus.failure,
-        errorMessage: 'Gagal mengirim OTP. Coba lagi.',
+        failure: AppFailure.otpSendFailed,
       ));
     }
   }
@@ -63,7 +64,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } catch (_) {
       emit(state.copyWith(
         status: AuthStatus.otpSent,
-        errorMessage: 'Kode OTP salah. Coba lagi.',
+        failure: AppFailure.otpInvalid,
       ));
     }
   }

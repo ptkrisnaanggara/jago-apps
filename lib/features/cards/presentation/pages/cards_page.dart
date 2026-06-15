@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jago/l10n/app_localizations.dart';
 
+import '../../../../core/errors/app_failure.dart';
+import '../../../../core/errors/failure_l10n.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../data/models/payment_card.dart';
@@ -34,11 +36,11 @@ class _CardsView extends StatelessWidget {
         child: BlocConsumer<CardsBloc, CardsState>(
           listenWhen: (prev, curr) =>
               curr.status == CardsStatus.success &&
-              curr.errorMessage != null &&
-              prev.errorMessage != curr.errorMessage,
+              curr.failure != null &&
+              prev.failure != curr.failure,
           listener: (context, state) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.errorMessage!)),
+              SnackBar(content: Text(failureText(context, state.failure!))),
             );
           },
           builder: (context, state) {
@@ -48,7 +50,8 @@ class _CardsView extends StatelessWidget {
                 return const Center(child: CircularProgressIndicator());
               case CardsStatus.failure:
                 return _ErrorView(
-                  message: state.errorMessage ?? l10n.genericError,
+                  message: failureText(
+                      context, state.failure ?? AppFailure.generic),
                   onRetry: () =>
                       context.read<CardsBloc>().add(const CardsStarted()),
                 );

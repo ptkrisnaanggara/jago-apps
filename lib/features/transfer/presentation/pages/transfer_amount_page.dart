@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jago/l10n/app_localizations.dart';
 
+import '../../../../core/errors/failure_l10n.dart';
 import '../../../../core/routing/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -142,9 +143,9 @@ class _TransferAmountPageState extends State<TransferAmountPage> {
               Navigator.of(context).pop();
               context.pushReplacement(AppRouter.transferReceipt);
             } else if (state.status == TransferStatus.failure &&
-                state.errorMessage != null) {
+                state.failure != null) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.errorMessage!)),
+                SnackBar(content: Text(failureText(context, state.failure!))),
               );
             }
           },

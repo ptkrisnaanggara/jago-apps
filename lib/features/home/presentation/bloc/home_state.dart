@@ -7,14 +7,14 @@ class HomeState extends Equatable {
   final Account? account;
   final List<Shortcut> shortcuts;
   final List<TransactionItem> recentTransactions;
-  final String? errorMessage;
+  final AppFailure? failure;
 
   const HomeState({
     this.status = HomeStatus.initial,
     this.account,
     this.shortcuts = const [],
     this.recentTransactions = const [],
-    this.errorMessage,
+    this.failure,
   });
 
   HomeState copyWith({
@@ -22,18 +22,18 @@ class HomeState extends Equatable {
     Account? account,
     List<Shortcut>? shortcuts,
     List<TransactionItem>? recentTransactions,
-    String? errorMessage,
+    AppFailure? failure,
   }) {
     return HomeState(
       status: status ?? this.status,
       account: account ?? this.account,
       shortcuts: shortcuts ?? this.shortcuts,
       recentTransactions: recentTransactions ?? this.recentTransactions,
-      errorMessage: errorMessage ?? this.errorMessage,
+      failure: failure ?? this.failure,
     );
   }
 
   @override
   List<Object?> get props =>
-      [status, account, shortcuts, recentTransactions, errorMessage];
+      [status, account, shortcuts, recentTransactions, failure];
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jago/l10n/app_localizations.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -28,7 +29,7 @@ class BalanceCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Total Saldo',
+            AppLocalizations.of(context)!.balanceTotal,
             style: Theme.of(context)
                 .textTheme
                 .bodyMedium

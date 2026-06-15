@@ -8,30 +8,30 @@ class CardsState extends Equatable {
 
   /// Id of the card whose freeze state is currently updating.
   final String? togglingId;
-  final String? errorMessage;
+  final AppFailure? failure;
 
   const CardsState({
     this.status = CardsStatus.initial,
     this.cards = const [],
     this.togglingId,
-    this.errorMessage,
+    this.failure,
   });
 
   CardsState copyWith({
     CardsStatus? status,
     List<PaymentCard>? cards,
     String? togglingId,
-    String? errorMessage,
+    AppFailure? failure,
   }) {
     return CardsState(
       status: status ?? this.status,
       cards: cards ?? this.cards,
-      // togglingId and errorMessage reset each transition unless set explicitly.
+      // togglingId and failure reset each transition unless set explicitly.
       togglingId: togglingId,
-      errorMessage: errorMessage,
+      failure: failure,
     );
   }
 
   @override
-  List<Object?> get props => [status, cards, togglingId, errorMessage];
+  List<Object?> get props => [status, cards, togglingId, failure];
 }

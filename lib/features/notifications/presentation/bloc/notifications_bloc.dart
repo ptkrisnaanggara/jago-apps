@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/errors/app_failure.dart';
 import '../../data/models/app_notification.dart';
 import '../../data/repositories/notifications_repository.dart';
 
@@ -31,7 +32,7 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
     } catch (_) {
       emit(state.copyWith(
         status: NotificationsStatus.failure,
-        errorMessage: 'Gagal memuat notifikasi. Coba lagi.',
+        failure: AppFailure.loadNotificationsFailed,
       ));
     }
   }

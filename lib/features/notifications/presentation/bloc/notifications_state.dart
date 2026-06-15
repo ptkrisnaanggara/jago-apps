@@ -5,12 +5,12 @@ enum NotificationsStatus { initial, loading, success, failure }
 class NotificationsState extends Equatable {
   final NotificationsStatus status;
   final List<AppNotification> items;
-  final String? errorMessage;
+  final AppFailure? failure;
 
   const NotificationsState({
     this.status = NotificationsStatus.initial,
     this.items = const [],
-    this.errorMessage,
+    this.failure,
   });
 
   int get unreadCount => items.where((n) => !n.isRead).length;
@@ -18,15 +18,15 @@ class NotificationsState extends Equatable {
   NotificationsState copyWith({
     NotificationsStatus? status,
     List<AppNotification>? items,
-    String? errorMessage,
+    AppFailure? failure,
   }) {
     return NotificationsState(
       status: status ?? this.status,
       items: items ?? this.items,
-      errorMessage: errorMessage,
+      failure: failure,
     );
   }
 
   @override
-  List<Object?> get props => [status, items, errorMessage];
+  List<Object?> get props => [status, items, failure];
 }

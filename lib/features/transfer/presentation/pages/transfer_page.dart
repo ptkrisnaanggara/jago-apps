@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jago/l10n/app_localizations.dart';
 
+import '../../../../core/errors/app_failure.dart';
+import '../../../../core/errors/failure_l10n.dart';
 import '../../../../core/routing/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -46,7 +48,8 @@ class TransferPage extends StatelessWidget {
                       return const Center(child: CircularProgressIndicator());
                     case TransferStatus.failure:
                       return _ErrorView(
-                        message: state.errorMessage ?? l10n.genericError,
+                        message: failureText(
+                            context, state.failure ?? AppFailure.generic),
                         onRetry: () => context
                             .read<TransferBloc>()
                             .add(const TransferStarted()),

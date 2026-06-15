@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:jago/l10n/app_localizations.dart';
 
+import '../../../../core/errors/app_failure.dart';
+import '../../../../core/errors/failure_l10n.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/currency_formatter.dart';
@@ -41,7 +43,8 @@ class _TransactionsView extends StatelessWidget {
                 return const Center(child: CircularProgressIndicator());
               case TransactionsStatus.failure:
                 return Center(
-                    child: Text(state.errorMessage ?? l10n.genericError));
+                    child: Text(failureText(
+                        context, state.failure ?? AppFailure.generic)));
               case TransactionsStatus.success:
                 if (state.transactions.isEmpty) {
                   return Center(child: Text(l10n.transactionsEmpty));

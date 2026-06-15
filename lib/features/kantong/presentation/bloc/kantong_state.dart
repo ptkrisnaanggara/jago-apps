@@ -5,12 +5,12 @@ enum KantongStatus { initial, loading, success, failure }
 class KantongState extends Equatable {
   final KantongStatus status;
   final List<Pocket> pockets;
-  final String? errorMessage;
+  final AppFailure? failure;
 
   const KantongState({
     this.status = KantongStatus.initial,
     this.pockets = const [],
-    this.errorMessage,
+    this.failure,
   });
 
   double get totalBalance =>
@@ -19,15 +19,15 @@ class KantongState extends Equatable {
   KantongState copyWith({
     KantongStatus? status,
     List<Pocket>? pockets,
-    String? errorMessage,
+    AppFailure? failure,
   }) {
     return KantongState(
       status: status ?? this.status,
       pockets: pockets ?? this.pockets,
-      errorMessage: errorMessage ?? this.errorMessage,
+      failure: failure ?? this.failure,
     );
   }
 
   @override
-  List<Object?> get props => [status, pockets, errorMessage];
+  List<Object?> get props => [status, pockets, failure];
 }

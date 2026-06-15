@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/errors/app_failure.dart';
 import '../../data/models/contact.dart';
 import '../../data/models/transfer_result.dart';
 import '../../data/repositories/transfer_repository.dart';
@@ -38,7 +39,7 @@ class TransferBloc extends Bloc<TransferEvent, TransferState> {
     } catch (_) {
       emit(state.copyWith(
         status: TransferStatus.failure,
-        errorMessage: 'Gagal memuat kontak. Coba lagi.',
+        failure: AppFailure.loadContactsFailed,
       ));
     }
   }
@@ -81,7 +82,7 @@ class TransferBloc extends Bloc<TransferEvent, TransferState> {
     } catch (_) {
       emit(state.copyWith(
         status: TransferStatus.failure,
-        errorMessage: 'Transfer gagal. Coba lagi.',
+        failure: AppFailure.transferFailed,
       ));
     }
   }

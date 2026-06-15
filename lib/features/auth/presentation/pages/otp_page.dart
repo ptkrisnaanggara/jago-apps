@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jago/l10n/app_localizations.dart';
 
+import '../../../../core/errors/failure_l10n.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../bloc/auth_bloc.dart';
@@ -38,12 +39,11 @@ class _OtpPageState extends State<OtpPage> {
       body: SafeArea(
         child: BlocConsumer<AuthBloc, AuthState>(
           listenWhen: (prev, curr) =>
-              prev.status != curr.status || prev.errorMessage != curr.errorMessage,
+              prev.status != curr.status || prev.failure != curr.failure,
           listener: (context, state) {
-            if (state.status == AuthStatus.otpSent &&
-                state.errorMessage != null) {
+            if (state.status == AuthStatus.otpSent && state.failure != null) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.errorMessage!)),
+                SnackBar(content: Text(failureText(context, state.failure!))),
               );
             }
             // On AuthStatus.authenticated the router redirect navigates Home.

@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/errors/app_failure.dart';
 import '../../data/models/transaction.dart';
 import '../../data/repositories/transaction_repository.dart';
 
@@ -30,7 +31,7 @@ class TransactionsBloc extends Bloc<TransactionsEvent, TransactionsState> {
     } catch (e) {
       emit(state.copyWith(
         status: TransactionsStatus.failure,
-        errorMessage: 'Gagal memuat transaksi. Coba lagi.',
+        failure: AppFailure.loadTransactionsFailed,
       ));
     }
   }

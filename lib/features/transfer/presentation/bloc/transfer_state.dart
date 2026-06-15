@@ -17,7 +17,7 @@ class TransferState extends Equatable {
   final double amount;
   final String note;
   final TransferResult? result;
-  final String? errorMessage;
+  final AppFailure? failure;
 
   const TransferState({
     this.status = TransferStatus.initial,
@@ -27,7 +27,7 @@ class TransferState extends Equatable {
     this.amount = 0,
     this.note = '',
     this.result,
-    this.errorMessage,
+    this.failure,
   });
 
   /// Contacts filtered by [query] (matches name, bank, or account number).
@@ -50,7 +50,7 @@ class TransferState extends Equatable {
     double? amount,
     String? note,
     TransferResult? result,
-    String? errorMessage,
+    AppFailure? failure,
   }) {
     return TransferState(
       status: status ?? this.status,
@@ -60,7 +60,7 @@ class TransferState extends Equatable {
       amount: amount ?? this.amount,
       note: note ?? this.note,
       result: result ?? this.result,
-      errorMessage: errorMessage,
+      failure: failure,
     );
   }
 
@@ -73,6 +73,6 @@ class TransferState extends Equatable {
         amount,
         note,
         result,
-        errorMessage,
+        failure,
       ];
 }

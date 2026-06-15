@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jago/l10n/app_localizations.dart';
 
 import '../../../../core/routing/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -13,8 +14,9 @@ class TransferPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text('Kirim & Bayar')),
+      appBar: AppBar(title: Text(l10n.transferTitle)),
       body: SafeArea(
         child: Column(
           children: [
@@ -24,7 +26,7 @@ class TransferPage extends StatelessWidget {
                 onChanged: (value) =>
                     context.read<TransferBloc>().add(TransferSearchChanged(value)),
                 decoration: InputDecoration(
-                  hintText: 'Cari nama, bank, atau no. rekening',
+                  hintText: l10n.transferSearchHint,
                   prefixIcon: const Icon(Icons.search_rounded),
                   filled: true,
                   fillColor: AppColors.lightGrey,
@@ -44,7 +46,7 @@ class TransferPage extends StatelessWidget {
                       return const Center(child: CircularProgressIndicator());
                     case TransferStatus.failure:
                       return _ErrorView(
-                        message: state.errorMessage ?? 'Terjadi kesalahan.',
+                        message: state.errorMessage ?? l10n.genericError,
                         onRetry: () => context
                             .read<TransferBloc>()
                             .add(const TransferStarted()),
@@ -97,15 +99,17 @@ class _EmptyView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    return Center(
       child: Padding(
-        padding: EdgeInsets.all(32),
+        padding: const EdgeInsets.all(32),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.person_search_rounded, size: 48, color: AppColors.grey),
-            SizedBox(height: 12),
-            Text('Kontak tidak ditemukan.', textAlign: TextAlign.center),
+            const Icon(Icons.person_search_rounded,
+                size: 48, color: AppColors.grey),
+            const SizedBox(height: 12),
+            Text(AppLocalizations.of(context)!.transferContactsEmpty,
+                textAlign: TextAlign.center),
           ],
         ),
       ),
@@ -132,7 +136,9 @@ class _ErrorView extends StatelessWidget {
             const SizedBox(height: 12),
             Text(message, textAlign: TextAlign.center),
             const SizedBox(height: 16),
-            ElevatedButton(onPressed: onRetry, child: const Text('Coba Lagi')),
+            ElevatedButton(
+                onPressed: onRetry,
+                child: Text(AppLocalizations.of(context)!.actionRetry)),
           ],
         ),
       ),

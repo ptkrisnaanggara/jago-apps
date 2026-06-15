@@ -1,0 +1,117 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "JAGO",
+
+  "actionRetry": "Try Again",
+  "actionCancel": "Cancel",
+  "actionNext": "Next",
+  "actionDone": "Done",
+  "genericError": "Something went wrong.",
+
+  "navHome": "Home",
+  "navKantong": "Pockets",
+  "navTransactions": "Transactions",
+  "navProfile": "Profile",
+
+  "onboardingSkip": "Skip",
+  "onboardingStart": "Get Started",
+  "onboardingTitle1": "Manage Money More Easily",
+  "onboardingBody1": "Organize your balance, Pockets, and bills in one app.",
+  "onboardingTitle2": "Save with Pockets",
+  "onboardingBody2": "Set money aside for every goal and reach your targets.",
+  "onboardingTitle3": "Send & Pay Instantly",
+  "onboardingBody3": "Transfer and pay bills quickly and securely.",
+
+  "signInTitle": "Sign in to Jago",
+  "signInSubtitle": "Enter your phone number to receive an OTP code.",
+  "phoneLabel": "Phone Number",
+  "phoneInvalid": "Invalid phone number",
+  "sendOtp": "Send OTP Code",
+  "noAccountQuestion": "Don't have an account?",
+  "register": "Register",
+
+  "signUpTitle": "Create a Jago account",
+  "fullNameLabel": "Full Name",
+  "nameRequired": "Name is required",
+  "registerAndSendOtp": "Register & Send OTP",
+
+  "otpTitle": "Verify OTP",
+  "otpSubtitle": "Enter the 6-digit code sent to +62 {phone}.",
+  "@otpSubtitle": {
+    "placeholders": { "phone": { "type": "String" } }
+  },
+  "otpDemoHint": "Demo: use the code 123456",
+  "otpVerify": "Verify",
+
+  "homeSearchHint": "Search Contacts & Bills",
+  "homePlanAhead": "Plan Ahead",
+  "homePlanAheadPrompt": "Often forget to pay bills?",
+  "homePlanAheadCta": "Create a Payment Plan",
+  "homeShortcut": "Shortcut",
+  "homeRecentTransactions": "Recent Transactions",
+
+  "kantongTitle": "Pockets",
+  "kantongNew": "New Pocket",
+  "kantongTotal": "Total across all Pockets",
+  "kantongTarget": "Target {amount}",
+  "@kantongTarget": {
+    "placeholders": { "amount": { "type": "String" } }
+  },
+
+  "transactionsTitle": "Transactions",
+  "transactionsEmpty": "No transactions yet.",
+
+  "profileTitle": "Profile",
+  "settingSecurity": "Security",
+  "settingLanguage": "Language",
+  "settingAppearance": "Appearance",
+  "settingHelp": "Help",
+  "signOut": "Sign Out",
+  "signOutConfirmBody": "Are you sure you want to sign out?",
+
+  "transferTitle": "Send & Pay",
+  "transferSearchHint": "Search name, bank, or account no.",
+  "transferContactsEmpty": "No contacts found.",
+  "transferAmountTitle": "Transfer Amount",
+  "transferSelectContactFirst": "Please select a contact first.",
+  "amountLabel": "Amount",
+  "noteOptionalLabel": "Note (optional)",
+  "amountInvalid": "Enter a valid amount.",
+  "transferConfirmTitle": "Confirm Transfer",
+  "fieldRecipient": "Recipient",
+  "fieldBank": "Bank",
+  "fieldNote": "Note",
+  "transferSendNow": "Send Now",
+  "transferSuccess": "Transfer Successful",
+  "fieldReferenceNo": "Reference No.",
+  "fieldTime": "Time",
+  "transferNoData": "No transaction data.",
+
+  "billsTitle": "Bills & Plans",
+  "billsNewPlan": "New Plan",
+  "billsTotalUpcoming": "Total upcoming bills",
+  "billsUpcoming": "Upcoming",
+  "billsPaid": "Paid",
+  "billsEmptyUpcoming": "No upcoming bills.",
+  "billsPay": "Pay",
+  "billDue": "Due {date}",
+  "@billDue": {
+    "placeholders": { "date": { "type": "String" } }
+  },
+  "billOverdue": "Overdue • {date}",
+  "@billOverdue": {
+    "placeholders": { "date": { "type": "String" } }
+  },
+  "recurrenceOnce": "Once",
+  "recurrenceWeekly": "Weekly",
+  "recurrenceMonthly": "Monthly",
+
+  "createPlanTitle": "New Payment Plan",
+  "billerLabel": "Bill / provider name",
+  "billerRequired": "Bill name is required",
+  "categoryLabel": "Category",
+  "dueDateLabel": "Due date",
+  "recurrenceLabel": "Recurrence",
+  "savePlan": "Save Plan"
+}

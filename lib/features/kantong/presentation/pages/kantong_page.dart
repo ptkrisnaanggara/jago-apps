@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jago/l10n/app_localizations.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -27,14 +28,15 @@ class _KantongView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text('Kantong')),
+      appBar: AppBar(title: Text(l10n.kantongTitle)),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {},
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.white,
         icon: const Icon(Icons.add),
-        label: const Text('Kantong Baru'),
+        label: Text(l10n.kantongNew),
       ),
       body: SafeArea(
         child: BlocBuilder<KantongBloc, KantongState>(
@@ -44,13 +46,14 @@ class _KantongView extends StatelessWidget {
               case KantongStatus.loading:
                 return const Center(child: CircularProgressIndicator());
               case KantongStatus.failure:
-                return Center(child: Text(state.errorMessage ?? 'Error'));
+                return Center(
+                    child: Text(state.errorMessage ?? l10n.genericError));
               case KantongStatus.success:
                 return ListView(
                   padding: const EdgeInsets.all(AppTheme.defaultMargin),
                   children: [
                     Text(
-                      'Total di semua Kantong',
+                      l10n.kantongTotal,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     const SizedBox(height: 4),
@@ -143,7 +146,8 @@ class _PocketTile extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             Text(
-              'Target ${CurrencyFormatter.format(pocket.target!)}',
+              AppLocalizations.of(context)!
+                  .kantongTarget(CurrencyFormatter.format(pocket.target!)),
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ],

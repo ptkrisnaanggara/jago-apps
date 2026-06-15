@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jago/l10n/app_localizations.dart';
 
 import '../../../../core/routing/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -33,7 +34,7 @@ class _TransferAmountPageState extends State<TransferAmountPage> {
   void _onContinue() {
     if (_amount <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Masukkan nominal yang valid.')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.amountInvalid)),
       );
       return;
     }
@@ -48,6 +49,7 @@ class _TransferAmountPageState extends State<TransferAmountPage> {
 
   void _showConfirmSheet() {
     final bloc = context.read<TransferBloc>();
+    final l10n = AppLocalizations.of(context)!;
     final contact = bloc.state.selectedContact;
     if (contact == null) return;
     showModalBottomSheet<void>(
@@ -69,24 +71,25 @@ class _TransferAmountPageState extends State<TransferAmountPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Konfirmasi Transfer',
+                  l10n.transferConfirmTitle,
                   style: Theme.of(sheetContext)
                       .textTheme
                       .titleLarge
                       ?.copyWith(fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(height: 16),
-                _SummaryRow(label: 'Penerima', value: contact.name),
+                _SummaryRow(label: l10n.fieldRecipient, value: contact.name),
                 _SummaryRow(
-                    label: 'Bank',
+                    label: l10n.fieldBank,
                     value: '${contact.bankName} • ${contact.accountNumber}'),
                 _SummaryRow(
-                  label: 'Nominal',
+                  label: l10n.amountLabel,
                   value: CurrencyFormatter.format(_amount),
                   emphasize: true,
                 ),
                 if (_noteController.text.trim().isNotEmpty)
-                  _SummaryRow(label: 'Catatan', value: _noteController.text.trim()),
+                  _SummaryRow(
+                      label: l10n.fieldNote, value: _noteController.text.trim()),
                 const SizedBox(height: 24),
                 BlocBuilder<TransferBloc, TransferState>(
                   builder: (context, state) {
@@ -109,7 +112,7 @@ class _TransferAmountPageState extends State<TransferAmountPage> {
                                   color: AppColors.white,
                                 ),
                               )
-                            : const Text('Kirim Sekarang'),
+                            : Text(l10n.transferSendNow),
                       ),
                     );
                   },
@@ -125,10 +128,11 @@ class _TransferAmountPageState extends State<TransferAmountPage> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context)!;
     final contact = context.select((TransferBloc b) => b.state.selectedContact);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Nominal Transfer')),
+      appBar: AppBar(title: Text(l10n.transferAmountTitle)),
       body: SafeArea(
         child: BlocListener<TransferBloc, TransferState>(
           listenWhen: (prev, curr) => prev.status != curr.status,
@@ -145,7 +149,7 @@ class _TransferAmountPageState extends State<TransferAmountPage> {
             }
           },
           child: contact == null
-              ? const Center(child: Text('Pilih kontak terlebih dahulu.'))
+              ? Center(child: Text(l10n.transferSelectContactFirst))
               : ListView(
                   padding: const EdgeInsets.all(AppTheme.defaultMargin),
                   children: [
@@ -166,7 +170,7 @@ class _TransferAmountPageState extends State<TransferAmountPage> {
                           '${contact.bankName} • ${contact.accountNumber}'),
                     ),
                     const SizedBox(height: 16),
-                    Text('Nominal',
+                    Text(l10n.amountLabel,
                         style: textTheme.bodyMedium
                             ?.copyWith(color: AppColors.grey)),
                     const SizedBox(height: 8),
@@ -188,15 +192,15 @@ class _TransferAmountPageState extends State<TransferAmountPage> {
                     TextField(
                       controller: _noteController,
                       textCapitalization: TextCapitalization.sentences,
-                      decoration: const InputDecoration(
-                        labelText: 'Catatan (opsional)',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: l10n.noteOptionalLabel,
+                        border: const OutlineInputBorder(),
                       ),
                     ),
                     const SizedBox(height: 24),
                     ElevatedButton(
                       onPressed: _onContinue,
-                      child: const Text('Lanjut'),
+                      child: Text(l10n.actionNext),
                     ),
                   ],
                 ),

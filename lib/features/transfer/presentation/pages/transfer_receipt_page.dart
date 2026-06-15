@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:jago/l10n/app_localizations.dart';
 
 import '../../../../core/routing/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -16,12 +17,13 @@ class TransferReceiptPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context)!;
     final result = context.select((TransferBloc b) => b.state.result);
 
     if (result == null) {
       return Scaffold(
         appBar: AppBar(),
-        body: const Center(child: Text('Tidak ada data transaksi.')),
+        body: Center(child: Text(l10n.transferNoData)),
       );
     }
 
@@ -42,7 +44,7 @@ class TransferReceiptPage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Text(
-                'Transfer Berhasil',
+                l10n.transferSuccess,
                 style:
                     textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
               ),
@@ -61,16 +63,19 @@ class TransferReceiptPage extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    _ReceiptRow(label: 'Penerima', value: result.contact.name),
                     _ReceiptRow(
-                      label: 'Bank',
+                        label: l10n.fieldRecipient, value: result.contact.name),
+                    _ReceiptRow(
+                      label: l10n.fieldBank,
                       value:
                           '${result.contact.bankName} • ${result.contact.accountNumber}',
                     ),
                     if (result.note.isNotEmpty)
-                      _ReceiptRow(label: 'Catatan', value: result.note),
-                    _ReceiptRow(label: 'No. Referensi', value: result.referenceId),
-                    _ReceiptRow(label: 'Waktu', value: dateLabel),
+                      _ReceiptRow(label: l10n.fieldNote, value: result.note),
+                    _ReceiptRow(
+                        label: l10n.fieldReferenceNo,
+                        value: result.referenceId),
+                    _ReceiptRow(label: l10n.fieldTime, value: dateLabel),
                   ],
                 ),
               ),
@@ -79,7 +84,7 @@ class TransferReceiptPage extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () => context.go(AppRouter.home),
-                  child: const Text('Selesai'),
+                  child: Text(l10n.actionDone),
                 ),
               ),
             ],

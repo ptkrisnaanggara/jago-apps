@@ -1,25 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jago/l10n/app_localizations.dart';
 
 import '../../../../core/routing/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 
-class _Slide {
-  final IconData icon;
-  final String title;
-  final String body;
-  const _Slide(this.icon, this.title, this.body);
-}
-
-const _slides = <_Slide>[
-  _Slide(Icons.account_balance_wallet_rounded, 'Kelola Uang Lebih Mudah',
-      'Atur saldo, Kantong, dan tagihan dalam satu aplikasi.'),
-  _Slide(Icons.savings_rounded, 'Nabung dengan Kantong',
-      'Pisahkan dana untuk setiap tujuan dan capai targetmu.'),
-  _Slide(Icons.bolt_rounded, 'Kirim & Bayar Seketika',
-      'Transfer dan bayar tagihan dengan cepat dan aman.'),
+const _slideIcons = <IconData>[
+  Icons.account_balance_wallet_rounded,
+  Icons.savings_rounded,
+  Icons.bolt_rounded,
 ];
+
+String _slideTitle(AppLocalizations l10n, int i) =>
+    [l10n.onboardingTitle1, l10n.onboardingTitle2, l10n.onboardingTitle3][i];
+
+String _slideBody(AppLocalizations l10n, int i) =>
+    [l10n.onboardingBody1, l10n.onboardingBody2, l10n.onboardingBody3][i];
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -38,7 +35,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     super.dispose();
   }
 
-  bool get _isLast => _index == _slides.length - 1;
+  bool get _isLast => _index == _slideIcons.length - 1;
 
   void _next() {
     if (_isLast) {
@@ -54,6 +51,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -62,16 +60,15 @@ class _OnboardingPageState extends State<OnboardingPage> {
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: () => context.go(AppRouter.signIn),
-                child: const Text('Lewati'),
+                child: Text(l10n.onboardingSkip),
               ),
             ),
             Expanded(
               child: PageView.builder(
                 controller: _controller,
                 onPageChanged: (i) => setState(() => _index = i),
-                itemCount: _slides.length,
+                itemCount: _slideIcons.length,
                 itemBuilder: (context, i) {
-                  final slide = _slides[i];
                   return Padding(
                     padding:
                         const EdgeInsets.all(AppTheme.defaultMargin),
@@ -81,19 +78,19 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         CircleAvatar(
                           radius: 64,
                           backgroundColor: AppColors.primaryLight,
-                          child: Icon(slide.icon,
+                          child: Icon(_slideIcons[i],
                               size: 64, color: AppColors.primary),
                         ),
                         const SizedBox(height: 40),
                         Text(
-                          slide.title,
+                          _slideTitle(l10n, i),
                           textAlign: TextAlign.center,
                           style: textTheme.headlineSmall
                               ?.copyWith(fontWeight: FontWeight.w700),
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          slide.body,
+                          _slideBody(l10n, i),
                           textAlign: TextAlign.center,
                           style: textTheme.bodyMedium
                               ?.copyWith(color: AppColors.grey),
@@ -107,7 +104,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                for (var i = 0; i < _slides.length; i++)
+                for (var i = 0; i < _slideIcons.length; i++)
                   AnimatedContainer(
                     duration: const Duration(milliseconds: 250),
                     margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -127,7 +124,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _next,
-                  child: Text(_isLast ? 'Mulai' : 'Lanjut'),
+                  child: Text(_isLast ? l10n.onboardingStart : l10n.actionNext),
                 ),
               ),
             ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jago/l10n/app_localizations.dart';
 
 import '../../../../core/routing/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -36,6 +37,7 @@ class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(),
       body: SafeArea(
@@ -65,13 +67,13 @@ class _SignInPageState extends State<SignInPage> {
                 padding: const EdgeInsets.all(AppTheme.defaultMargin),
                 children: [
                   Text(
-                    'Masuk ke Jago',
+                    l10n.signInTitle,
                     style: textTheme.headlineSmall
                         ?.copyWith(fontWeight: FontWeight.w700),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Masukkan nomor HP-mu untuk menerima kode OTP.',
+                    l10n.signInSubtitle,
                     style: textTheme.bodyMedium
                         ?.copyWith(color: AppColors.grey),
                   ),
@@ -82,14 +84,14 @@ class _SignInPageState extends State<SignInPage> {
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
                     ],
-                    decoration: const InputDecoration(
-                      labelText: 'Nomor HP',
+                    decoration: InputDecoration(
+                      labelText: l10n.phoneLabel,
                       prefixText: '+62 ',
-                      border: OutlineInputBorder(),
+                      border: const OutlineInputBorder(),
                     ),
                     validator: (value) {
                       final v = value?.trim() ?? '';
-                      if (v.length < 8) return 'Nomor HP tidak valid';
+                      if (v.length < 8) return l10n.phoneInvalid;
                       return null;
                     },
                   ),
@@ -105,16 +107,16 @@ class _SignInPageState extends State<SignInPage> {
                               color: AppColors.white,
                             ),
                           )
-                        : const Text('Kirim Kode OTP'),
+                        : Text(l10n.sendOtp),
                   ),
                   const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('Belum punya akun?'),
+                      Text(l10n.noAccountQuestion),
                       TextButton(
                         onPressed: () => context.push(AppRouter.signUp),
-                        child: const Text('Daftar'),
+                        child: Text(l10n.register),
                       ),
                     ],
                   ),

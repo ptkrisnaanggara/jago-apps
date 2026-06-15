@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:jago/l10n/app_localizations.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -28,8 +29,9 @@ class _TransactionsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text('Transaksi')),
+      appBar: AppBar(title: Text(l10n.transactionsTitle)),
       body: SafeArea(
         child: BlocBuilder<TransactionsBloc, TransactionsState>(
           builder: (context, state) {
@@ -38,10 +40,11 @@ class _TransactionsView extends StatelessWidget {
               case TransactionsStatus.loading:
                 return const Center(child: CircularProgressIndicator());
               case TransactionsStatus.failure:
-                return Center(child: Text(state.errorMessage ?? 'Error'));
+                return Center(
+                    child: Text(state.errorMessage ?? l10n.genericError));
               case TransactionsStatus.success:
                 if (state.transactions.isEmpty) {
-                  return const Center(child: Text('Belum ada transaksi.'));
+                  return Center(child: Text(l10n.transactionsEmpty));
                 }
                 return ListView.separated(
                   padding: const EdgeInsets.all(AppTheme.defaultMargin),

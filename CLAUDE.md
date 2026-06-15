@@ -122,6 +122,21 @@ Features today: `onboarding`, `auth`, `home`, `kantong`, `transfer`,
   `initializeDateFormatting('id_ID')` before `runApp`. Tests that format dates
   must do the same in `setUpAll`.
 
+### Localization (gen-l10n / ARB)
+- User-facing strings live in `lib/l10n/app_en.arb` (template) + `app_id.arb`
+  (config in `l10n.yaml`, `generate: true` in pubspec). Access via
+  `AppLocalizations.of(context)!` (`package:jago/l10n/app_localizations.dart`).
+  **No hardcoded UI strings** — add a key to *both* ARB files instead.
+- The generated `app_localizations*.dart` are build artifacts (git-ignored);
+  `flutter pub get` / `flutter gen-l10n` regenerates them.
+- App locale is forced to **`id`** (PRD primary); `en` exists for the future
+  language toggle (P2 #10). Bahasa is the source of truth for copy.
+- Boundaries: **mock data values** (contact names, biller names) and
+  **category enum-strings** (`'Listrik'`, matched by `_iconFor`) stay as data,
+  not l10n. Bloc-emitted `errorMessage` strings are a known follow-up (blocs
+  shouldn't hold display text — proper fix is error codes mapped in the UI).
+  Enum display labels go through helpers like `presentation/recurrence_l10n.dart`.
+
 ## Testing
 
 - Tests live under `test/features/<name>/` mirroring `lib/`.

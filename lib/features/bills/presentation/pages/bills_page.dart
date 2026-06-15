@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:jago/l10n/app_localizations.dart';
 
 import '../../../../core/routing/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -9,6 +10,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/currency_formatter.dart';
 import '../../data/models/bill.dart';
 import '../bloc/bills_bloc.dart';
+import '../recurrence_l10n.dart';
 
 /// Bills & Payment Plans: upcoming + paid bills, with quick pay and a
 /// "Rencana Baru" entry point to schedule a recurring bill.
@@ -17,14 +19,15 @@ class BillsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text('Tagihan & Rencana')),
+      appBar: AppBar(title: Text(l10n.billsTitle)),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push(AppRouter.billNew),
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.white,
         icon: const Icon(Icons.add),
-        label: const Text('Rencana Baru'),
+        label: Text(l10n.billsNewPlan),
       ),
       body: SafeArea(
         child: BlocConsumer<BillsBloc, BillsState>(
@@ -46,7 +49,7 @@ class BillsPage extends StatelessWidget {
                 return const Center(child: CircularProgressIndicator());
               case BillsStatus.failure:
                 return _ErrorView(
-                  message: state.errorMessage ?? 'Terjadi kesalahan.',
+                  message: state.errorMessage ?? l10n.genericError,
                   onRetry: () =>
                       context.read<BillsBloc>().add(const BillsStarted()),
                 );
@@ -68,6 +71,7 @@ class _BillsContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context)!;
     final upcoming = state.upcomingBills;
     final paid = state.paidBills;
 
@@ -83,8 +87,7 @@ class _BillsContent extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Total tagihan akan datang',
-                  style: textTheme.bodyMedium),
+              Text(l10n.billsTotalUpcoming, style: textTheme.bodyMedium),
               const SizedBox(height: 4),
               Text(
                 CurrencyFormatter.format(state.totalUpcoming),
@@ -96,12 +99,12 @@ class _BillsContent extends StatelessWidget {
         ),
         const SizedBox(height: 24),
         if (upcoming.isEmpty)
-          const _EmptyHint(
+          _EmptyHint(
             icon: Icons.check_circle_outline_rounded,
-            text: 'Tidak ada tagihan yang akan datang.',
+            text: l10n.billsEmptyUpcoming,
           )
         else ...[
-          Text('Akan Datang',
+          Text(l10n.billsUpcoming,
               style:
                   textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
           const SizedBox(height: 8),
@@ -110,7 +113,7 @@ class _BillsContent extends StatelessWidget {
         ],
         if (paid.isNotEmpty) ...[
           const SizedBox(height: 24),
-          Text('Lunas',
+          Text(l10n.billsPaid,
               style:
                   textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
           const SizedBox(height: 8),
@@ -131,6 +134,7 @@ class _BillTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context)!;
     final dueLabel = DateFormat('d MMM yyyy', 'id_ID').format(bill.dueDate);
     final accent = bill.isOverdue ? AppColors.error : AppColors.primary;
 
@@ -164,14 +168,16 @@ class _BillTile extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      bill.isOverdue ? 'Terlambat • $dueLabel' : 'Jatuh tempo $dueLabel',
+                      bill.isOverdue
+                          ? l10n.billOverdue(dueLabel)
+                          : l10n.billDue(dueLabel),
                       style: textTheme.bodySmall?.copyWith(
                         color: bill.isOverdue ? AppColors.error : AppColors.grey,
                       ),
                     ),
                     if (bill.isRecurring) ...[
                       const SizedBox(width: 6),
-                      _Chip(label: bill.recurrence.label),
+                      _Chip(label: recurrenceLabel(l10n, bill.recurrence)),
                     ],
                   ],
                 ),
@@ -206,7 +212,7 @@ class _BillTile extends StatelessWidget {
                           color: AppColors.white,
                         ),
                       )
-                    : const Text('Bayar'),
+                    : Text(l10n.billsPay),
               ),
             ),
         ],
@@ -296,7 +302,9 @@ class _ErrorView extends StatelessWidget {
             const SizedBox(height: 12),
             Text(message, textAlign: TextAlign.center),
             const SizedBox(height: 16),
-            ElevatedButton(onPressed: onRetry, child: const Text('Coba Lagi')),
+            ElevatedButton(
+                onPressed: onRetry,
+                child: Text(AppLocalizations.of(context)!.actionRetry)),
           ],
         ),
       ),

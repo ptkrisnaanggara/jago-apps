@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jago/l10n/app_localizations.dart';
 
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/routing/app_router.dart';
@@ -65,6 +66,7 @@ class _HomeContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context)!;
     return RefreshIndicator(
       onRefresh: () async =>
           context.read<HomeBloc>().add(const HomeStarted()),
@@ -83,7 +85,7 @@ class _HomeContent extends StatelessWidget {
           const _PlanAheadCard(),
           const SizedBox(height: 28),
           Text(
-            'Shortcut',
+            l10n.homeShortcut,
             style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           for (final shortcut in state.shortcuts)
@@ -95,7 +97,7 @@ class _HomeContent extends StatelessWidget {
             ),
           const SizedBox(height: 28),
           Text(
-            'Transaksi Terakhir',
+            l10n.homeRecentTransactions,
             style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
@@ -164,7 +166,7 @@ class _SearchBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Cari Kontak & Tagihan',
+              AppLocalizations.of(context)!.homeSearchHint,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: AppColors.grey,
                     fontWeight: FontWeight.w500,
@@ -184,11 +186,12 @@ class _PlanAheadCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Plan Ahead',
+          l10n.homePlanAhead,
           style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 16),
@@ -211,14 +214,14 @@ class _PlanAheadCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Sering lupa bayar tagihan?',
+                        l10n.homePlanAheadPrompt,
                         style: textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                       const SizedBox(height: 7),
                       Text(
-                        'Buat Rencana Pembayaran',
+                        l10n.homePlanAheadCta,
                         style: textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),

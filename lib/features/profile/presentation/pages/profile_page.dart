@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jago/l10n/app_localizations.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
@@ -12,8 +13,9 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = context.select((AuthBloc bloc) => bloc.state.user);
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text('Profil')),
+      appBar: AppBar(title: Text(l10n.profileTitle)),
       body: SafeArea(
         child: ListView(
           children: [
@@ -43,16 +45,16 @@ class ProfilePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            const _SettingTile(icon: Icons.lock_outline, label: 'Keamanan'),
-            const _SettingTile(
-                icon: Icons.language_outlined, label: 'Bahasa'),
-            const _SettingTile(
-                icon: Icons.dark_mode_outlined, label: 'Tampilan'),
-            const _SettingTile(
-                icon: Icons.help_outline_rounded, label: 'Bantuan'),
+            _SettingTile(icon: Icons.lock_outline, label: l10n.settingSecurity),
+            _SettingTile(
+                icon: Icons.language_outlined, label: l10n.settingLanguage),
+            _SettingTile(
+                icon: Icons.dark_mode_outlined, label: l10n.settingAppearance),
+            _SettingTile(
+                icon: Icons.help_outline_rounded, label: l10n.settingHelp),
             _SettingTile(
               icon: Icons.logout_rounded,
-              label: 'Keluar',
+              label: l10n.signOut,
               onTap: () => _confirmSignOut(context),
             ),
           ],
@@ -62,19 +64,20 @@ class ProfilePage extends StatelessWidget {
   }
 
   Future<void> _confirmSignOut(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Keluar'),
-        content: const Text('Yakin ingin keluar dari akun?'),
+        title: Text(l10n.signOut),
+        content: Text(l10n.signOutConfirmBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Batal'),
+            child: Text(l10n.actionCancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text('Keluar'),
+            child: Text(l10n.signOut),
           ),
         ],
       ),

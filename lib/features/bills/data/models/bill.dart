@@ -1,15 +1,8 @@
 import 'package:equatable/equatable.dart';
 
-/// How often a bill repeats.
+/// How often a bill repeats. (Display labels are localized via
+/// `presentation/recurrence_l10n.dart`, keeping text out of the model.)
 enum BillRecurrence { none, weekly, monthly }
-
-extension BillRecurrenceLabel on BillRecurrence {
-  String get label => switch (this) {
-        BillRecurrence.none => 'Sekali',
-        BillRecurrence.weekly => 'Mingguan',
-        BillRecurrence.monthly => 'Bulanan',
-      };
-}
 
 /// A scheduled bill / payment plan.
 class Bill extends Equatable {

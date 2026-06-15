@@ -3,11 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:jago/l10n/app_localizations.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../data/models/bill.dart';
 import '../bloc/bills_bloc.dart';
+import '../recurrence_l10n.dart';
 
 /// Schedule a new bill / payment plan.
 class CreatePaymentPlanPage extends StatefulWidget {
@@ -69,9 +71,10 @@ class _CreatePaymentPlanPageState extends State<CreatePaymentPlanPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final dateLabel = DateFormat('d MMM yyyy', 'id_ID').format(_dueDate);
     return Scaffold(
-      appBar: AppBar(title: const Text('Rencana Pembayaran Baru')),
+      appBar: AppBar(title: Text(l10n.createPlanTitle)),
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -81,20 +84,20 @@ class _CreatePaymentPlanPageState extends State<CreatePaymentPlanPage> {
               TextFormField(
                 controller: _billerController,
                 textCapitalization: TextCapitalization.words,
-                decoration: const InputDecoration(
-                  labelText: 'Nama tagihan / penyedia',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.billerLabel,
+                  border: const OutlineInputBorder(),
                 ),
                 validator: (v) => (v == null || v.trim().isEmpty)
-                    ? 'Nama tagihan wajib diisi'
+                    ? l10n.billerRequired
                     : null,
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 value: _category,
-                decoration: const InputDecoration(
-                  labelText: 'Kategori',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.categoryLabel,
+                  border: const OutlineInputBorder(),
                 ),
                 items: [
                   for (final c in _categories)
@@ -107,14 +110,14 @@ class _CreatePaymentPlanPageState extends State<CreatePaymentPlanPage> {
                 controller: _amountController,
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                decoration: const InputDecoration(
-                  labelText: 'Nominal',
+                decoration: InputDecoration(
+                  labelText: l10n.amountLabel,
                   prefixText: 'Rp ',
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                 ),
                 validator: (v) {
                   final amount = double.tryParse(v?.trim() ?? '') ?? 0;
-                  return amount <= 0 ? 'Masukkan nominal yang valid' : null;
+                  return amount <= 0 ? l10n.amountInvalid : null;
                 },
               ),
               const SizedBox(height: 16),
@@ -122,10 +125,11 @@ class _CreatePaymentPlanPageState extends State<CreatePaymentPlanPage> {
                 onTap: _pickDate,
                 borderRadius: BorderRadius.circular(AppTheme.defaultRadius),
                 child: InputDecorator(
-                  decoration: const InputDecoration(
-                    labelText: 'Jatuh tempo',
-                    border: OutlineInputBorder(),
-                    suffixIcon: Icon(Icons.calendar_today_rounded, size: 18),
+                  decoration: InputDecoration(
+                    labelText: l10n.dueDateLabel,
+                    border: const OutlineInputBorder(),
+                    suffixIcon:
+                        const Icon(Icons.calendar_today_rounded, size: 18),
                   ),
                   child: Text(dateLabel),
                 ),
@@ -133,13 +137,14 @@ class _CreatePaymentPlanPageState extends State<CreatePaymentPlanPage> {
               const SizedBox(height: 16),
               DropdownButtonFormField<BillRecurrence>(
                 value: _recurrence,
-                decoration: const InputDecoration(
-                  labelText: 'Pengulangan',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.recurrenceLabel,
+                  border: const OutlineInputBorder(),
                 ),
                 items: [
                   for (final r in BillRecurrence.values)
-                    DropdownMenuItem(value: r, child: Text(r.label)),
+                    DropdownMenuItem(
+                        value: r, child: Text(recurrenceLabel(l10n, r))),
                 ],
                 onChanged: (v) =>
                     setState(() => _recurrence = v ?? _recurrence),
@@ -153,7 +158,7 @@ class _CreatePaymentPlanPageState extends State<CreatePaymentPlanPage> {
                     backgroundColor: AppColors.primary,
                     foregroundColor: AppColors.white,
                   ),
-                  child: const Text('Simpan Rencana'),
+                  child: Text(l10n.savePlan),
                 ),
               ),
             ],

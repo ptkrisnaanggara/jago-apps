@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jago/l10n/app_localizations.dart';
 
 import '../../../../core/routing/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -39,8 +40,9 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text('Daftar')),
+      appBar: AppBar(title: Text(l10n.register)),
       body: SafeArea(
         child: BlocConsumer<AuthBloc, AuthState>(
           // Only react to the request→sent transition (so a failed OTP verify,
@@ -68,7 +70,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 padding: const EdgeInsets.all(AppTheme.defaultMargin),
                 children: [
                   Text(
-                    'Buat akun Jago',
+                    l10n.signUpTitle,
                     style: textTheme.headlineSmall
                         ?.copyWith(fontWeight: FontWeight.w700),
                   ),
@@ -76,13 +78,13 @@ class _SignUpPageState extends State<SignUpPage> {
                   TextFormField(
                     controller: _nameController,
                     textCapitalization: TextCapitalization.words,
-                    decoration: const InputDecoration(
-                      labelText: 'Nama Lengkap',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: l10n.fullNameLabel,
+                      border: const OutlineInputBorder(),
                     ),
                     validator: (value) =>
                         (value == null || value.trim().isEmpty)
-                            ? 'Nama wajib diisi'
+                            ? l10n.nameRequired
                             : null,
                   ),
                   const SizedBox(height: 16),
@@ -92,14 +94,14 @@ class _SignUpPageState extends State<SignUpPage> {
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
                     ],
-                    decoration: const InputDecoration(
-                      labelText: 'Nomor HP',
+                    decoration: InputDecoration(
+                      labelText: l10n.phoneLabel,
                       prefixText: '+62 ',
-                      border: OutlineInputBorder(),
+                      border: const OutlineInputBorder(),
                     ),
                     validator: (value) {
                       final v = value?.trim() ?? '';
-                      if (v.length < 8) return 'Nomor HP tidak valid';
+                      if (v.length < 8) return l10n.phoneInvalid;
                       return null;
                     },
                   ),
@@ -115,7 +117,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               color: AppColors.white,
                             ),
                           )
-                        : const Text('Daftar & Kirim OTP'),
+                        : Text(l10n.registerAndSendOtp),
                   ),
                 ],
               ),

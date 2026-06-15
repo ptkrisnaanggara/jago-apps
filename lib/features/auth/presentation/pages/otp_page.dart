@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jago/l10n/app_localizations.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -31,6 +32,7 @@ class _OtpPageState extends State<OtpPage> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(),
       body: SafeArea(
@@ -52,14 +54,13 @@ class _OtpPageState extends State<OtpPage> {
               padding: const EdgeInsets.all(AppTheme.defaultMargin),
               children: [
                 Text(
-                  'Verifikasi OTP',
+                  l10n.otpTitle,
                   style: textTheme.headlineSmall
                       ?.copyWith(fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Masukkan 6 digit kode yang dikirim ke '
-                  '+62 ${state.pendingPhone ?? ''}.',
+                  l10n.otpSubtitle(state.pendingPhone ?? ''),
                   style: textTheme.bodyMedium?.copyWith(color: AppColors.grey),
                 ),
                 const SizedBox(height: 32),
@@ -78,7 +79,7 @@ class _OtpPageState extends State<OtpPage> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Demo: gunakan kode 123456',
+                  l10n.otpDemoHint,
                   style: textTheme.bodySmall?.copyWith(color: AppColors.grey),
                 ),
                 const SizedBox(height: 24),
@@ -93,7 +94,7 @@ class _OtpPageState extends State<OtpPage> {
                             color: AppColors.white,
                           ),
                         )
-                      : const Text('Verifikasi'),
+                      : Text(l10n.otpVerify),
                 ),
               ],
             );

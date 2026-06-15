@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import 'core/routing/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'l10n/app_localizations.dart';
 import 'features/auth/data/repositories/auth_repository.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/bills/data/repositories/bills_repository.dart';
@@ -69,16 +69,15 @@ class _JagoAppState extends State<JagoApp> {
       child: BlocProvider<AuthBloc>.value(
         value: _authBloc,
         child: MaterialApp.router(
-          title: 'JAGO',
+          onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
           debugShowCheckedModeBanner: false,
           theme: AppTheme.light,
           routerConfig: _router,
-          supportedLocales: const [Locale('id'), Locale('en')],
-          localizationsDelegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
+          // Bahasa Indonesia is the primary locale (PRD §1); English is
+          // available for the future language toggle (P2 #10).
+          locale: const Locale('id'),
+          supportedLocales: AppLocalizations.supportedLocales,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
         ),
       ),
     );

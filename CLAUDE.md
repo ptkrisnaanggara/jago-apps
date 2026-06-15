@@ -51,7 +51,17 @@ lib/
   shared/widgets/ # cross-feature widgets (e.g. shortcut_card.dart)
 ```
 
-Features today: `onboarding`, `auth`, `home`, `kantong`, `transactions`, `profile`.
+Features today: `onboarding`, `auth`, `home`, `kantong`, `transfer`,
+`transactions`, `profile`.
+
+### Transfer & Pay (Kirim & Bayar)
+- Multi-step flow (`features/transfer`): pick contact → enter amount + note →
+  confirm (bottom sheet) → success receipt. Reachable from Home (the
+  "Kirim & Bayar" shortcut and the search bar).
+- Steps are **full-screen routes outside the bottom-nav shell**, wrapped in a
+  `ShellRoute` whose builder provides a single `TransferBloc` so the selected
+  contact/amount survive navigation between steps. The receipt's "Selesai"
+  `context.go`s back to `/home`.
 
 ### Auth & navigation gating
 - `AuthBloc` (in `features/auth`) is created once in `main.dart` (a `StatefulWidget`)

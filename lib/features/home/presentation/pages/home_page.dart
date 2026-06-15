@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_assets.dart';
+import '../../../../core/routing/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/currency_formatter.dart';
@@ -85,7 +87,12 @@ class _HomeContent extends StatelessWidget {
             style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           for (final shortcut in state.shortcuts)
-            ShortcutCard(shortcut: shortcut),
+            ShortcutCard(
+              shortcut: shortcut,
+              onTap: shortcut.name == 'Kirim & Bayar'
+                  ? () => context.push(AppRouter.transfer)
+                  : null,
+            ),
           const SizedBox(height: 28),
           Text(
             'Transaksi Terakhir',
@@ -143,25 +150,29 @@ class _SearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 50,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppTheme.defaultRadius),
-        color: AppColors.lightGrey,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'Cari Kontak & Tagihan',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.grey,
-                  fontWeight: FontWeight.w500,
-                ),
-          ),
-          Image.asset(AppAssets.iconSearch, width: 16, height: 16),
-        ],
+    return InkWell(
+      onTap: () => context.push(AppRouter.transfer),
+      borderRadius: BorderRadius.circular(AppTheme.defaultRadius),
+      child: Container(
+        height: 50,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(AppTheme.defaultRadius),
+          color: AppColors.lightGrey,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Cari Kontak & Tagihan',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppColors.grey,
+                    fontWeight: FontWeight.w500,
+                  ),
+            ),
+            Image.asset(AppAssets.iconSearch, width: 16, height: 16),
+          ],
+        ),
       ),
     );
   }

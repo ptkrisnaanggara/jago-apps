@@ -11,6 +11,7 @@ import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/home/data/repositories/account_repository.dart';
 import 'features/kantong/data/repositories/pocket_repository.dart';
 import 'features/transactions/data/repositories/transaction_repository.dart';
+import 'features/transfer/data/repositories/transfer_repository.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -56,6 +57,9 @@ class _JagoAppState extends State<JagoApp> {
         ),
         RepositoryProvider<PocketRepository>(
           create: (_) => MockPocketRepository(),
+        ),
+        RepositoryProvider<TransferRepository>(
+          create: (_) => MockTransferRepository(),
         ),
       ],
       child: BlocProvider<AuthBloc>.value(

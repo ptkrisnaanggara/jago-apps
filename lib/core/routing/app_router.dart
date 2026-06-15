@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
@@ -11,6 +12,11 @@ import '../../features/kantong/presentation/pages/kantong_page.dart';
 import '../../features/onboarding/presentation/pages/onboarding_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/transactions/presentation/pages/transactions_page.dart';
+import '../../features/transfer/data/repositories/transfer_repository.dart';
+import '../../features/transfer/presentation/bloc/transfer_bloc.dart';
+import '../../features/transfer/presentation/pages/transfer_amount_page.dart';
+import '../../features/transfer/presentation/pages/transfer_page.dart';
+import '../../features/transfer/presentation/pages/transfer_receipt_page.dart';
 import 'app_shell.dart';
 import 'go_router_refresh_stream.dart';
 
@@ -28,6 +34,9 @@ class AppRouter {
   static const String kantong = '/kantong';
   static const String transactions = '/transactions';
   static const String profile = '/profile';
+  static const String transfer = '/transfer';
+  static const String transferAmount = '/transfer/amount';
+  static const String transferReceipt = '/transfer/receipt';
 
   static const Set<String> _authFlow = {
     splash,
@@ -86,6 +95,27 @@ class AppRouter {
             StatefulShellBranch(routes: [
               GoRoute(path: profile, builder: (_, __) => const ProfilePage()),
             ]),
+          ],
+        ),
+        // Transfer & Pay flow — full-screen over the shell. A single
+        // TransferBloc wraps the steps so the selection survives navigation.
+        ShellRoute(
+          builder: (context, state, child) => BlocProvider(
+            create: (ctx) => TransferBloc(
+              repository: ctx.read<TransferRepository>(),
+            )..add(const TransferStarted()),
+            child: child,
+          ),
+          routes: [
+            GoRoute(path: transfer, builder: (_, __) => const TransferPage()),
+            GoRoute(
+              path: transferAmount,
+              builder: (_, __) => const TransferAmountPage(),
+            ),
+            GoRoute(
+              path: transferReceipt,
+              builder: (_, __) => const TransferReceiptPage(),
+            ),
           ],
         ),
       ],

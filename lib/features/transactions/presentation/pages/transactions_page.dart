@@ -87,7 +87,9 @@ class _TransactionTile extends StatelessWidget {
         '${item.isIncome ? '+' : '-'}${CurrencyFormatter.format(item.amount)}',
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w600,
-              color: item.isIncome ? AppColors.success : AppColors.black,
+              color: item.isIncome
+                  ? AppColors.success
+                  : Theme.of(context).colorScheme.onSurface,
             ),
       ),
     );

@@ -121,7 +121,9 @@ class _HomeContent extends StatelessWidget {
                 '${tx.isIncome ? '+' : '-'}${CurrencyFormatter.format(tx.amount)}',
                 style: textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: tx.isIncome ? AppColors.success : AppColors.black,
+                  color: tx.isIncome
+                      ? AppColors.success
+                      : Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ),
@@ -160,7 +162,7 @@ class _SearchBar extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppTheme.defaultRadius),
-          color: AppColors.lightGrey,
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -202,8 +204,9 @@ class _PlanAheadCard extends StatelessWidget {
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(AppTheme.defaultRadius),
-              color: AppColors.lightGrey,
-              border: Border.all(color: AppColors.border),
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+              border: Border.all(
+                  color: Theme.of(context).colorScheme.outlineVariant),
             ),
             child: Row(
               children: [

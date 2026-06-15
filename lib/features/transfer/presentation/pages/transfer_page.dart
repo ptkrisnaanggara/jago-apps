@@ -29,7 +29,7 @@ class TransferPage extends StatelessWidget {
                   hintText: l10n.transferSearchHint,
                   prefixIcon: const Icon(Icons.search_rounded),
                   filled: true,
-                  fillColor: AppColors.lightGrey,
+                  fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppTheme.defaultRadius),
                     borderSide: BorderSide.none,

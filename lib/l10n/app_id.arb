@@ -101,5 +101,13 @@
   "categoryLabel": "Kategori",
   "dueDateLabel": "Jatuh tempo",
   "recurrenceLabel": "Pengulangan",
-  "savePlan": "Simpan Rencana"
+  "savePlan": "Simpan Rencana",
+
+  "chooseLanguage": "Pilih Bahasa",
+  "languageIndonesian": "Bahasa Indonesia",
+  "languageEnglish": "English",
+  "chooseAppearance": "Pilih Tampilan",
+  "appearanceSystem": "Ikuti Sistem",
+  "appearanceLight": "Terang",
+  "appearanceDark": "Gelap"
 }

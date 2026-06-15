@@ -58,7 +58,7 @@ class TransferReceiptPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: AppColors.lightGrey,
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(AppTheme.defaultRadius),
                 ),
                 child: Column(

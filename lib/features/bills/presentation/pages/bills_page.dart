@@ -87,12 +87,16 @@ class _BillsContent extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(l10n.billsTotalUpcoming, style: textTheme.bodyMedium),
+              // The card stays light-orange in both themes, so pin text dark.
+              Text(l10n.billsTotalUpcoming,
+                  style: textTheme.bodyMedium?.copyWith(color: AppColors.black)),
               const SizedBox(height: 4),
               Text(
                 CurrencyFormatter.format(state.totalUpcoming),
-                style: textTheme.headlineSmall
-                    ?.copyWith(fontWeight: FontWeight.w700),
+                style: textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.black,
+                ),
               ),
             ],
           ),
@@ -142,7 +146,7 @@ class _BillTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.lightGrey,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(AppTheme.defaultRadius),
       ),
       child: Row(

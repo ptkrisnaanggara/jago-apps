@@ -111,8 +111,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     height: 8,
                     width: i == _index ? 24 : 8,
                     decoration: BoxDecoration(
-                      color:
-                          i == _index ? AppColors.primary : AppColors.border,
+                      color: i == _index
+                          ? AppColors.primary
+                          : Theme.of(context).colorScheme.outlineVariant,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),

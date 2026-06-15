@@ -19,6 +19,11 @@ class AppColors {
   static const Color lightGrey = Color(0xFFF6F7FB);
   static const Color border = Color(0x1F000000);
 
+  // Dark-mode neutrals (used by AppTheme.dark; cards/text use ColorScheme roles).
+  static const Color darkBackground = Color(0xFF121212);
+  static const Color darkSurface = Color(0xFF1E1E1E);
+  static const Color darkOnSurface = Color(0xFFEDEDED);
+
   // Semantic
   static const Color success = Color(0xFF1FB57A);
   static const Color error = Color(0xFFE5484D);

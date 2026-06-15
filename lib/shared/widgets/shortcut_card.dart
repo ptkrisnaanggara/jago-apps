@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_assets.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/currency_formatter.dart';
 import '../../features/home/data/models/shortcut.dart';
@@ -24,7 +23,7 @@ class ShortcutCard extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppTheme.defaultRadius),
-          color: AppColors.lightGrey,
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.15),

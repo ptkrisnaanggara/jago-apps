@@ -52,7 +52,22 @@ lib/
 ```
 
 Features today: `onboarding`, `auth`, `home`, `kantong`, `transfer`,
-`bills`, `transactions`, `profile`.
+`bills`, `transactions`, `profile`, `settings`.
+
+### Settings (language + theme)
+- `SettingsBloc` (in `features/settings`) holds `locale` + `themeMode`,
+  created in `main.dart` and provided **above** `MaterialApp.router`; a
+  `BlocBuilder` rebuilds the app's `locale` / `themeMode` on change. In-memory
+  for now (persisting via `shared_preferences` is a follow-up, like auth).
+- Profile → Language switches `id`/`en` (makes the `en` ARB reachable);
+  Profile → Appearance switches System/Light/Dark.
+- `AppTheme` exposes **`light` + `dark`** from a shared `_build(brightness)`.
+  Dark mode works because card/section backgrounds use
+  `colorScheme.surfaceContainerHighest`, primary/secondary text use
+  `onSurface` / kept-`AppColors.grey`, and hairlines use `outlineVariant` —
+  **don't** hardcode `AppColors.lightGrey`/`black` for theme-sensitive
+  surfaces. Colors that sit on the fixed-light `primaryLight` card (e.g. the
+  bills total) pin their text to `AppColors.black`.
 
 ### Bills & Payment Plans
 - `features/bills`: upcoming/overdue + paid bills with quick "Bayar", plus a

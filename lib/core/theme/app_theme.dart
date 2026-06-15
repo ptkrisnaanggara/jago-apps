@@ -11,25 +11,34 @@ class AppTheme {
   static const double defaultMargin = 24.0;
   static const double defaultRadius = 16.0;
 
-  static ThemeData get light {
-    final base = ThemeData.light(useMaterial3: true);
+  static ThemeData get light => _build(Brightness.light);
+  static ThemeData get dark => _build(Brightness.dark);
+
+  static ThemeData _build(Brightness brightness) {
+    final isDark = brightness == Brightness.dark;
+    final base = ThemeData(brightness: brightness, useMaterial3: true);
+    final scaffoldBg = isDark ? AppColors.darkBackground : AppColors.white;
+    final surface = isDark ? AppColors.darkSurface : AppColors.white;
+    final textColor = isDark ? AppColors.darkOnSurface : AppColors.black;
+
     final colorScheme = ColorScheme.fromSeed(
       seedColor: AppColors.primary,
+      brightness: brightness,
       primary: AppColors.primary,
-      surface: AppColors.white,
+      surface: surface,
       error: AppColors.error,
     );
 
     return base.copyWith(
       colorScheme: colorScheme,
-      scaffoldBackgroundColor: AppColors.white,
+      scaffoldBackgroundColor: scaffoldBg,
       textTheme: GoogleFonts.poppinsTextTheme(base.textTheme).apply(
-        bodyColor: AppColors.black,
-        displayColor: AppColors.black,
+        bodyColor: textColor,
+        displayColor: textColor,
       ),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.white,
-        foregroundColor: AppColors.black,
+      appBarTheme: AppBarTheme(
+        backgroundColor: scaffoldBg,
+        foregroundColor: textColor,
         elevation: 0,
         centerTitle: false,
       ),
@@ -48,8 +57,8 @@ class AppTheme {
           ),
         ),
       ),
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: AppColors.white,
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: surface,
         selectedItemColor: AppColors.primary,
         unselectedItemColor: AppColors.grey,
         type: BottomNavigationBarType.fixed,

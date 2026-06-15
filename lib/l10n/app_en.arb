@@ -113,5 +113,13 @@
   "categoryLabel": "Category",
   "dueDateLabel": "Due date",
   "recurrenceLabel": "Recurrence",
-  "savePlan": "Save Plan"
+  "savePlan": "Save Plan",
+
+  "chooseLanguage": "Choose Language",
+  "languageIndonesian": "Bahasa Indonesia",
+  "languageEnglish": "English",
+  "chooseAppearance": "Choose Appearance",
+  "appearanceSystem": "Follow System",
+  "appearanceLight": "Light",
+  "appearanceDark": "Dark"
 }

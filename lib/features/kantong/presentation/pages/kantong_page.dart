@@ -93,7 +93,7 @@ class _PocketTile extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppTheme.defaultRadius),
-        color: AppColors.lightGrey,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,7 +140,7 @@ class _PocketTile extends StatelessWidget {
               child: LinearProgressIndicator(
                 value: progress,
                 minHeight: 6,
-                backgroundColor: AppColors.border,
+                backgroundColor: Theme.of(context).colorScheme.outlineVariant,
                 valueColor: AlwaysStoppedAnimation<Color>(accent),
               ),
             ),

@@ -51,7 +51,19 @@ lib/
   shared/widgets/ # cross-feature widgets (e.g. shortcut_card.dart)
 ```
 
-Features today: `home`, `kantong`, `transactions`, `profile`.
+Features today: `onboarding`, `auth`, `home`, `kantong`, `transactions`, `profile`.
+
+### Auth & navigation gating
+- `AuthBloc` (in `features/auth`) is created once in `main.dart` (a `StatefulWidget`)
+  and provided **above** `MaterialApp.router` so the router can read it.
+- `AppRouter.build(authBloc)` wires `redirect` + `refreshListenable`
+  (`GoRouterRefreshStream` over the bloc's stream). Redirect rules: `unknown` →
+  splash; unauthenticated → onboarding/auth flow; authenticated → app shell
+  (and out of the auth flow). Auth-flow routes live **outside** the shell.
+- Auth flow is phone + OTP (mock accepts demo code `123456`): onboarding →
+  sign in / sign up → OTP → authenticated. Pages dispatch events and use
+  `BlocListener` to push the OTP page; reaching `authenticated` lets the router
+  redirect Home automatically.
 
 ### Data layer (mock-backed)
 - Each repository is an **abstract interface** with a `Mock…Repository`

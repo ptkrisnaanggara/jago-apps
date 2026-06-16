@@ -143,10 +143,19 @@ type Notification struct {
 	IsRead   bool                 `json:"isRead"`
 }
 
+// Contact is a saved transfer recipient / payee shown in the picker.
+type Contact struct {
+	Base
+	UserID        string `gorm:"index;not null" json:"userId"`
+	Name          string `json:"name"`
+	BankName      string `json:"bankName"`
+	AccountNumber string `json:"accountNumber"`
+}
+
 // All returns every model for AutoMigrate.
 func All() []any {
 	return []any{
 		&User{}, &Account{}, &Pocket{}, &Transaction{},
-		&Transfer{}, &Bill{}, &Card{}, &Notification{},
+		&Transfer{}, &Bill{}, &Card{}, &Notification{}, &Contact{},
 	}
 }

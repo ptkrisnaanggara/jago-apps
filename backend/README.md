@@ -81,6 +81,7 @@ All responses use `{"data": ...}` on success and
 | `GET` | `/api/v1/account` | Balance (Redis-cached). |
 | `GET` | `/api/v1/pockets` | Savings pockets. |
 | `GET` | `/api/v1/transactions` | Transaction history. |
+| `GET` | `/api/v1/contacts` | Saved transfer recipients. |
 | `GET`/`POST` | `/api/v1/transfers` | List / create a transfer (publishes an event). |
 | `GET`/`POST` | `/api/v1/bills` | List / schedule a bill. |
 | `POST` | `/api/v1/bills/:id/pay` | Pay a bill. |

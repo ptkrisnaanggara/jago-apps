@@ -159,7 +159,18 @@ func (s *Server) seedNewUser(u *model.User) error {
 			{UserID: u.ID, Biller: "PLN Pascabayar", Category: "Listrik", Amount: 320_000, DueDate: now.AddDate(0, 0, 3), Recurrence: model.RecurrenceMonthly},
 			{UserID: u.ID, Biller: "IndiHome", Category: "Internet", Amount: 410_000, DueDate: now.AddDate(0, 0, 8), Recurrence: model.RecurrenceMonthly},
 		}
-		return tx.Create(&bills).Error
+		if err := tx.Create(&bills).Error; err != nil {
+			return err
+		}
+
+		contacts := []model.Contact{
+			{UserID: u.ID, Name: "Budi Santoso", BankName: "Bank Jago", AccountNumber: "100 8420 5566"},
+			{UserID: u.ID, Name: "Siti Rahmawati", BankName: "BCA", AccountNumber: "012 3456 7890"},
+			{UserID: u.ID, Name: "Andi Pratama", BankName: "Mandiri", AccountNumber: "137 0099 8877"},
+			{UserID: u.ID, Name: "Dewi Lestari", BankName: "BNI", AccountNumber: "088 1212 3434"},
+			{UserID: u.ID, Name: "Eko Wijaya", BankName: "Bank Jago", AccountNumber: "100 7711 2299"},
+		}
+		return tx.Create(&contacts).Error
 	})
 }
 

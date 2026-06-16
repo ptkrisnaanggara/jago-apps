@@ -32,6 +32,8 @@ func (s *Server) Router() *gin.Engine {
 			secured.GET("/pockets", s.listPockets)
 			secured.GET("/transactions", s.listTransactions)
 
+			secured.GET("/contacts", s.listContacts)
+
 			secured.GET("/transfers", s.listTransfers)
 			secured.POST("/transfers", s.createTransfer)
 

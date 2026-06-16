@@ -31,6 +31,8 @@ Legend: ✅ done · 🟡 in progress · ⏳ todo · 🚫 blocked (environment)
 ### Integration
 - ✅ Mobile app → backend: Dio API client + token store + API-backed
   repositories for all 8 interfaces, behind `AppConfig.useMockData`
+- ✅ Backend `GET /contacts` endpoint (+ seed) wired to the transfer picker;
+  verified live (5 seeded contacts returned)
 
 ### Repo
 - ✅ Monorepo restructure: `backend/`, `mobile-app/`, `frontend/` (history preserved)
@@ -46,8 +48,8 @@ Legend: ✅ done · 🟡 in progress · ⏳ todo · 🚫 blocked (environment)
 ## Backlog
 
 ### Integration
-- ⏳ Backend endpoints the app needs but lacks: **contacts** (transfer picker)
-  and **home shortcuts** (currently kept static client-side).
+- ⏳ Backend **home shortcuts** endpoint (Home tiles are still static
+  client-side; UI-only concept).
 - ⏳ Map backend `{error.code}` → app `AppFailure` for precise messages.
 
 ### Backend hardening

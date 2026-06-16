@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/routing/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'l10n/app_localizations.dart';
 import 'features/auth/data/repositories/auth_repository.dart';
+import 'features/auth/data/sources/auth_session_store.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/bills/data/repositories/bills_repository.dart';
 import 'features/cards/data/repositories/cards_repository.dart';
@@ -14,6 +16,7 @@ import 'features/home/data/repositories/account_repository.dart';
 import 'features/kantong/data/repositories/pocket_repository.dart';
 import 'features/notifications/data/repositories/notifications_repository.dart';
 import 'features/notifications/presentation/bloc/notifications_bloc.dart';
+import 'features/settings/data/settings_store.dart';
 import 'features/settings/presentation/bloc/settings_bloc.dart';
 import 'features/transactions/data/repositories/transaction_repository.dart';
 import 'features/transfer/data/repositories/transfer_repository.dart';
@@ -22,11 +25,31 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Required for Indonesian number/date formatting (NumberFormat, DateFormat).
   await initializeDateFormatting('id_ID');
-  runApp(const JagoApp());
+
+  // Load persisted preferences before first paint so there's no theme/locale
+  // flash on cold start.
+  final settingsStore = PrefsSettingsStore(await SharedPreferences.getInstance());
+  final saved = await settingsStore.read();
+  final initialSettings = SettingsState(
+    locale: saved.locale ?? const Locale('id'),
+    themeMode: saved.themeMode ?? ThemeMode.system,
+  );
+
+  runApp(JagoApp(
+    settingsStore: settingsStore,
+    initialSettings: initialSettings,
+  ));
 }
 
 class JagoApp extends StatefulWidget {
-  const JagoApp({super.key});
+  final SettingsStore settingsStore;
+  final SettingsState initialSettings;
+
+  const JagoApp({
+    super.key,
+    required this.settingsStore,
+    required this.initialSettings,
+  });
 
   @override
   State<JagoApp> createState() => _JagoAppState();
@@ -35,7 +58,10 @@ class JagoApp extends StatefulWidget {
 class _JagoAppState extends State<JagoApp> {
   // Mock repositories are wired here. Swap these for real, API-backed
   // implementations without touching the UI (see PRD §5).
-  final AuthRepository _authRepository = MockAuthRepository();
+  // Session persists in secure storage, so a restored session keeps the user
+  // signed in across restarts (AuthStarted reads it on launch).
+  final AuthRepository _authRepository =
+      MockAuthRepository(session: const SecureAuthSessionStore());
   final NotificationsRepository _notificationsRepository =
       MockNotificationsRepository();
 
@@ -43,7 +69,10 @@ class _JagoAppState extends State<JagoApp> {
   // lifetime so redirects react to auth changes without rebuilding the router.
   late final AuthBloc _authBloc =
       AuthBloc(repository: _authRepository)..add(const AuthStarted());
-  final SettingsBloc _settingsBloc = SettingsBloc();
+  late final SettingsBloc _settingsBloc = SettingsBloc(
+    store: widget.settingsStore,
+    initialState: widget.initialSettings,
+  );
   // App-level so the Home bell badge + notifications page share one state.
   late final NotificationsBloc _notificationsBloc =
       NotificationsBloc(repository: _notificationsRepository)

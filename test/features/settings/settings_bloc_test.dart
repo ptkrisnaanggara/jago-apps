@@ -1,6 +1,7 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:jago/features/settings/data/settings_store.dart';
 import 'package:jago/features/settings/presentation/bloc/settings_bloc.dart';
 
 void main() {
@@ -9,6 +10,31 @@ void main() {
       final bloc = SettingsBloc();
       expect(bloc.state.locale, const Locale('id'));
       expect(bloc.state.themeMode, ThemeMode.system);
+    });
+
+    test('honours the persisted initialState', () {
+      final bloc = SettingsBloc(
+        initialState: const SettingsState(
+          locale: Locale('en'),
+          themeMode: ThemeMode.dark,
+        ),
+      );
+      expect(bloc.state.locale, const Locale('en'));
+      expect(bloc.state.themeMode, ThemeMode.dark);
+    });
+
+    test('writes locale + theme changes back to the store', () async {
+      final store = InMemorySettingsStore();
+      final bloc = SettingsBloc(store: store);
+
+      bloc
+        ..add(const SettingsLocaleChanged(Locale('en')))
+        ..add(const SettingsThemeModeChanged(ThemeMode.dark));
+      await Future<void>.delayed(Duration.zero);
+
+      final snapshot = await store.read();
+      expect(snapshot.locale, const Locale('en'));
+      expect(snapshot.themeMode, ThemeMode.dark);
     });
 
     blocTest<SettingsBloc, SettingsState>(

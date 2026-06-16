@@ -73,8 +73,10 @@ Features today: `onboarding`, `auth`, `home`, `kantong`, `transfer`,
 ### Settings (language + theme)
 - `SettingsBloc` (in `features/settings`) holds `locale` + `themeMode`,
   created in `main.dart` and provided **above** `MaterialApp.router`; a
-  `BlocBuilder` rebuilds the app's `locale` / `themeMode` on change. In-memory
-  for now (persisting via `shared_preferences` is a follow-up, like auth).
+  `BlocBuilder` rebuilds the app's `locale` / `themeMode` on change.
+  **Persisted** via `SettingsStore` (`shared_preferences`): `main()` loads the
+  saved snapshot before first paint (no flash) and passes it as `initialState`;
+  changes are written back. Tests default to `InMemorySettingsStore`.
 - Profile → Language switches `id`/`en` (makes the `en` ARB reachable);
   Profile → Appearance switches System/Light/Dark.
 - `AppTheme` exposes **`light` + `dark`** from a shared `_build(brightness)`.
@@ -115,6 +117,10 @@ Features today: `onboarding`, `auth`, `home`, `kantong`, `transfer`,
   sign in / sign up → OTP → authenticated. Pages dispatch events and use
   `BlocListener` to push the OTP page; reaching `authenticated` lets the router
   redirect Home automatically.
+- **Session persists** via `AuthSessionStore` (`flutter_secure_storage`, wired in
+  `main.dart`): `verifyOtp` saves the session, `currentUser` (on `AuthStarted`)
+  restores it so login survives restarts, `signOut` clears it. Tests default to
+  `InMemoryAuthSessionStore` (no platform plugin needed).
 
 ### Data layer (mock-backed)
 - Each repository is an **abstract interface** with a `Mock…Repository`

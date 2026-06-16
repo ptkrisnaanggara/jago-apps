@@ -43,8 +43,11 @@ Legend: ✅ done · 🟡 in progress · ⏳ todo · 🚫 blocked (environment)
 - ✅ **Top-up prepaid (pulsa/data)** — backend catalog (`/topup/products`) +
   purchase (`/topup`) debiting a pocket; mobile Home shortcut → phone + product
   + pocket → buy → receipt. Backend verified live; mobile analyze + 31 tests.
-- ⏳ Top-up prepaid (pulsa/data), saving lock/autosave, transaction filters,
-  money pool / shared pockets, security PIN
+- ✅ **Transaction filters** — `?type=income|expense` (backend) + filter chips
+  (mobile); verified live.
+- ✅ **Security PIN** — device-local app-lock (SHA-256 hash in secure storage),
+  full-screen lock overlay + set/change/remove in Profile → Security.
+- ⏳ Saving lock/autosave, money pool / shared pockets, biometric unlock
 - 🔌 e-wallet link / investments / insurance (external integrations)
 
 ### Repo

@@ -1,7 +1,8 @@
 import '../models/transaction.dart';
 
 abstract class TransactionRepository {
-  Future<List<TransactionItem>> getTransactions();
+  /// [type] filters by 'income' or 'expense'; null returns all.
+  Future<List<TransactionItem>> getTransactions({String? type});
 }
 
 /// Temporary in-memory mock data source.
@@ -9,10 +10,10 @@ class MockTransactionRepository implements TransactionRepository {
   static const _latency = Duration(milliseconds: 600);
 
   @override
-  Future<List<TransactionItem>> getTransactions() async {
+  Future<List<TransactionItem>> getTransactions({String? type}) async {
     await Future<void>.delayed(_latency);
     final now = DateTime.now();
-    return [
+    final all = [
       TransactionItem(
         id: 't1',
         title: 'Gaji Bulanan',
@@ -54,5 +55,12 @@ class MockTransactionRepository implements TransactionRepository {
         date: now.subtract(const Duration(days: 4)),
       ),
     ];
+    if (type == 'income') {
+      return all.where((t) => t.type == TransactionType.income).toList();
+    }
+    if (type == 'expense') {
+      return all.where((t) => t.type == TransactionType.expense).toList();
+    }
+    return all;
   }
 }

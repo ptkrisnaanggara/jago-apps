@@ -10,8 +10,9 @@ class ApiTransactionRepository implements TransactionRepository {
   ApiTransactionRepository(this._api);
 
   @override
-  Future<List<TransactionItem>> getTransactions() async {
-    final list = await _api.get('/transactions') as List<dynamic>;
+  Future<List<TransactionItem>> getTransactions({String? type}) async {
+    final list = await _api.get('/transactions',
+        query: {if (type != null) 'type': type}) as List<dynamic>;
     return list
         .map((e) => _txFromJson(e as Map<String, dynamic>))
         .toList();

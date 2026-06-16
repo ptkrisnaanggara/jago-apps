@@ -20,10 +20,10 @@ integration (implemented as a mock/simulation here).
 | Top‑up prepaid (pulsa / data) | ✅ | catalog + pay from a pocket |
 | Money Pool / Patungan | ⏳ | |
 | Cards (Visa debit, virtual, freeze) | ✅ | freeze/unfreeze + reveal details |
-| Transactions history (+ filters) | 🟡 | list + pagination; filters ⏳ |
+| Transactions history (+ filters) | ✅ | list + pagination + type filter |
 | Notifications centre | ✅ | read/unread, mark‑all, live badge |
 | Profile & settings (language, theme) | ✅ | id/en + light/dark |
-| Security: PIN / biometric | ⏳ | session persisted (secure storage) |
+| Security: PIN / biometric | 🟡 | app-lock PIN done (hashed); biometric ⏳ |
 | e‑Wallet link (GoPay/GoTo) | 🔌 | external integration |
 | Investments (Bibit / Stockbit) | 🔌 | external integration |
 | Insurance ("Last Wish") | 🔌 | external integration |

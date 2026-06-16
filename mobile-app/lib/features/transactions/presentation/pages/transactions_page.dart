@@ -35,7 +35,11 @@ class _TransactionsView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.transactionsTitle)),
       body: SafeArea(
-        child: BlocBuilder<TransactionsBloc, TransactionsState>(
+        child: Column(
+          children: [
+            const _FilterBar(),
+            Expanded(
+              child: BlocBuilder<TransactionsBloc, TransactionsState>(
           builder: (context, state) {
             switch (state.status) {
               case TransactionsStatus.initial:
@@ -58,7 +62,45 @@ class _TransactionsView extends StatelessWidget {
                 );
             }
           },
+              ),
+            ),
+          ],
         ),
+      ),
+    );
+  }
+}
+
+class _FilterBar extends StatelessWidget {
+  const _FilterBar();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final selected = context.select((TransactionsBloc b) => b.state.filter);
+    final labels = {
+      TransactionFilter.all: l10n.filterAll,
+      TransactionFilter.income: l10n.filterIncome,
+      TransactionFilter.expense: l10n.filterExpense,
+    };
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.defaultMargin, vertical: 8),
+      child: Row(
+        children: [
+          for (final f in TransactionFilter.values)
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: ChoiceChip(
+                label: Text(labels[f]!),
+                selected: selected == f,
+                onSelected: (_) => context
+                    .read<TransactionsBloc>()
+                    .add(TransactionsFilterChanged(f)),
+              ),
+            ),
+        ],
       ),
     );
   }

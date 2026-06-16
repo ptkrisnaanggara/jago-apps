@@ -73,6 +73,14 @@ All responses use `{"data": ...}` on success and
 `{"error": {"code","message"}}` on failure. Secured routes require
 `Authorization: Bearer <token>`.
 
+List endpoints (transactions, transfers, bills, notifications, contacts) accept
+`?page=` and `?limit=` (default `limit=20`, max `100`) and add a `meta` block
+alongside `data`:
+
+```json
+{ "data": [ ... ], "meta": { "page": 1, "limit": 20, "total": 42, "totalPages": 3 } }
+```
+
 | Method | Path | Description |
 | --- | --- | --- |
 | `POST` | `/api/v1/auth/otp/request` | Send an OTP for a phone number. |

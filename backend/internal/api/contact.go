@@ -5,15 +5,26 @@ import (
 	"github.com/ptkrisnaanggara/jago-apps/backend/internal/model"
 )
 
-// listContacts returns the user's saved transfer recipients.
+// listContacts returns a page of the user's saved transfer recipients.
 func (s *Server) listContacts(c *gin.Context) {
+	uid := currentUserID(c)
+	p := parsePage(c)
+
+	var total int64
+	if err := s.db.Model(&model.Contact{}).
+		Where("user_id = ?", uid).Count(&total).Error; err != nil {
+		respondError(c, 500, "internal", "failed to load contacts")
+		return
+	}
+
 	var contacts []model.Contact
 	if err := s.db.
-		Where("user_id = ?", currentUserID(c)).
+		Where("user_id = ?", uid).
 		Order("name ASC").
+		Limit(p.Limit).Offset(p.Offset).
 		Find(&contacts).Error; err != nil {
 		respondError(c, 500, "internal", "failed to load contacts")
 		return
 	}
-	respondOK(c, contacts)
+	respondPaginated(c, contacts, p, total)
 }

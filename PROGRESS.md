@@ -59,9 +59,12 @@ Legend: ✅ done · 🟡 in progress · ⏳ todo · 🚫 blocked (environment)
 - ✅ **Versioned migrations** (goose) replacing `AutoMigrate` — up/down SQL,
   `goose_db_version` tracking, `cmd/migrate` CLI, `migrationsRun`-on-boot flag.
   Verified live on a fresh DB (full smoke test passes on the migrated schema).
+- ✅ **Pagination** (`?page=&limit=`, `meta` block, limit clamp 100) on
+  transactions/transfers/bills/notifications/contacts — verified live.
 - ⏳ Integration tests (handlers) against test-containerized services
-- ⏳ OTP rate-limiting (Redis), request pagination, real SMS delivery
+- ⏳ OTP rate-limiting (Redis), real SMS delivery
 - ⏳ Structured logging/metrics
+- ⏳ Mobile: consume pagination (infinite scroll); repos currently take page 1
 
 ### Android
 - ⏳ Modernize Gradle toolchain (AGP 3.5→8, Gradle 5.6→8, compileSdk 29→34,

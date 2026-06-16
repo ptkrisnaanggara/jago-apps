@@ -86,17 +86,28 @@ func (s *Server) createTransfer(c *gin.Context) {
 	respondCreated(c, transfer)
 }
 
-// listTransfers returns the user's transfer receipts, newest first.
+// listTransfers returns a page of the user's transfer receipts, newest first.
 func (s *Server) listTransfers(c *gin.Context) {
+	uid := currentUserID(c)
+	p := parsePage(c)
+
+	var total int64
+	if err := s.db.Model(&model.Transfer{}).
+		Where("user_id = ?", uid).Count(&total).Error; err != nil {
+		respondError(c, 500, "internal", "failed to load transfers")
+		return
+	}
+
 	var transfers []model.Transfer
 	if err := s.db.
-		Where("user_id = ?", currentUserID(c)).
+		Where("user_id = ?", uid).
 		Order("created_at DESC").
+		Limit(p.Limit).Offset(p.Offset).
 		Find(&transfers).Error; err != nil {
 		respondError(c, 500, "internal", "failed to load transfers")
 		return
 	}
-	respondOK(c, transfers)
+	respondPaginated(c, transfers, p, total)
 }
 
 // publishTransferCompleted emits the event (best-effort: a broker hiccup must

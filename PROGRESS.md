@@ -34,6 +34,15 @@ Legend: ✅ done · 🟡 in progress · ⏳ todo · 🚫 blocked (environment)
 - ✅ Backend `GET /contacts` endpoint (+ seed) wired to the transfer picker;
   verified live (5 seeded contacts returned)
 
+### Jago feature parity (see [docs/JAGO_PARITY.md](docs/JAGO_PARITY.md))
+- ✅ **Kantong money management** — pocket **types** (main/spending/saving),
+  **create pocket**, **move money between pockets** (atomic, locked) — full-stack
+  (backend + mobile), backend verified live, mobile analyze + 27 tests pass.
+- ⏳ QRIS scan-to-pay (linked to a spending pocket)
+- ⏳ Top-up prepaid (pulsa/data), saving lock/autosave, transaction filters,
+  money pool / shared pockets, security PIN
+- 🔌 e-wallet link / investments / insurance (external integrations)
+
 ### Repo
 - ✅ Monorepo restructure: `backend/`, `mobile-app/`, `frontend/` (history preserved)
 

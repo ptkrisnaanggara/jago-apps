@@ -1,10 +1,14 @@
 import 'package:equatable/equatable.dart';
 
-/// A "Kantong" (savings pocket). [target] is optional for pockets that are
-/// not goal-based (e.g. the main pocket).
+/// Kind of pocket, mirroring Bank Jago's Kantong types.
+enum PocketType { main, spending, saving }
+
+/// A "Kantong" (pocket). [target] is optional for pockets that are not
+/// goal-based (e.g. the main pocket).
 class Pocket extends Equatable {
   final String id;
   final String name;
+  final PocketType type;
   final double balance;
   final double? target;
   final bool isMain;
@@ -12,6 +16,7 @@ class Pocket extends Equatable {
   const Pocket({
     required this.id,
     required this.name,
+    this.type = PocketType.spending,
     required this.balance,
     this.target,
     this.isMain = false,
@@ -25,5 +30,5 @@ class Pocket extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, name, balance, target, isMain];
+  List<Object?> get props => [id, name, type, balance, target, isMain];
 }

@@ -17,6 +17,7 @@
   "errorScheduleBill": "Failed to save the plan. Try again.",
   "errorLoadTransactions": "Failed to load transactions. Try again.",
   "errorLoadPockets": "Failed to load Pockets. Try again.",
+  "errorPocketAction": "Pocket action failed. Try again.",
   "errorLoadCards": "Failed to load cards. Try again.",
   "errorUpdateCard": "Failed to update the card. Try again.",
   "errorLoadNotifications": "Failed to load notifications. Try again.",
@@ -73,6 +74,17 @@
   "@kantongTarget": {
     "placeholders": { "amount": { "type": "String" } }
   },
+  "pocketNameLabel": "Pocket name",
+  "pocketTypeLabel": "Type",
+  "pocketTypeSpending": "Spending",
+  "pocketTypeSaving": "Saving",
+  "pocketTypeMain": "Main",
+  "pocketTargetOptional": "Target (optional)",
+  "createPocketAction": "Create Pocket",
+  "moveMoneyTitle": "Move Money",
+  "moveFromLabel": "From",
+  "moveToLabel": "To",
+  "moveAction": "Move",
 
   "transactionsTitle": "Transactions",
   "transactionsEmpty": "No transactions yet.",

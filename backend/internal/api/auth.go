@@ -175,9 +175,9 @@ func (s *Server) seedNewUser(u *model.User) error {
 		}
 
 		pockets := []model.Pocket{
-			{UserID: u.ID, Name: "Kantong Utama", Balance: 1_000_000, IsMain: true},
-			{UserID: u.ID, Name: "Dana Darurat", Balance: 4_500_000, Target: &target1},
-			{UserID: u.ID, Name: "Liburan ke Bali", Balance: 2_300_000, Target: &target2},
+			{UserID: u.ID, Name: "Kantong Utama", Type: model.PocketMain, Balance: 1_000_000, IsMain: true},
+			{UserID: u.ID, Name: "Dana Darurat", Type: model.PocketSaving, Balance: 4_500_000, Target: &target1},
+			{UserID: u.ID, Name: "Liburan ke Bali", Type: model.PocketSaving, Balance: 2_300_000, Target: &target2},
 		}
 		if err := tx.Create(&pockets).Error; err != nil {
 			return err

@@ -41,14 +41,24 @@ type Account struct {
 	Balance       int64  `json:"balance"`
 }
 
-// Pocket is a savings "Kantong" with an optional target.
+// PocketType mirrors Jago's pocket kinds.
+type PocketType string
+
+const (
+	PocketMain     PocketType = "main"
+	PocketSpending PocketType = "spending"
+	PocketSaving   PocketType = "saving"
+)
+
+// Pocket is a "Kantong" with an optional savings target.
 type Pocket struct {
 	Base
-	UserID  string `gorm:"index;not null" json:"userId"`
-	Name    string `json:"name"`
-	Balance int64  `json:"balance"`
-	Target  *int64 `json:"target,omitempty"`
-	IsMain  bool   `json:"isMain"`
+	UserID  string     `gorm:"index;not null" json:"userId"`
+	Name    string     `json:"name"`
+	Type    PocketType `json:"type"`
+	Balance int64      `json:"balance"`
+	Target  *int64     `json:"target,omitempty"`
+	IsMain  bool       `json:"isMain"`
 }
 
 // TxType distinguishes money in vs money out.

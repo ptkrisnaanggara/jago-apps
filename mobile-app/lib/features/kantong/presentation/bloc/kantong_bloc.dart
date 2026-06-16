@@ -15,6 +15,8 @@ class KantongBloc extends Bloc<KantongEvent, KantongState> {
       : _repository = repository,
         super(const KantongState()) {
     on<KantongStarted>(_onStarted);
+    on<KantongPocketCreated>(_onPocketCreated);
+    on<KantongMoneyMoved>(_onMoneyMoved);
   }
 
   Future<void> _onStarted(
@@ -30,6 +32,38 @@ class KantongBloc extends Bloc<KantongEvent, KantongState> {
         status: KantongStatus.failure,
         failure: AppFailure.loadPocketsFailed,
       ));
+    }
+  }
+
+  Future<void> _onPocketCreated(
+    KantongPocketCreated event,
+    Emitter<KantongState> emit,
+  ) async {
+    try {
+      final pockets = await _repository.createPocket(
+        name: event.name,
+        type: event.type,
+        target: event.target,
+      );
+      emit(state.copyWith(status: KantongStatus.success, pockets: pockets));
+    } catch (_) {
+      emit(state.copyWith(failure: AppFailure.pocketActionFailed));
+    }
+  }
+
+  Future<void> _onMoneyMoved(
+    KantongMoneyMoved event,
+    Emitter<KantongState> emit,
+  ) async {
+    try {
+      final pockets = await _repository.movePocket(
+        fromId: event.fromId,
+        toId: event.toId,
+        amount: event.amount,
+      );
+      emit(state.copyWith(status: KantongStatus.success, pockets: pockets));
+    } catch (_) {
+      emit(state.copyWith(failure: AppFailure.pocketActionFailed));
     }
   }
 }

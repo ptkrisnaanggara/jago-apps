@@ -1,0 +1,11 @@
+# Binaries
+/api
+/worker
+/bin/
+*.exe
+
+# Local env
+.env
+
+# Go test/coverage artifacts
+*.out

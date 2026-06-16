@@ -69,9 +69,13 @@ Legend: ✅ done · 🟡 in progress · ⏳ todo · 🚫 blocked (environment)
 - ⏳ Mobile: consume pagination (infinite scroll); repos currently take page 1
 
 ### Android
-- ⏳ Modernize Gradle toolchain (AGP 3.5→8, Gradle 5.6→8, compileSdk 29→34,
-  drop `jcenter`) — must be verified with a real `flutter build apk`
-- ⏳ Rename source package `com.example.food` → `com.jago.app`
+- ✅ Modernized the Gradle toolchain by regenerating the scaffold from Flutter
+  3.44's template: **Gradle 9.1, AGP 9.0.1, Kotlin 2.3.20, JVM 17**, Kotlin DSL
+  (`.kts`), compile/min/target SDK from `flutter.*`, `mavenCentral` (no
+  `jcenter`), `namespace` set. App id `com.jago.app`, label "Jago", package
+  `com.jago.jago` (replaces `com.example.food`).
+  ⚠️ Not gradle-build-verified here (no Android SDK + Google Maven is
+  network-blocked); analyze + 25 tests pass. Run `flutter build apk` locally.
 
 ### Quality / CI
 - ⏳ Widget tests + integration tests (auth, transfer) — coverage is bloc-only

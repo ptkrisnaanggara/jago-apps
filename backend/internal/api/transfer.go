@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -127,6 +126,10 @@ func (s *Server) publishTransferCompleted(c *gin.Context, t model.Transfer) {
 		return
 	}
 	if err := s.broker.Publish(c, event.RoutingTransferCompleted, payload); err != nil {
-		log.Printf("publish %s failed: %v", event.RoutingTransferCompleted, err)
+		s.log.Error("event_publish_failed",
+			"request_id", c.GetString(ctxRequestID),
+			"routing_key", event.RoutingTransferCompleted,
+			"error", err,
+		)
 	}
 }

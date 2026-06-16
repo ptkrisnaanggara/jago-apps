@@ -63,9 +63,12 @@ Legend: ✅ done · 🟡 in progress · ⏳ todo · 🚫 blocked (environment)
   transactions/transfers/bills/notifications/contacts — verified live.
 - ✅ **OTP rate limiting** (Redis): per-phone request cap (429 + Retry-After) +
   per-OTP verify brute-force guard (429 + invalidates code) — verified live.
+- ✅ **Structured logging** (slog/JSON): per-request log with request_id /
+  method / path / status / latency, level-by-status, `X-Request-Id` header,
+  panic recovery; `LOG_LEVEL`/`LOG_FORMAT` config — verified live.
 - ⏳ Integration tests (handlers) against test-containerized services
 - ⏳ Real SMS delivery (turn off demo mode)
-- ⏳ Structured logging/metrics
+- ⏳ Metrics (Prometheus)
 - ⏳ Mobile: consume pagination (infinite scroll); repos currently take page 1
 
 ### Android

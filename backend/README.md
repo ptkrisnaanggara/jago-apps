@@ -105,6 +105,21 @@ alongside `data`:
 | `POST` | `/api/v1/notifications/:id/read` | Mark one read. |
 | `POST` | `/api/v1/notifications/read-all` | Mark all read. |
 
+## Logging
+
+Structured logging via the standard library [`log/slog`](https://pkg.go.dev/log/slog)
+(no extra deps). Every request emits one JSON line with a correlation id:
+
+```json
+{"time":"...","level":"INFO","msg":"http_request","request_id":"…","method":"GET","path":"/api/v1/account","status":200,"latency_ms":2,"ip":"127.0.0.1"}
+```
+
+- A request id is generated (or taken from an inbound `X-Request-Id`) and
+  returned in the `X-Request-Id` response header.
+- Request log level follows status: `INFO` (<400), `WARN` (4xx), `ERROR` (5xx);
+  panics are recovered and logged.
+- Configure with `LOG_LEVEL` (debug/info/warn/error) and `LOG_FORMAT` (json/text).
+
 ## Migrations
 
 Schema is managed with **versioned migrations** ([goose](https://github.com/pressly/goose))

@@ -4,8 +4,8 @@ package main
 import (
 	"context"
 	"errors"
-	"log"
 	"net/http"
+	"os"
 	"os/signal"
 	"syscall"
 	"time"
@@ -15,39 +15,46 @@ import (
 	"github.com/ptkrisnaanggara/jago-apps/backend/internal/platform/broker"
 	"github.com/ptkrisnaanggara/jago-apps/backend/internal/platform/cache"
 	"github.com/ptkrisnaanggara/jago-apps/backend/internal/platform/db"
+	"github.com/ptkrisnaanggara/jago-apps/backend/internal/platform/logging"
 	"github.com/ptkrisnaanggara/jago-apps/backend/internal/token"
 )
 
 func main() {
 	cfg := config.Load()
+	logger := logging.New(cfg.LogLevel, cfg.LogFormat)
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
 	gdb, err := db.Open(cfg.DatabaseURL)
 	if err != nil {
-		log.Fatalf("postgres: %v", err)
+		logger.Error("postgres connect failed", "error", err)
+		os.Exit(1)
 	}
 	if cfg.MigrateOnStart {
 		if err := db.RunMigrations(gdb); err != nil {
-			log.Fatalf("migrate: %v", err)
+			logger.Error("migration failed", "error", err)
+			os.Exit(1)
 		}
+		logger.Info("migrations applied")
 	}
 
 	rdb, err := cache.Open(ctx, cfg.RedisURL)
 	if err != nil {
-		log.Fatalf("redis: %v", err)
+		logger.Error("redis connect failed", "error", err)
+		os.Exit(1)
 	}
 	defer func() { _ = rdb.Close() }()
 
 	br, err := broker.Open(cfg.RabbitMQURL)
 	if err != nil {
-		log.Fatalf("rabbitmq: %v", err)
+		logger.Error("rabbitmq connect failed", "error", err)
+		os.Exit(1)
 	}
 	defer br.Close()
 
 	tokens := token.NewManager(cfg.JWTSecret, cfg.JWTTTL)
-	server := api.New(cfg, gdb, rdb, br, tokens)
+	server := api.New(cfg, gdb, rdb, br, tokens, logger)
 
 	srv := &http.Server{
 		Addr:    ":" + cfg.AppPort,
@@ -55,18 +62,19 @@ func main() {
 	}
 
 	go func() {
-		log.Printf("API listening on :%s", cfg.AppPort)
+		logger.Info("api listening", "port", cfg.AppPort)
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			log.Fatalf("listen: %v", err)
+			logger.Error("listen failed", "error", err)
+			os.Exit(1)
 		}
 	}()
 
 	<-ctx.Done()
-	log.Println("shutting down...")
+	logger.Info("shutting down")
 
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	if err := srv.Shutdown(shutdownCtx); err != nil {
-		log.Printf("graceful shutdown failed: %v", err)
+		logger.Error("graceful shutdown failed", "error", err)
 	}
 }

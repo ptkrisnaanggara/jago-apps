@@ -17,8 +17,8 @@ import (
 
 	"github.com/pressly/goose/v3"
 	"github.com/ptkrisnaanggara/jago-apps/backend/internal/config"
-	migrations "github.com/ptkrisnaanggara/jago-apps/backend/migrations"
 	"github.com/ptkrisnaanggara/jago-apps/backend/internal/platform/db"
+	migrations "github.com/ptkrisnaanggara/jago-apps/backend/migrations"
 )
 
 const migrationsDir = "migrations"

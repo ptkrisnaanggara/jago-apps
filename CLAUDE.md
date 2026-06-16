@@ -2,6 +2,14 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Repository layout (monorepo)
+
+- **`mobile-app/`** — the Flutter app. **All paths and `flutter` commands in this
+  document are relative to `mobile-app/`** (e.g. `mobile-app/lib/...`).
+- **`backend/`** — the Go API (Gin + GORM/Postgres + Redis + RabbitMQ). See
+  [`backend/README.md`](backend/README.md).
+- **`frontend/`** — web frontend (scaffold, not started).
+
 ## Overview
 
 `jago` is a Flutter **digital banking / e-wallet** app (Indonesian market, logo

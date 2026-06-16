@@ -37,8 +37,7 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.example.food"
+        applicationId "com.jago.app"
         // Raised to 21: required by flutter_secure_storage (≥18) /
         // shared_preferences and matches the current Flutter baseline.
         minSdkVersion 21

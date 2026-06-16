@@ -91,6 +91,28 @@ All responses use `{"data": ...}` on success and
 | `POST` | `/api/v1/notifications/:id/read` | Mark one read. |
 | `POST` | `/api/v1/notifications/read-all` | Mark all read. |
 
+## Migrations
+
+Schema is managed with **versioned migrations** ([goose](https://github.com/pressly/goose))
+— the TypeORM/Nest equivalent of `migration:run` / `migration:revert`. GORM's
+`AutoMigrate` is intentionally not used; the SQL files in `migrations/` are the
+source of truth, embedded into the binary and tracked in a `goose_db_version`
+table. The API applies pending migrations on boot when `MIGRATE_ON_START=true`
+(default; like Nest's `migrationsRun: true`).
+
+| Command (local) | Docker | TypeORM analog |
+| --- | --- | --- |
+| `go run ./cmd/migrate up` | `docker compose run --rm migrate up` | `migration:run` |
+| `go run ./cmd/migrate down` | `… migrate down` | `migration:revert` |
+| `go run ./cmd/migrate status` | `… migrate status` | `migration:show` |
+| `go run ./cmd/migrate version` | `… migrate version` | — |
+| `go run ./cmd/migrate create <name> sql` | — | `migration:create` |
+
+```bash
+# write a new migration (edit the -- +goose Up / Down blocks it scaffolds)
+go run ./cmd/migrate create add_widgets_table sql
+```
+
 ## Commands
 
 ```bash

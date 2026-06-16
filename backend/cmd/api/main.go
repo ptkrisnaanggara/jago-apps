@@ -28,8 +28,10 @@ func main() {
 	if err != nil {
 		log.Fatalf("postgres: %v", err)
 	}
-	if err := db.Migrate(gdb); err != nil {
-		log.Fatalf("migrate: %v", err)
+	if cfg.MigrateOnStart {
+		if err := db.RunMigrations(gdb); err != nil {
+			log.Fatalf("migrate: %v", err)
+		}
 	}
 
 	rdb, err := cache.Open(ctx, cfg.RedisURL)

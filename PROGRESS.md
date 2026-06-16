@@ -56,9 +56,12 @@ Legend: ✅ done · 🟡 in progress · ⏳ todo · 🚫 blocked (environment)
 - ✅ **End-to-end smoke test** — done (see Completed → Backend). Unblocked by
   starting `dockerd` in-session and using `mirror.gcr.io` as a registry mirror
   (Docker Hub's blob CDN is 403-blocked by the network policy).
+- ✅ **Versioned migrations** (goose) replacing `AutoMigrate` — up/down SQL,
+  `goose_db_version` tracking, `cmd/migrate` CLI, `migrationsRun`-on-boot flag.
+  Verified live on a fresh DB (full smoke test passes on the migrated schema).
 - ⏳ Integration tests (handlers) against test-containerized services
 - ⏳ OTP rate-limiting (Redis), request pagination, real SMS delivery
-- ⏳ Migrations tool (beyond `AutoMigrate`), structured logging/metrics
+- ⏳ Structured logging/metrics
 
 ### Android
 - ⏳ Modernize Gradle toolchain (AGP 3.5→8, Gradle 5.6→8, compileSdk 29→34,

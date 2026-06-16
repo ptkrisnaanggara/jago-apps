@@ -61,5 +61,16 @@ services:
       postgres: { condition: service_healthy }
       rabbitmq: { condition: service_healthy }
 
+  # One-shot migration runner: `docker compose run --rm migrate <up|down|status>`
+  migrate:
+    build: .
+    entrypoint: ["/migrate"]
+    command: ["up"]
+    environment:
+      DATABASE_URL: "postgres://jago:jago@postgres:5432/jago?sslmode=disable"
+    depends_on:
+      postgres: { condition: service_healthy }
+    profiles: ["tools"]
+
 volumes:
   pgdata:

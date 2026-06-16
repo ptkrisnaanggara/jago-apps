@@ -22,6 +22,7 @@
   "errorUpdateCard": "Gagal memperbarui kartu. Coba lagi.",
   "errorLoadNotifications": "Gagal memuat notifikasi. Coba lagi.",
   "errorLoadData": "Gagal memuat data. Coba lagi.",
+  "errorQris": "Pembayaran QRIS gagal. Coba lagi.",
 
   "balanceTotal": "Total Saldo",
 
@@ -79,6 +80,14 @@
   "moveFromLabel": "Dari",
   "moveToLabel": "Ke",
   "moveAction": "Pindahkan",
+  "qrisTitle": "Bayar QRIS",
+  "qrisPayloadLabel": "Kode QRIS",
+  "qrisUseSample": "Gunakan contoh",
+  "qrisMerchantLabel": "Merchant",
+  "qrisPayFrom": "Bayar dari",
+  "qrisPayAction": "Bayar",
+  "qrisSuccessTitle": "Pembayaran Berhasil",
+  "homeQris": "Scan QRIS",
 
   "transactionsTitle": "Transaksi",
   "transactionsEmpty": "Belum ada transaksi.",

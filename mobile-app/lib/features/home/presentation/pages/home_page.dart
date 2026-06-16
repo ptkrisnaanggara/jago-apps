@@ -146,9 +146,14 @@ class _AppBar extends StatelessWidget {
     final unread =
         context.select((NotificationsBloc bloc) => bloc.state.unreadCount);
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Image.asset(AppAssets.logo, width: 100, height: 30),
+        const Spacer(),
+        IconButton(
+          tooltip: AppLocalizations.of(context)!.homeQris,
+          icon: const Icon(Icons.qr_code_scanner_rounded),
+          onPressed: () => context.push(AppRouter.qris),
+        ),
         InkWell(
           onTap: () => context.push(AppRouter.notifications),
           customBorder: const CircleBorder(),

@@ -15,7 +15,7 @@ integration (implemented as a mock/simulation here).
 | Interest (bunga) on savings | ⏳ | |
 | Transfer & Pay (to contact / bank) | ✅ | contact picker → amount → receipt; event‑driven notification |
 | Move money between pockets | ✅ | this change |
-| **QRIS** scan‑to‑pay (linked to Spending Pocket) | ⏳ | next iconic feature to add |
+| **QRIS** scan‑to‑pay (linked to Spending Pocket) | ✅ | EMV TLV parse + pay from a pocket |
 | Bills & payment plans (PLN, etc.) | ✅ | list / schedule / pay |
 | Top‑up prepaid (pulsa / data) | ⏳ | |
 | Money Pool / Patungan | ⏳ | |

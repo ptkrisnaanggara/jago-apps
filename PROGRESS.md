@@ -36,9 +36,11 @@ Legend: ✅ done · 🟡 in progress · ⏳ todo · 🚫 blocked (environment)
 
 ### Jago feature parity (see [docs/JAGO_PARITY.md](docs/JAGO_PARITY.md))
 - ✅ **Kantong money management** — pocket **types** (main/spending/saving),
-  **create pocket**, **move money between pockets** (atomic, locked) — full-stack
-  (backend + mobile), backend verified live, mobile analyze + 27 tests pass.
-- ⏳ QRIS scan-to-pay (linked to a spending pocket)
+  **create pocket**, **move money between pockets** (atomic, locked) — full-stack.
+- ✅ **QRIS scan-to-pay** — backend parses EMV TLV payload (`/qris/parse`,
+  `/qris/pay`) and debits a pocket; mobile paste/sample → merchant review → pick
+  pocket → pay → receipt. Backend verified live (static+dynamic QR, 422 guard);
+  mobile analyze + 29 tests pass.
 - ⏳ Top-up prepaid (pulsa/data), saving lock/autosave, transaction filters,
   money pool / shared pockets, security PIN
 - 🔌 e-wallet link / investments / insurance (external integrations)

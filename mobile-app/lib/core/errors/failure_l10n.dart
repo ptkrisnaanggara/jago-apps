@@ -23,5 +23,6 @@ String failureText(BuildContext context, AppFailure failure) {
     AppFailure.updateCardFailed => l10n.errorUpdateCard,
     AppFailure.loadNotificationsFailed => l10n.errorLoadNotifications,
     AppFailure.loadAccountFailed => l10n.errorLoadData,
+    AppFailure.qrisFailed => l10n.errorQris,
   };
 }

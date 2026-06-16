@@ -17,4 +17,5 @@ enum AppFailure {
   updateCardFailed,
   loadNotificationsFailed,
   loadAccountFailed,
+  qrisFailed,
 }

@@ -95,9 +95,11 @@ class _HomeContent extends StatelessWidget {
           for (final shortcut in state.shortcuts)
             ShortcutCard(
               shortcut: shortcut,
-              onTap: shortcut.name == 'Kirim & Bayar'
-                  ? () => context.push(AppRouter.transfer)
-                  : null,
+              onTap: switch (shortcut.name) {
+                'Kirim & Bayar' => () => context.push(AppRouter.transfer),
+                'Pulsa & Data' => () => context.push(AppRouter.topup),
+                _ => null,
+              },
             ),
           const SizedBox(height: 28),
           Text(

@@ -37,6 +37,10 @@ class MockAccountRepository implements AccountRepository {
         name: 'Kirim & Bayar',
         imageUrl: AppAssets.transaction,
       ),
+      Shortcut(
+        name: 'Pulsa & Data',
+        imageUrl: AppAssets.tasks,
+      ),
     ];
   }
 }

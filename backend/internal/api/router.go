@@ -39,6 +39,9 @@ func (s *Server) Router() *gin.Engine {
 			secured.POST("/qris/parse", s.parseQRIS)
 			secured.POST("/qris/pay", s.payQRIS)
 
+			secured.GET("/topup/products", s.listTopupProducts)
+			secured.POST("/topup", s.purchaseTopup)
+
 			secured.GET("/transfers", s.listTransfers)
 			secured.POST("/transfers", s.createTransfer)
 

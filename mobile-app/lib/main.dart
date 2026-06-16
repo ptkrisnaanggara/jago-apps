@@ -27,6 +27,8 @@ import 'features/notifications/data/repositories/notifications_repository.dart';
 import 'features/notifications/presentation/bloc/notifications_bloc.dart';
 import 'features/qris/data/repositories/api_qris_repository.dart';
 import 'features/qris/data/repositories/qris_repository.dart';
+import 'features/topup/data/repositories/api_topup_repository.dart';
+import 'features/topup/data/repositories/topup_repository.dart';
 import 'features/settings/data/settings_store.dart';
 import 'features/settings/presentation/bloc/settings_bloc.dart';
 import 'features/transactions/data/repositories/api_transaction_repository.dart';
@@ -146,6 +148,10 @@ class _JagoAppState extends State<JagoApp> {
         ),
         RepositoryProvider<QrisRepository>(
           create: (_) => _useMock ? MockQrisRepository() : ApiQrisRepository(_api!),
+        ),
+        RepositoryProvider<TopupRepository>(
+          create: (_) =>
+              _useMock ? MockTopupRepository() : ApiTopupRepository(_api!),
         ),
       ],
       child: MultiBlocProvider(

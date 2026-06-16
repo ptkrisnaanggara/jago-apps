@@ -39,8 +39,10 @@ Legend: ✅ done · 🟡 in progress · ⏳ todo · 🚫 blocked (environment)
   **create pocket**, **move money between pockets** (atomic, locked) — full-stack.
 - ✅ **QRIS scan-to-pay** — backend parses EMV TLV payload (`/qris/parse`,
   `/qris/pay`) and debits a pocket; mobile paste/sample → merchant review → pick
-  pocket → pay → receipt. Backend verified live (static+dynamic QR, 422 guard);
-  mobile analyze + 29 tests pass.
+  pocket → pay → receipt. Backend verified live (static+dynamic QR, 422 guard).
+- ✅ **Top-up prepaid (pulsa/data)** — backend catalog (`/topup/products`) +
+  purchase (`/topup`) debiting a pocket; mobile Home shortcut → phone + product
+  + pocket → buy → receipt. Backend verified live; mobile analyze + 31 tests.
 - ⏳ Top-up prepaid (pulsa/data), saving lock/autosave, transaction filters,
   money pool / shared pockets, security PIN
 - 🔌 e-wallet link / investments / insurance (external integrations)

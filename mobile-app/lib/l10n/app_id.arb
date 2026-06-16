@@ -23,6 +23,7 @@
   "errorLoadNotifications": "Gagal memuat notifikasi. Coba lagi.",
   "errorLoadData": "Gagal memuat data. Coba lagi.",
   "errorQris": "Pembayaran QRIS gagal. Coba lagi.",
+  "errorTopup": "Pembelian gagal. Coba lagi.",
 
   "balanceTotal": "Total Saldo",
 
@@ -88,6 +89,11 @@
   "qrisPayAction": "Bayar",
   "qrisSuccessTitle": "Pembayaran Berhasil",
   "homeQris": "Scan QRIS",
+  "topupTitle": "Pulsa & Paket Data",
+  "topupTabPulsa": "Pulsa",
+  "topupTabData": "Paket Data",
+  "topupBuy": "Beli",
+  "topupSuccessTitle": "Pembelian Berhasil",
 
   "transactionsTitle": "Transaksi",
   "transactionsEmpty": "Belum ada transaksi.",

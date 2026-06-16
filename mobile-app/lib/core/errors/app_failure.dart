@@ -18,4 +18,5 @@ enum AppFailure {
   loadNotificationsFailed,
   loadAccountFailed,
   qrisFailed,
+  topupFailed,
 }

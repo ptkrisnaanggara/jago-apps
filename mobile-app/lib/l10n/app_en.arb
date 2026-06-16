@@ -23,6 +23,7 @@
   "errorLoadNotifications": "Failed to load notifications. Try again.",
   "errorLoadData": "Failed to load data. Try again.",
   "errorQris": "QRIS payment failed. Try again.",
+  "errorTopup": "Top-up failed. Try again.",
 
   "balanceTotal": "Total Balance",
 
@@ -94,6 +95,11 @@
   "qrisPayAction": "Pay",
   "qrisSuccessTitle": "Payment Successful",
   "homeQris": "Scan QRIS",
+  "topupTitle": "Airtime & Data",
+  "topupTabPulsa": "Airtime",
+  "topupTabData": "Data",
+  "topupBuy": "Buy",
+  "topupSuccessTitle": "Purchase Successful",
 
   "transactionsTitle": "Transactions",
   "transactionsEmpty": "No transactions yet.",

@@ -26,6 +26,11 @@ type Config struct {
 	OTPTTL      time.Duration
 	OTPDemoMode bool   // when true, the OTP is always OTPDemoCode (dev/demo)
 	OTPDemoCode string // matches the Flutter app's mock code
+
+	// Rate limiting (Redis-backed).
+	OTPMaxRequests       int           // max OTP requests per phone per window
+	OTPRateWindow        time.Duration // the request window
+	OTPMaxVerifyAttempts int           // max verify attempts per issued OTP
 }
 
 // Load reads configuration, applying sensible local-dev defaults. A `.env`
@@ -44,7 +49,20 @@ func Load() Config {
 		OTPTTL:      envDuration("OTP_TTL", 5*time.Minute),
 		OTPDemoMode: envBool("OTP_DEMO_MODE", true),
 		OTPDemoCode: env("OTP_DEMO_CODE", "123456"),
+
+		OTPMaxRequests:       envInt("OTP_MAX_REQUESTS", 5),
+		OTPRateWindow:        envDuration("OTP_RATE_WINDOW", 15*time.Minute),
+		OTPMaxVerifyAttempts: envInt("OTP_MAX_VERIFY_ATTEMPTS", 5),
 	}
+}
+
+func envInt(key string, fallback int) int {
+	if v, ok := os.LookupEnv(key); ok {
+		if n, err := strconv.Atoi(v); err == nil {
+			return n
+		}
+	}
+	return fallback
 }
 
 func env(key, fallback string) string {

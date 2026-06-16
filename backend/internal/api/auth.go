@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -12,20 +13,45 @@ import (
 	"gorm.io/gorm"
 )
 
-func otpKey(phone string) string { return "otp:" + phone }
+func otpKey(phone string) string      { return "otp:" + phone }
+func otpRateKey(phone string) string  { return "otp:rate:" + phone }
+func otpTriesKey(phone string) string { return "otp:attempts:" + phone }
 
 type otpRequest struct {
 	Phone string `json:"phone" binding:"required"`
 }
 
-// requestOTP generates a code, stores it in Redis with a TTL, and (in demo
-// mode) returns it in the response for convenience.
+// requestOTP rate-limits per phone, then generates a code, stores it in Redis
+// with a TTL, and (in demo mode) returns it for convenience.
 func (s *Server) requestOTP(c *gin.Context) {
 	var req otpRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		respondError(c, 400, "bad_request", "phone is required")
 		return
 	}
+
+	// Fixed-window rate limit: INCR a counter whose TTL starts on the first
+	// request in the window.
+	count, err := s.rdb.Incr(c, otpRateKey(req.Phone)).Result()
+	if err != nil {
+		respondError(c, 500, "internal", "rate limiter unavailable")
+		return
+	}
+	if count == 1 {
+		s.rdb.Expire(c, otpRateKey(req.Phone), s.cfg.OTPRateWindow)
+	}
+	if count > int64(s.cfg.OTPMaxRequests) {
+		ttl, _ := s.rdb.TTL(c, otpRateKey(req.Phone)).Result()
+		if ttl > 0 {
+			c.Header("Retry-After", strconv.Itoa(int(ttl.Seconds())))
+		}
+		respondError(c, 429, "rate_limited",
+			"Terlalu banyak permintaan OTP. Coba lagi nanti.")
+		return
+	}
+
+	// Fresh OTP → reset the verify-attempt counter for this phone.
+	s.rdb.Del(c, otpTriesKey(req.Phone))
 
 	code := s.cfg.OTPDemoCode
 	if !s.cfg.OTPDemoMode {
@@ -67,11 +93,29 @@ func (s *Server) verifyOTP(c *gin.Context) {
 		respondError(c, 500, "internal", "failed to read OTP")
 		return
 	}
+
+	// Brute-force guard: cap verify attempts per issued OTP.
+	attempts, err := s.rdb.Incr(c, otpTriesKey(req.Phone)).Result()
+	if err != nil {
+		respondError(c, 500, "internal", "rate limiter unavailable")
+		return
+	}
+	if attempts == 1 {
+		s.rdb.Expire(c, otpTriesKey(req.Phone), s.cfg.OTPTTL)
+	}
+	if attempts > int64(s.cfg.OTPMaxVerifyAttempts) {
+		// Too many guesses → invalidate the OTP so a new one must be requested.
+		s.rdb.Del(c, otpKey(req.Phone))
+		respondError(c, 429, "rate_limited",
+			"Terlalu banyak percobaan. Minta OTP baru.")
+		return
+	}
+
 	if stored != req.Code {
 		respondError(c, 401, "otp_invalid", "Invalid OTP code")
 		return
 	}
-	s.rdb.Del(c, otpKey(req.Phone))
+	s.rdb.Del(c, otpKey(req.Phone), otpTriesKey(req.Phone))
 
 	var user model.User
 	err = s.db.Where("phone = ?", req.Phone).First(&user).Error

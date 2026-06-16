@@ -53,6 +53,12 @@ make worker                     # worker  (terminal 2)
 Demo mode is on by default: the OTP is always `123456` (and echoed back in the
 request response for convenience).
 
+**Rate limiting** (Redis-backed): OTP requests are capped per phone
+(`OTP_MAX_REQUESTS` per `OTP_RATE_WINDOW`, default 5 / 15m) — exceeding it
+returns `429` with a `Retry-After` header. Verify attempts are capped per issued
+OTP (`OTP_MAX_VERIFY_ATTEMPTS`, default 5); too many wrong guesses returns `429`
+and invalidates the code (a new one must be requested).
+
 ```bash
 # 1. request an OTP
 curl -s localhost:8080/api/v1/auth/otp/request \

@@ -61,8 +61,10 @@ Legend: ✅ done · 🟡 in progress · ⏳ todo · 🚫 blocked (environment)
   Verified live on a fresh DB (full smoke test passes on the migrated schema).
 - ✅ **Pagination** (`?page=&limit=`, `meta` block, limit clamp 100) on
   transactions/transfers/bills/notifications/contacts — verified live.
+- ✅ **OTP rate limiting** (Redis): per-phone request cap (429 + Retry-After) +
+  per-OTP verify brute-force guard (429 + invalidates code) — verified live.
 - ⏳ Integration tests (handlers) against test-containerized services
-- ⏳ OTP rate-limiting (Redis), real SMS delivery
+- ⏳ Real SMS delivery (turn off demo mode)
 - ⏳ Structured logging/metrics
 - ⏳ Mobile: consume pagination (infinite scroll); repos currently take page 1
 

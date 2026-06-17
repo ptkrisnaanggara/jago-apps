@@ -1,10 +1,11 @@
-// Package db wires GORM to Postgres and runs migrations.
+// Package db wires GORM to Postgres and applies versioned migrations (goose).
 package db
 
 import (
 	"fmt"
 
-	"github.com/ptkrisnaanggara/jago-apps/backend/internal/model"
+	"github.com/pressly/goose/v3"
+	migrations "github.com/ptkrisnaanggara/jago-apps/backend/migrations"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -21,10 +22,20 @@ func Open(dsn string) (*gorm.DB, error) {
 	return gdb, nil
 }
 
-// Migrate creates/updates tables for every model.
-func Migrate(gdb *gorm.DB) error {
-	if err := gdb.AutoMigrate(model.All()...); err != nil {
-		return fmt.Errorf("auto-migrate: %w", err)
+// RunMigrations applies all pending migrations (the "migrationsRun: true" path,
+// used on API boot). Migrations themselves are the schema source of truth —
+// GORM's AutoMigrate is intentionally not used.
+func RunMigrations(gdb *gorm.DB) error {
+	sqlDB, err := gdb.DB()
+	if err != nil {
+		return fmt.Errorf("get sql.DB: %w", err)
+	}
+	goose.SetBaseFS(migrations.FS)
+	if err := goose.SetDialect("postgres"); err != nil {
+		return fmt.Errorf("set dialect: %w", err)
+	}
+	if err := goose.Up(sqlDB, "."); err != nil {
+		return fmt.Errorf("migrate up: %w", err)
 	}
 	return nil
 }

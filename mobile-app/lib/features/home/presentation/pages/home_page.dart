@@ -95,9 +95,12 @@ class _HomeContent extends StatelessWidget {
           for (final shortcut in state.shortcuts)
             ShortcutCard(
               shortcut: shortcut,
-              onTap: shortcut.name == 'Kirim & Bayar'
-                  ? () => context.push(AppRouter.transfer)
-                  : null,
+              onTap: switch (shortcut.name) {
+                'Kirim & Bayar' => () => context.push(AppRouter.transfer),
+                'Pulsa & Data' => () => context.push(AppRouter.topup),
+                'Patungan' => () => context.push(AppRouter.pools),
+                _ => null,
+              },
             ),
           const SizedBox(height: 28),
           Text(
@@ -146,9 +149,14 @@ class _AppBar extends StatelessWidget {
     final unread =
         context.select((NotificationsBloc bloc) => bloc.state.unreadCount);
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Image.asset(AppAssets.logo, width: 100, height: 30),
+        const Spacer(),
+        IconButton(
+          tooltip: AppLocalizations.of(context)!.homeQris,
+          icon: const Icon(Icons.qr_code_scanner_rounded),
+          onPressed: () => context.push(AppRouter.qris),
+        ),
         InkWell(
           onTap: () => context.push(AppRouter.notifications),
           customBorder: const CircleBorder(),

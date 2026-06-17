@@ -53,6 +53,12 @@ make worker                     # worker  (terminal 2)
 Demo mode is on by default: the OTP is always `123456` (and echoed back in the
 request response for convenience).
 
+**Rate limiting** (Redis-backed): OTP requests are capped per phone
+(`OTP_MAX_REQUESTS` per `OTP_RATE_WINDOW`, default 5 / 15m) — exceeding it
+returns `429` with a `Retry-After` header. Verify attempts are capped per issued
+OTP (`OTP_MAX_VERIFY_ATTEMPTS`, default 5); too many wrong guesses returns `429`
+and invalidates the code (a new one must be requested).
+
 ```bash
 # 1. request an OTP
 curl -s localhost:8080/api/v1/auth/otp/request \
@@ -73,6 +79,14 @@ All responses use `{"data": ...}` on success and
 `{"error": {"code","message"}}` on failure. Secured routes require
 `Authorization: Bearer <token>`.
 
+List endpoints (transactions, transfers, bills, notifications, contacts) accept
+`?page=` and `?limit=` (default `limit=20`, max `100`) and add a `meta` block
+alongside `data`:
+
+```json
+{ "data": [ ... ], "meta": { "page": 1, "limit": 20, "total": 42, "totalPages": 3 } }
+```
+
 | Method | Path | Description |
 | --- | --- | --- |
 | `POST` | `/api/v1/auth/otp/request` | Send an OTP for a phone number. |
@@ -81,6 +95,7 @@ All responses use `{"data": ...}` on success and
 | `GET` | `/api/v1/account` | Balance (Redis-cached). |
 | `GET` | `/api/v1/pockets` | Savings pockets. |
 | `GET` | `/api/v1/transactions` | Transaction history. |
+| `GET` | `/api/v1/contacts` | Saved transfer recipients. |
 | `GET`/`POST` | `/api/v1/transfers` | List / create a transfer (publishes an event). |
 | `GET`/`POST` | `/api/v1/bills` | List / schedule a bill. |
 | `POST` | `/api/v1/bills/:id/pay` | Pay a bill. |
@@ -89,6 +104,43 @@ All responses use `{"data": ...}` on success and
 | `GET` | `/api/v1/notifications` | List notifications. |
 | `POST` | `/api/v1/notifications/:id/read` | Mark one read. |
 | `POST` | `/api/v1/notifications/read-all` | Mark all read. |
+
+## Logging
+
+Structured logging via the standard library [`log/slog`](https://pkg.go.dev/log/slog)
+(no extra deps). Every request emits one JSON line with a correlation id:
+
+```json
+{"time":"...","level":"INFO","msg":"http_request","request_id":"…","method":"GET","path":"/api/v1/account","status":200,"latency_ms":2,"ip":"127.0.0.1"}
+```
+
+- A request id is generated (or taken from an inbound `X-Request-Id`) and
+  returned in the `X-Request-Id` response header.
+- Request log level follows status: `INFO` (<400), `WARN` (4xx), `ERROR` (5xx);
+  panics are recovered and logged.
+- Configure with `LOG_LEVEL` (debug/info/warn/error) and `LOG_FORMAT` (json/text).
+
+## Migrations
+
+Schema is managed with **versioned migrations** ([goose](https://github.com/pressly/goose))
+— the TypeORM/Nest equivalent of `migration:run` / `migration:revert`. GORM's
+`AutoMigrate` is intentionally not used; the SQL files in `migrations/` are the
+source of truth, embedded into the binary and tracked in a `goose_db_version`
+table. The API applies pending migrations on boot when `MIGRATE_ON_START=true`
+(default; like Nest's `migrationsRun: true`).
+
+| Command (local) | Docker | TypeORM analog |
+| --- | --- | --- |
+| `go run ./cmd/migrate up` | `docker compose run --rm migrate up` | `migration:run` |
+| `go run ./cmd/migrate down` | `… migrate down` | `migration:revert` |
+| `go run ./cmd/migrate status` | `… migrate status` | `migration:show` |
+| `go run ./cmd/migrate version` | `… migrate version` | — |
+| `go run ./cmd/migrate create <name> sql` | — | `migration:create` |
+
+```bash
+# write a new migration (edit the -- +goose Up / Down blocks it scaffolds)
+go run ./cmd/migrate create add_widgets_table sql
+```
 
 ## Commands
 

@@ -10,3 +10,12 @@ sealed class TransactionsEvent extends Equatable {
 class TransactionsStarted extends TransactionsEvent {
   const TransactionsStarted();
 }
+
+class TransactionsFilterChanged extends TransactionsEvent {
+  final TransactionFilter filter;
+
+  const TransactionsFilterChanged(this.filter);
+
+  @override
+  List<Object?> get props => [filter];
+}

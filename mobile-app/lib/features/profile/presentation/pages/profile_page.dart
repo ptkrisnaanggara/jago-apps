@@ -4,6 +4,7 @@ import 'package:jago/l10n/app_localizations.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../../security/presentation/pages/security_page.dart';
 import '../../../settings/presentation/bloc/settings_bloc.dart';
 
 /// Profile tab. Personal info comes from the authenticated [AuthUser];
@@ -47,7 +48,13 @@ class ProfilePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            _SettingTile(icon: Icons.lock_outline, label: l10n.settingSecurity),
+            _SettingTile(
+              icon: Icons.lock_outline,
+              label: l10n.settingSecurity,
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const SecurityPage()),
+              ),
+            ),
             _SettingTile(
               icon: Icons.language_outlined,
               label: l10n.settingLanguage,

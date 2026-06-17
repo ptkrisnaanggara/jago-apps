@@ -24,7 +24,8 @@ class KantongState extends Equatable {
     return KantongState(
       status: status ?? this.status,
       pockets: pockets ?? this.pockets,
-      failure: failure ?? this.failure,
+      // failure resets each transition unless set explicitly.
+      failure: failure,
     );
   }
 

@@ -9,7 +9,7 @@ import (
 // Router builds the Gin engine with all routes.
 func (s *Server) Router() *gin.Engine {
 	r := gin.New()
-	r.Use(gin.Logger(), gin.Recovery())
+	r.Use(requestID(), s.requestLogger(), gin.CustomRecovery(s.recovery()))
 
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
@@ -30,7 +30,27 @@ func (s *Server) Router() *gin.Engine {
 
 			secured.GET("/account", s.getAccount)
 			secured.GET("/pockets", s.listPockets)
+			secured.POST("/pockets", s.createPocket)
+			secured.POST("/pockets/move", s.movePocket)
+			secured.POST("/pockets/:id/lock", s.lockPocket)
+			secured.POST("/pockets/:id/unlock", s.unlockPocket)
+			secured.POST("/pockets/:id/autosave", s.setAutosave)
+			secured.POST("/pockets/:id/autosave/run", s.runAutosave)
 			secured.GET("/transactions", s.listTransactions)
+
+			secured.GET("/contacts", s.listContacts)
+
+			secured.POST("/qris/parse", s.parseQRIS)
+			secured.POST("/qris/pay", s.payQRIS)
+
+			secured.GET("/topup/products", s.listTopupProducts)
+			secured.POST("/topup", s.purchaseTopup)
+
+			secured.GET("/pools", s.listPools)
+			secured.POST("/pools", s.createPool)
+			secured.GET("/pools/:id", s.getPool)
+			secured.POST("/pools/:id/contribute", s.contributePool)
+			secured.POST("/pools/:id/close", s.closePool)
 
 			secured.GET("/transfers", s.listTransfers)
 			secured.POST("/transfers", s.createTransfer)

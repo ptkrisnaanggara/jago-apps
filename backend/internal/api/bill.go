@@ -10,17 +10,28 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-// listBills returns the user's bills, earliest due first.
+// listBills returns a page of the user's bills, earliest due first.
 func (s *Server) listBills(c *gin.Context) {
+	uid := currentUserID(c)
+	p := parsePage(c)
+
+	var total int64
+	if err := s.db.Model(&model.Bill{}).
+		Where("user_id = ?", uid).Count(&total).Error; err != nil {
+		respondError(c, 500, "internal", "failed to load bills")
+		return
+	}
+
 	var bills []model.Bill
 	if err := s.db.
-		Where("user_id = ?", currentUserID(c)).
+		Where("user_id = ?", uid).
 		Order("due_date ASC").
+		Limit(p.Limit).Offset(p.Offset).
 		Find(&bills).Error; err != nil {
 		respondError(c, 500, "internal", "failed to load bills")
 		return
 	}
-	respondOK(c, bills)
+	respondPaginated(c, bills, p, total)
 }
 
 type createBillRequest struct {

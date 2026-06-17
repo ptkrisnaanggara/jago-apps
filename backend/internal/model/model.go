@@ -41,14 +41,33 @@ type Account struct {
 	Balance       int64  `json:"balance"`
 }
 
-// Pocket is a savings "Kantong" with an optional target.
+// PocketType mirrors Jago's pocket kinds.
+type PocketType string
+
+const (
+	PocketMain     PocketType = "main"
+	PocketSpending PocketType = "spending"
+	PocketSaving   PocketType = "saving"
+)
+
+// Pocket is a "Kantong" with an optional savings target.
 type Pocket struct {
 	Base
-	UserID  string `gorm:"index;not null" json:"userId"`
-	Name    string `json:"name"`
-	Balance int64  `json:"balance"`
-	Target  *int64 `json:"target,omitempty"`
-	IsMain  bool   `json:"isMain"`
+	UserID  string     `gorm:"index;not null" json:"userId"`
+	Name    string     `json:"name"`
+	Type    PocketType `json:"type"`
+	Balance int64      `json:"balance"`
+	Target  *int64     `json:"target,omitempty"`
+	IsMain  bool       `json:"isMain"`
+
+	// Saving lock: while locked, money cannot be moved out of the pocket.
+	Locked    bool       `json:"locked"`
+	LockUntil *time.Time `json:"lockUntil,omitempty"`
+
+	// Autosave: a recurring top-up from the main pocket. AutosaveAmount == 0
+	// means autosave is off. Frequency is none|daily|weekly|monthly.
+	AutosaveAmount    int64  `json:"autosaveAmount"`
+	AutosaveFrequency string `json:"autosaveFrequency"`
 }
 
 // TxType distinguishes money in vs money out.
@@ -143,10 +162,47 @@ type Notification struct {
 	IsRead   bool                 `json:"isRead"`
 }
 
+// Contact is a saved transfer recipient / payee shown in the picker.
+type Contact struct {
+	Base
+	UserID        string `gorm:"index;not null" json:"userId"`
+	Name          string `json:"name"`
+	BankName      string `json:"bankName"`
+	AccountNumber string `json:"accountNumber"`
+}
+
+// PoolStatus is a money pool's lifecycle state.
+type PoolStatus string
+
+const (
+	PoolOpen   PoolStatus = "open"
+	PoolClosed PoolStatus = "closed"
+)
+
+// MoneyPool is a "Patungan" — collect contributions toward a target, then cash
+// out to the owner's main pocket.
+type MoneyPool struct {
+	Base
+	OwnerUserID string     `gorm:"index;not null" json:"ownerUserId"`
+	Title       string     `json:"title"`
+	Target      int64      `json:"target"`
+	Collected   int64      `json:"collected"`
+	Status      PoolStatus `json:"status"`
+}
+
+// PoolContribution is one payment into a [MoneyPool].
+type PoolContribution struct {
+	Base
+	PoolID string `gorm:"index;not null" json:"poolId"`
+	Name   string `json:"name"`
+	Amount int64  `json:"amount"`
+}
+
 // All returns every model for AutoMigrate.
 func All() []any {
 	return []any{
 		&User{}, &Account{}, &Pocket{}, &Transaction{},
-		&Transfer{}, &Bill{}, &Card{}, &Notification{},
+		&Transfer{}, &Bill{}, &Card{}, &Notification{}, &Contact{},
+		&MoneyPool{}, &PoolContribution{},
 	}
 }

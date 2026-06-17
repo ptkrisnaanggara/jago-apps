@@ -18,9 +18,13 @@ String failureText(BuildContext context, AppFailure failure) {
     AppFailure.scheduleBillFailed => l10n.errorScheduleBill,
     AppFailure.loadTransactionsFailed => l10n.errorLoadTransactions,
     AppFailure.loadPocketsFailed => l10n.errorLoadPockets,
+    AppFailure.pocketActionFailed => l10n.errorPocketAction,
     AppFailure.loadCardsFailed => l10n.errorLoadCards,
     AppFailure.updateCardFailed => l10n.errorUpdateCard,
     AppFailure.loadNotificationsFailed => l10n.errorLoadNotifications,
     AppFailure.loadAccountFailed => l10n.errorLoadData,
+    AppFailure.qrisFailed => l10n.errorQris,
+    AppFailure.topupFailed => l10n.errorTopup,
+    AppFailure.poolFailed => l10n.errorPool,
   };
 }

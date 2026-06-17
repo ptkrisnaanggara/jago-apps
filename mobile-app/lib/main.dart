@@ -25,6 +25,16 @@ import 'features/kantong/data/repositories/pocket_repository.dart';
 import 'features/notifications/data/repositories/api_notifications_repository.dart';
 import 'features/notifications/data/repositories/notifications_repository.dart';
 import 'features/notifications/presentation/bloc/notifications_bloc.dart';
+import 'features/pool/data/repositories/api_pool_repository.dart';
+import 'features/pool/data/repositories/pool_repository.dart';
+import 'features/qris/data/repositories/api_qris_repository.dart';
+import 'features/qris/data/repositories/qris_repository.dart';
+import 'features/security/data/biometric_auth.dart';
+import 'features/security/data/pin_store.dart';
+import 'features/security/presentation/bloc/security_bloc.dart';
+import 'features/security/presentation/pages/pin_lock_screen.dart';
+import 'features/topup/data/repositories/api_topup_repository.dart';
+import 'features/topup/data/repositories/topup_repository.dart';
 import 'features/settings/data/settings_store.dart';
 import 'features/settings/presentation/bloc/settings_bloc.dart';
 import 'features/transactions/data/repositories/api_transaction_repository.dart';
@@ -99,6 +109,11 @@ class _JagoAppState extends State<JagoApp> {
   late final NotificationsBloc _notificationsBloc =
       NotificationsBloc(repository: _notificationsRepository)
         ..add(const NotificationsStarted());
+  // App-lock PIN (device-local; works regardless of the data source).
+  late final SecurityBloc _securityBloc = SecurityBloc(
+    store: const SecurePinStore(),
+    biometric: LocalAuthBiometric(),
+  )..add(const SecurityStarted());
   late final GoRouter _router = AppRouter.build(_authBloc);
 
   @override
@@ -106,6 +121,7 @@ class _JagoAppState extends State<JagoApp> {
     _authBloc.close();
     _settingsBloc.close();
     _notificationsBloc.close();
+    _securityBloc.close();
     super.dispose();
   }
 
@@ -142,12 +158,24 @@ class _JagoAppState extends State<JagoApp> {
         RepositoryProvider<NotificationsRepository>.value(
           value: _notificationsRepository,
         ),
+        RepositoryProvider<QrisRepository>(
+          create: (_) => _useMock ? MockQrisRepository() : ApiQrisRepository(_api!),
+        ),
+        RepositoryProvider<TopupRepository>(
+          create: (_) =>
+              _useMock ? MockTopupRepository() : ApiTopupRepository(_api!),
+        ),
+        RepositoryProvider<PoolRepository>(
+          create: (_) =>
+              _useMock ? MockPoolRepository() : ApiPoolRepository(_api!),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider<AuthBloc>.value(value: _authBloc),
           BlocProvider<SettingsBloc>.value(value: _settingsBloc),
           BlocProvider<NotificationsBloc>.value(value: _notificationsBloc),
+          BlocProvider<SecurityBloc>.value(value: _securityBloc),
         ],
         // Rebuilds locale + theme when the user changes them in Settings.
         child: BlocBuilder<SettingsBloc, SettingsState>(
@@ -165,6 +193,17 @@ class _JagoAppState extends State<JagoApp> {
               locale: settings.locale,
               supportedLocales: AppLocalizations.supportedLocales,
               localizationsDelegates: AppLocalizations.localizationsDelegates,
+              // App-lock overlay: when a PIN is set and the (authenticated)
+              // session is locked, gate the whole app behind the lock screen.
+              builder: (context, child) {
+                final authed = context.select((AuthBloc b) =>
+                    b.state.status == AuthStatus.authenticated);
+                final sec = context.watch<SecurityBloc>().state;
+                if (authed && sec.pinSet && sec.locked) {
+                  return const PinLockScreen();
+                }
+                return child!;
+              },
             );
           },
         ),

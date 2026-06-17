@@ -27,6 +27,8 @@ class ApiAccountRepository implements AccountRepository {
     return const [
       Shortcut(name: 'Kantong Utama', imageUrl: AppAssets.wallet),
       Shortcut(name: 'Kirim & Bayar', imageUrl: AppAssets.transaction),
+      Shortcut(name: 'Pulsa & Data', imageUrl: AppAssets.tasks),
+      Shortcut(name: 'Patungan', imageUrl: AppAssets.wallet),
     ];
   }
 }

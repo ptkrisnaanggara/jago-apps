@@ -4,8 +4,7 @@ import '../models/contact.dart';
 import '../models/transfer_result.dart';
 import 'transfer_repository.dart';
 
-/// Backend-backed [TransferRepository]. The backend has no contacts endpoint
-/// yet, so the picker list stays static; the transfer itself hits the API.
+/// Backend-backed [TransferRepository].
 class ApiTransferRepository implements TransferRepository {
   final ApiClient _api;
 
@@ -13,14 +12,18 @@ class ApiTransferRepository implements TransferRepository {
 
   @override
   Future<List<Contact>> getContacts() async {
-    return const [
-      Contact(id: 'c1', name: 'Budi Santoso', bankName: 'Bank Jago', accountNumber: '100 8420 5566'),
-      Contact(id: 'c2', name: 'Siti Rahmawati', bankName: 'BCA', accountNumber: '012 3456 7890'),
-      Contact(id: 'c3', name: 'Andi Pratama', bankName: 'Mandiri', accountNumber: '137 0099 8877'),
-      Contact(id: 'c4', name: 'Dewi Lestari', bankName: 'BNI', accountNumber: '088 1212 3434'),
-      Contact(id: 'c5', name: 'Eko Wijaya', bankName: 'Bank Jago', accountNumber: '100 7711 2299'),
-    ];
+    final list = await _api.get('/contacts') as List<dynamic>;
+    return list
+        .map((e) => _contactFromJson(e as Map<String, dynamic>))
+        .toList();
   }
+
+  Contact _contactFromJson(Map<String, dynamic> json) => Contact(
+        id: json['id'] as String,
+        name: json['name'] as String,
+        bankName: json['bankName'] as String,
+        accountNumber: json['accountNumber'] as String,
+      );
 
   @override
   Future<TransferResult> submitTransfer({

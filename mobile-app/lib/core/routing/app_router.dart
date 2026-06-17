@@ -16,6 +16,9 @@ import '../../features/kantong/presentation/pages/kantong_page.dart';
 import '../../features/notifications/presentation/pages/notifications_page.dart';
 import '../../features/onboarding/presentation/pages/onboarding_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
+import '../../features/pool/presentation/pages/pools_page.dart';
+import '../../features/qris/presentation/pages/qris_page.dart';
+import '../../features/topup/presentation/pages/topup_page.dart';
 import '../../features/transactions/presentation/pages/transactions_page.dart';
 import '../../features/transfer/data/repositories/transfer_repository.dart';
 import '../../features/transfer/presentation/bloc/transfer_bloc.dart';
@@ -46,6 +49,9 @@ class AppRouter {
   static const String bills = '/bills';
   static const String billNew = '/bills/new';
   static const String notifications = '/notifications';
+  static const String qris = '/qris';
+  static const String topup = '/topup';
+  static const String pools = '/pools';
 
   static const Set<String> _authFlow = {
     splash,
@@ -153,6 +159,12 @@ class AppRouter {
           path: notifications,
           builder: (_, __) => const NotificationsPage(),
         ),
+        // QRIS scan-to-pay — full-screen over the shell.
+        GoRoute(path: qris, builder: (_, __) => const QrisPage()),
+        // Prepaid top-up (pulsa/data) — full-screen over the shell.
+        GoRoute(path: topup, builder: (_, __) => const TopupPage()),
+        // Money Pool (Patungan) — full-screen over the shell.
+        GoRoute(path: pools, builder: (_, __) => const PoolsPage()),
       ],
     );
   }

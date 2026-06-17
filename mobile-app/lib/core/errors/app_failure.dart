@@ -12,8 +12,12 @@ enum AppFailure {
   scheduleBillFailed,
   loadTransactionsFailed,
   loadPocketsFailed,
+  pocketActionFailed,
   loadCardsFailed,
   updateCardFailed,
   loadNotificationsFailed,
   loadAccountFailed,
+  qrisFailed,
+  topupFailed,
+  poolFailed,
 }

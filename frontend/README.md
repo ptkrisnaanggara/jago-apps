@@ -1,9 +1,11 @@
 # JAGO Admin Dashboard (Web)
 
-A read-only **operator dashboard** for JAGO, built with **Vite + React +
-TypeScript**. It consumes the [`backend`](../backend) admin API and gives an
-operator a cross-user view: headline stats, a users table (with balances), and
-recent transactions across all users.
+An **operator dashboard** for JAGO, built with **Vite + React + TypeScript**. It
+consumes the [`backend`](../backend) admin API and gives an operator a cross-user
+view: headline stats; a users table that drills into a per-user detail modal
+(account, pockets, cards, bills, pools, recent transactions); transactions with
+type filters; and a money-pools table. The one write action is freezing/
+unfreezing a user's card from the detail modal.
 
 > The customer-facing product is the Flutter [`mobile-app`](../mobile-app). This
 > web app is the **internal admin** surface only.
@@ -46,10 +48,13 @@ src/
   App.tsx                # login gate → dashboard
   components/
     Login.tsx            # base URL + admin key, verified on submit
-    Dashboard.tsx        # stat cards + tab switcher
-    UsersTable.tsx       # paginated users (+ account balance)
-    TransactionsTable.tsx# paginated cross-user transactions
+    Dashboard.tsx        # stat cards + tab switcher (Users/Transactions/Pools)
+    UsersTable.tsx       # paginated users (+ balance); rows open UserDetail
+    UserDetail.tsx       # per-user modal: pockets/cards/bills/pools/txns + freeze
+    TransactionsTable.tsx# paginated cross-user transactions + type filter
+    PoolsTable.tsx       # paginated money pools (+ owner name)
     Pager.tsx            # prev/next from the backend `meta` block
+    Logo.tsx             # inline Jago wordmark (brand)
 ```
 
 ## Backend endpoints used

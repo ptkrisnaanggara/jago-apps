@@ -115,7 +115,11 @@ All buildable Jago parity features are now implemented; remaining items are
 - ⏳ Visual QA on device (dark mode, cards/notifications, persistence)
 
 ### Frontend
-- ✅ **Admin dashboard** scaffolded (Vite + React + TS) — see "This session".
+- ✅ **Admin dashboard** (Vite + React + TS): on-brand (Jago logo/Poppins/
+  palette); login (admin key), stat cards, users table → per-user detail modal
+  (account/pockets/cards/bills/pools/txns) with card freeze, transactions with
+  type filters, money-pools table. Backend admin API + CORS. Verified live with
+  a headless browser.
 - ⏳ Customer-facing web app (the dashboard is internal/admin only).
 
 ---

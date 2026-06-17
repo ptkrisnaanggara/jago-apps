@@ -3,6 +3,7 @@ import { api, type Credentials, type Stats } from "../api";
 import { formatRupiah } from "../format";
 import UsersTable from "./UsersTable";
 import TransactionsTable from "./TransactionsTable";
+import PoolsTable from "./PoolsTable";
 import Logo from "./Logo";
 
 interface Props {
@@ -10,7 +11,7 @@ interface Props {
   onLogout: () => void;
 }
 
-type Tab = "users" | "transactions";
+type Tab = "users" | "transactions" | "pools";
 
 export default function Dashboard({ creds, onLogout }: Props) {
   const [stats, setStats] = useState<Stats | null>(null);
@@ -84,13 +85,17 @@ export default function Dashboard({ creds, onLogout }: Props) {
           >
             Transaksi
           </button>
+          <button
+            className={tab === "pools" ? "active" : ""}
+            onClick={() => setTab("pools")}
+          >
+            Patungan
+          </button>
         </nav>
 
-        {tab === "users" ? (
-          <UsersTable creds={creds} />
-        ) : (
-          <TransactionsTable creds={creds} />
-        )}
+        {tab === "users" && <UsersTable creds={creds} />}
+        {tab === "transactions" && <TransactionsTable creds={creds} />}
+        {tab === "pools" && <PoolsTable creds={creds} />}
       </main>
     </div>
   );

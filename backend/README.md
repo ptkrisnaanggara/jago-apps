@@ -115,7 +115,10 @@ JWT-secured; instead they require an `X-Admin-Key` header matching the
 | --- | --- | --- |
 | `GET` | `/api/v1/admin/stats` | Aggregate counts + total account/pocket balances. |
 | `GET` | `/api/v1/admin/users` | Users with their account balance (paginated). |
-| `GET` | `/api/v1/admin/transactions` | Recent transactions across all users (paginated). |
+| `GET` | `/api/v1/admin/users/:id` | One user's full detail (account, pockets, cards, bills, pools, recent transactions). |
+| `GET` | `/api/v1/admin/transactions` | Transactions across all users (paginated; `?type=income\|expense`, `?userId=`). |
+| `GET` | `/api/v1/admin/pools` | Money pools across all users with owner name (paginated). |
+| `POST` | `/api/v1/admin/cards/:id/freeze` | Freeze/unfreeze any card (`{"frozen":true}`). |
 
 The dashboard is a browser client, so the API sends **CORS** headers (the mobile
 app, being native, needs none). Allowed origins come from `CORS_ALLOWED_ORIGINS`

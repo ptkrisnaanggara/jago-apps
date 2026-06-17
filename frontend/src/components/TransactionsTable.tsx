@@ -4,6 +4,7 @@ import {
   type AdminTransaction,
   type Credentials,
   type Meta,
+  type TxFilter,
 } from "../api";
 import { formatDate, formatRupiah } from "../format";
 import Pager from "./Pager";
@@ -12,10 +13,17 @@ interface Props {
   creds: Credentials;
 }
 
+const FILTERS: { value: TxFilter; label: string }[] = [
+  { value: "", label: "Semua" },
+  { value: "income", label: "Masuk" },
+  { value: "expense", label: "Keluar" },
+];
+
 export default function TransactionsTable({ creds }: Props) {
   const [rows, setRows] = useState<AdminTransaction[]>([]);
   const [meta, setMeta] = useState<Meta | null>(null);
   const [page, setPage] = useState(1);
+  const [type, setType] = useState<TxFilter>("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -24,7 +32,7 @@ export default function TransactionsTable({ creds }: Props) {
     setLoading(true);
     setError(null);
     api
-      .transactions(creds, page)
+      .transactions(creds, page, 20, type)
       .then((res) => {
         if (!active) return;
         setRows(res.data);
@@ -39,14 +47,50 @@ export default function TransactionsTable({ creds }: Props) {
     return () => {
       active = false;
     };
-  }, [creds, page]);
+  }, [creds, page, type]);
 
-  if (error) return <p className="error">{error}</p>;
-  if (loading && rows.length === 0) return <p className="muted">Memuat…</p>;
-  if (rows.length === 0) return <p className="muted">Belum ada transaksi.</p>;
+  // Switching the filter resets to the first page.
+  function selectType(value: TxFilter) {
+    setType(value);
+    setPage(1);
+  }
+
+  const filterChips = (
+    <div className="chips-row">
+      {FILTERS.map((f) => (
+        <button
+          key={f.value}
+          className={`filter-chip${type === f.value ? " active" : ""}`}
+          onClick={() => selectType(f.value)}
+        >
+          {f.label}
+        </button>
+      ))}
+    </div>
+  );
+
+  if (error)
+    return (
+      <>
+        {filterChips}
+        <p className="error">{error}</p>
+      </>
+    );
+  if (loading && rows.length === 0)
+    return (
+      <>
+        {filterChips}
+        <p className="muted">Memuat…</p>
+      </>
+    );
 
   return (
     <>
+      {filterChips}
+      {rows.length === 0 ? (
+        <p className="muted">Belum ada transaksi.</p>
+      ) : (
+        <>
       <div className="table-wrap">
         <table>
           <thead>
@@ -77,6 +121,8 @@ export default function TransactionsTable({ creds }: Props) {
         </table>
       </div>
       <Pager meta={meta} onPage={setPage} loading={loading} />
+        </>
+      )}
     </>
   );
 }

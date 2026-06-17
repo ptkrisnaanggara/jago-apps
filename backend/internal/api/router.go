@@ -76,7 +76,10 @@ func (s *Server) Router() *gin.Engine {
 		{
 			admin.GET("/stats", s.getAdminStats)
 			admin.GET("/users", s.listAdminUsers)
+			admin.GET("/users/:id", s.getAdminUser)
 			admin.GET("/transactions", s.listAdminTransactions)
+			admin.GET("/pools", s.listAdminPools)
+			admin.POST("/cards/:id/freeze", s.adminSetCardFrozen)
 		}
 	}
 

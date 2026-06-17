@@ -281,6 +281,129 @@ td.expense {
   cursor: not-allowed;
 }
 
+/* ---- Filter chips ---- */
+.chips-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.9rem;
+}
+.filter-chip {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: var(--muted-dark);
+}
+.filter-chip.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+/* ---- Clickable rows ---- */
+tbody tr.clickable {
+  cursor: pointer;
+}
+.chip-warn {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+}
+button.ghost.small {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+}
+
+/* ---- Modal (user detail) ---- */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 17, 17, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 3rem 1rem;
+  z-index: 50;
+  overflow-y: auto;
+}
+.modal {
+  background: var(--surface);
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 560px;
+}
+.modal-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 1.2rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.modal-head h2 {
+  margin: 0 0 0.2rem;
+  font-size: 1.2rem;
+}
+.modal-head p {
+  margin: 0;
+}
+.modal-body {
+  padding: 1.2rem 1.5rem;
+}
+.detail-account {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  background: var(--primary-light);
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1.2rem;
+}
+.detail-account .card-value {
+  color: var(--primary-dark);
+}
+.detail-section {
+  margin-bottom: 1.2rem;
+}
+.detail-section h3 {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted-dark);
+  margin: 0 0 0.5rem;
+}
+.detail-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.detail-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0.7rem;
+  background: var(--bg);
+  border-radius: 8px;
+  font-size: 0.88rem;
+}
+.detail-list li > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+.detail-list .num.income {
+  color: var(--income);
+}
+.detail-list .num.expense {
+  color: var(--expense);
+}
+
 /* ---- Misc ---- */
 .muted {
   color: var(--muted);

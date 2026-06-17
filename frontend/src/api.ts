@@ -35,6 +35,63 @@ export interface AdminTransaction {
   createdAt: string;
 }
 
+export interface Pocket {
+  id: string;
+  name: string;
+  type: "main" | "spending" | "saving";
+  balance: number;
+  target?: number;
+  isMain: boolean;
+  locked: boolean;
+  shared: boolean;
+}
+
+export interface Card {
+  id: string;
+  label: string;
+  number: string;
+  holderName: string;
+  expiry: string;
+  type: "virtual" | "physical";
+  isFrozen: boolean;
+}
+
+export interface Bill {
+  id: string;
+  biller: string;
+  category: string;
+  amount: number;
+  dueDate: string;
+  isPaid: boolean;
+  recurrence: string;
+}
+
+export interface Pool {
+  id: string;
+  title: string;
+  target: number;
+  collected: number;
+  status: "open" | "closed";
+  createdAt: string;
+}
+
+export interface AdminPool extends Pool {
+  ownerUserId: string;
+  ownerName: string;
+}
+
+export interface UserDetail {
+  user: { id: string; name: string; phone: string; createdAt: string };
+  account: { accountNumber: string; balance: number } | null;
+  pockets: Pocket[];
+  cards: Card[];
+  bills: Bill[];
+  pools: Pool[];
+  transactions: AdminTransaction[];
+}
+
+export type TxFilter = "" | "income" | "expense";
+
 export interface Meta {
   page: number;
   limit: number;
@@ -82,12 +139,21 @@ function normalizeBase(baseUrl: string): string {
   return b;
 }
 
-async function request<T>(creds: Credentials, path: string): Promise<T> {
+async function request<T>(
+  creds: Credentials,
+  path: string,
+  init?: RequestInit,
+): Promise<T> {
   const url = `${normalizeBase(creds.baseUrl)}${path}`;
   let res: Response;
   try {
     res = await fetch(url, {
-      headers: { "X-Admin-Key": creds.adminKey },
+      ...init,
+      headers: {
+        "X-Admin-Key": creds.adminKey,
+        ...(init?.body ? { "Content-Type": "application/json" } : {}),
+        ...init?.headers,
+      },
     });
   } catch {
     throw new Error("Tidak dapat terhubung ke server. Periksa Base URL.");
@@ -116,9 +182,27 @@ export const api = {
   users: (creds: Credentials, page = 1, limit = 20) =>
     request<Page<AdminUser>>(creds, `/admin/users?page=${page}&limit=${limit}`),
 
-  transactions: (creds: Credentials, page = 1, limit = 20) =>
-    request<Page<AdminTransaction>>(
-      creds,
-      `/admin/transactions?page=${page}&limit=${limit}`,
+  user: (creds: Credentials, id: string) =>
+    request<{ data: UserDetail }>(creds, `/admin/users/${id}`).then(
+      (r) => r.data,
     ),
+
+  transactions: (
+    creds: Credentials,
+    page = 1,
+    limit = 20,
+    type: TxFilter = "",
+  ) => {
+    const q = `page=${page}&limit=${limit}${type ? `&type=${type}` : ""}`;
+    return request<Page<AdminTransaction>>(creds, `/admin/transactions?${q}`);
+  },
+
+  pools: (creds: Credentials, page = 1, limit = 20) =>
+    request<Page<AdminPool>>(creds, `/admin/pools?page=${page}&limit=${limit}`),
+
+  freezeCard: (creds: Credentials, cardId: string, frozen: boolean) =>
+    request<{ data: Card }>(creds, `/admin/cards/${cardId}/freeze`, {
+      method: "POST",
+      body: JSON.stringify({ frozen }),
+    }).then((r) => r.data),
 };

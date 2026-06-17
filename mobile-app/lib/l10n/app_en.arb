@@ -140,6 +140,8 @@
   "pinRemove": "Remove PIN",
   "pinLockSubtitle": "Enter your PIN to unlock",
   "pinWrong": "Wrong PIN, try again",
+  "securityBiometric": "Biometric unlock",
+  "biometricUnlock": "Use biometrics",
   "settingLanguage": "Language",
   "settingAppearance": "Appearance",
   "settingHelp": "Help",

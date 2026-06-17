@@ -29,6 +29,7 @@ import 'features/pool/data/repositories/api_pool_repository.dart';
 import 'features/pool/data/repositories/pool_repository.dart';
 import 'features/qris/data/repositories/api_qris_repository.dart';
 import 'features/qris/data/repositories/qris_repository.dart';
+import 'features/security/data/biometric_auth.dart';
 import 'features/security/data/pin_store.dart';
 import 'features/security/presentation/bloc/security_bloc.dart';
 import 'features/security/presentation/pages/pin_lock_screen.dart';
@@ -109,8 +110,10 @@ class _JagoAppState extends State<JagoApp> {
       NotificationsBloc(repository: _notificationsRepository)
         ..add(const NotificationsStarted());
   // App-lock PIN (device-local; works regardless of the data source).
-  late final SecurityBloc _securityBloc =
-      SecurityBloc(store: const SecurePinStore())..add(const SecurityStarted());
+  late final SecurityBloc _securityBloc = SecurityBloc(
+    store: const SecurePinStore(),
+    biometric: LocalAuthBiometric(),
+  )..add(const SecurityStarted());
   late final GoRouter _router = AppRouter.build(_authBloc);
 
   @override

@@ -36,7 +36,8 @@ class _SecurityPageState extends State<SecurityPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final pinSet = context.select((SecurityBloc b) => b.state.pinSet);
+    final sec = context.watch<SecurityBloc>().state;
+    final pinSet = sec.pinSet;
     return Scaffold(
       appBar: AppBar(title: Text(l10n.settingSecurity)),
       body: SafeArea(
@@ -71,6 +72,17 @@ class _SecurityPageState extends State<SecurityPage> {
                     foregroundColor: AppColors.error),
                 child: Text(l10n.pinRemove),
               ),
+              if (sec.biometricAvailable) ...[
+                const SizedBox(height: 8),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(l10n.securityBiometric),
+                  value: sec.biometricEnabled,
+                  activeThumbColor: AppColors.primary,
+                  onChanged: (v) =>
+                      context.read<SecurityBloc>().add(BiometricToggled(v)),
+                ),
+              ],
             ],
           ],
         ),

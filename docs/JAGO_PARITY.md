@@ -23,7 +23,7 @@ integration (implemented as a mock/simulation here).
 | Transactions history (+ filters) | ✅ | list + pagination + type filter |
 | Notifications centre | ✅ | read/unread, mark‑all, live badge |
 | Profile & settings (language, theme) | ✅ | id/en + light/dark |
-| Security: PIN / biometric | 🟡 | app-lock PIN done (hashed); biometric ⏳ |
+| Security: PIN / biometric | ✅ | app-lock PIN (hashed) + biometric unlock (local_auth) |
 | e‑Wallet link (GoPay/GoTo) | 🔌 | external integration |
 | Investments (Bibit / Stockbit) | 🔌 | external integration |
 | Insurance ("Last Wish") | 🔌 | external integration |

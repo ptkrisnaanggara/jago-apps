@@ -33,3 +33,16 @@ class PinUnlockRequested extends SecurityEvent {
 class PinRemoved extends SecurityEvent {
   const PinRemoved();
 }
+
+class BiometricToggled extends SecurityEvent {
+  final bool enabled;
+
+  const BiometricToggled(this.enabled);
+
+  @override
+  List<Object?> get props => [enabled];
+}
+
+class BiometricUnlockRequested extends SecurityEvent {
+  const BiometricUnlockRequested();
+}

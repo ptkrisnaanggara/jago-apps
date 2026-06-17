@@ -134,6 +134,8 @@
   "pinRemove": "Hapus PIN",
   "pinLockSubtitle": "Masukkan PIN untuk membuka",
   "pinWrong": "PIN salah, coba lagi",
+  "securityBiometric": "Buka dengan biometrik",
+  "biometricUnlock": "Gunakan biometrik",
   "settingLanguage": "Bahasa",
   "settingAppearance": "Tampilan",
   "settingHelp": "Bantuan",

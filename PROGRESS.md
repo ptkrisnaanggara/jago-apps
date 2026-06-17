@@ -52,7 +52,10 @@ Legend: ✅ done · 🟡 in progress · ⏳ todo · 🚫 blocked (environment)
 - ✅ **Saving lock + autosave** — lock a pocket (blocks moving money out, 423);
   autosave config + run (top-up from main). Pocket actions sheet on the Kantong
   tile. Backend verified live; mobile analyze + 40 tests.
-- ⏳ Shared pockets (multi-user), biometric unlock
+- ✅ **Biometric unlock** — `local_auth` behind an injectable abstraction;
+  Security page toggle, PIN lock screen auto-prompts + fingerprint button
+  (Android: FlutterFragmentActivity + USE_BIOMETRIC). 41 tests.
+- ⏳ Shared pockets (multi-user)
 - 🔌 e-wallet link / investments / insurance (external integrations)
 
 ### Repo

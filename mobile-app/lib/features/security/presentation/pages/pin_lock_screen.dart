@@ -21,6 +21,18 @@ class _PinLockScreenState extends State<PinLockScreen> {
   final _controller = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    // Auto-prompt biometrics once if enabled.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      if (context.read<SecurityBloc>().state.biometricEnabled) {
+        context.read<SecurityBloc>().add(const BiometricUnlockRequested());
+      }
+    });
+  }
+
+  @override
   void dispose() {
     _controller.dispose();
     super.dispose();
@@ -38,6 +50,8 @@ class _PinLockScreenState extends State<PinLockScreen> {
     final l10n = AppLocalizations.of(context)!;
     final failed =
         context.select((SecurityBloc b) => b.state.lastAttemptFailed);
+    final biometric =
+        context.select((SecurityBloc b) => b.state.biometricEnabled);
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -73,6 +87,16 @@ class _PinLockScreenState extends State<PinLockScreen> {
                 const SizedBox(height: 8),
                 Text(l10n.pinWrong,
                     style: const TextStyle(color: AppColors.error)),
+              ],
+              if (biometric) ...[
+                const SizedBox(height: 16),
+                OutlinedButton.icon(
+                  onPressed: () => context
+                      .read<SecurityBloc>()
+                      .add(const BiometricUnlockRequested()),
+                  icon: const Icon(Icons.fingerprint_rounded),
+                  label: Text(l10n.biometricUnlock),
+                ),
               ],
               const SizedBox(height: 16),
               TextButton(

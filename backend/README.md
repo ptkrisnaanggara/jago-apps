@@ -117,6 +117,11 @@ JWT-secured; instead they require an `X-Admin-Key` header matching the
 | `GET` | `/api/v1/admin/users` | Users with their account balance (paginated). |
 | `GET` | `/api/v1/admin/transactions` | Recent transactions across all users (paginated). |
 
+The dashboard is a browser client, so the API sends **CORS** headers (the mobile
+app, being native, needs none). Allowed origins come from `CORS_ALLOWED_ORIGINS`
+(comma-separated, default `*`); auth is header-based (not cookies) so a wildcard
+is safe. Preflight `OPTIONS` requests are answered with `204`.
+
 ## Logging
 
 Structured logging via the standard library [`log/slog`](https://pkg.go.dev/log/slog)

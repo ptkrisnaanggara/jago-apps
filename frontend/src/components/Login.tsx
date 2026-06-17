@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { api, saveCredentials, type Credentials } from "../api";
+import Logo from "./Logo";
 
 interface Props {
   onAuthenticated: (creds: Credentials) => void;
@@ -34,7 +35,7 @@ export default function Login({ onAuthenticated }: Props) {
     <div className="login">
       <form className="login-card" onSubmit={handleSubmit}>
         <div className="brand">
-          <span className="brand-mark">JAGO</span>
+          <Logo height={32} className="brand-logo" />
           <span className="brand-sub">Admin Dashboard</span>
         </div>
 

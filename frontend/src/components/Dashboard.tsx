@@ -3,6 +3,7 @@ import { api, type Credentials, type Stats } from "../api";
 import { formatRupiah } from "../format";
 import UsersTable from "./UsersTable";
 import TransactionsTable from "./TransactionsTable";
+import Logo from "./Logo";
 
 interface Props {
   creds: Credentials;
@@ -34,7 +35,7 @@ export default function Dashboard({ creds, onLogout }: Props) {
     <div className="app">
       <header className="topbar">
         <div className="brand">
-          <span className="brand-mark">JAGO</span>
+          <Logo height={26} className="brand-logo" />
           <span className="brand-sub">Admin</span>
         </div>
         <div className="topbar-actions">

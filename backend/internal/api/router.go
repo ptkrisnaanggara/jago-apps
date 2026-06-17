@@ -9,7 +9,7 @@ import (
 // Router builds the Gin engine with all routes.
 func (s *Server) Router() *gin.Engine {
 	r := gin.New()
-	r.Use(requestID(), s.requestLogger(), gin.CustomRecovery(s.recovery()))
+	r.Use(requestID(), s.cors(), s.requestLogger(), gin.CustomRecovery(s.recovery()))
 
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})

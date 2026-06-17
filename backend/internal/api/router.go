@@ -42,6 +42,12 @@ func (s *Server) Router() *gin.Engine {
 			secured.GET("/topup/products", s.listTopupProducts)
 			secured.POST("/topup", s.purchaseTopup)
 
+			secured.GET("/pools", s.listPools)
+			secured.POST("/pools", s.createPool)
+			secured.GET("/pools/:id", s.getPool)
+			secured.POST("/pools/:id/contribute", s.contributePool)
+			secured.POST("/pools/:id/close", s.closePool)
+
 			secured.GET("/transfers", s.listTransfers)
 			secured.POST("/transfers", s.createTransfer)
 

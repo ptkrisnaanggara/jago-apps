@@ -19,4 +19,5 @@ enum AppFailure {
   loadAccountFailed,
   qrisFailed,
   topupFailed,
+  poolFailed,
 }

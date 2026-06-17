@@ -98,6 +98,7 @@ class _HomeContent extends StatelessWidget {
               onTap: switch (shortcut.name) {
                 'Kirim & Bayar' => () => context.push(AppRouter.transfer),
                 'Pulsa & Data' => () => context.push(AppRouter.topup),
+                'Patungan' => () => context.push(AppRouter.pools),
                 _ => null,
               },
             ),

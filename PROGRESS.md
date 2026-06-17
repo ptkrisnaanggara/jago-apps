@@ -47,7 +47,9 @@ Legend: ✅ done · 🟡 in progress · ⏳ todo · 🚫 blocked (environment)
   (mobile); verified live.
 - ✅ **Security PIN** — device-local app-lock (SHA-256 hash in secure storage),
   full-screen lock overlay + set/change/remove in Profile → Security.
-- ⏳ Saving lock/autosave, money pool / shared pockets, biometric unlock
+- ✅ **Money Pool (Patungan)** — create pool → contribute → close & cash out to
+  the main pocket (backend model+migration+endpoints; mobile list + detail).
+- ⏳ Saving lock/autosave, shared pockets (multi-user), biometric unlock
 - 🔌 e-wallet link / investments / insurance (external integrations)
 
 ### Repo

@@ -18,7 +18,7 @@ integration (implemented as a mock/simulation here).
 | **QRIS** scan‑to‑pay (linked to Spending Pocket) | ✅ | EMV TLV parse + pay from a pocket |
 | Bills & payment plans (PLN, etc.) | ✅ | list / schedule / pay |
 | Top‑up prepaid (pulsa / data) | ✅ | catalog + pay from a pocket |
-| Money Pool / Patungan | ⏳ | |
+| Money Pool / Patungan | ✅ | create → contribute → close (cash out to main pocket) |
 | Cards (Visa debit, virtual, freeze) | ✅ | freeze/unfreeze + reveal details |
 | Transactions history (+ filters) | ✅ | list + pagination + type filter |
 | Notifications centre | ✅ | read/unread, mark‑all, live badge |

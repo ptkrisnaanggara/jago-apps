@@ -25,6 +25,8 @@ import 'features/kantong/data/repositories/pocket_repository.dart';
 import 'features/notifications/data/repositories/api_notifications_repository.dart';
 import 'features/notifications/data/repositories/notifications_repository.dart';
 import 'features/notifications/presentation/bloc/notifications_bloc.dart';
+import 'features/pool/data/repositories/api_pool_repository.dart';
+import 'features/pool/data/repositories/pool_repository.dart';
 import 'features/qris/data/repositories/api_qris_repository.dart';
 import 'features/qris/data/repositories/qris_repository.dart';
 import 'features/security/data/pin_store.dart';
@@ -159,6 +161,10 @@ class _JagoAppState extends State<JagoApp> {
         RepositoryProvider<TopupRepository>(
           create: (_) =>
               _useMock ? MockTopupRepository() : ApiTopupRepository(_api!),
+        ),
+        RepositoryProvider<PoolRepository>(
+          create: (_) =>
+              _useMock ? MockPoolRepository() : ApiPoolRepository(_api!),
         ),
       ],
       child: MultiBlocProvider(

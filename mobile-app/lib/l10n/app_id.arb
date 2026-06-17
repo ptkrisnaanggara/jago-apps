@@ -24,6 +24,7 @@
   "errorLoadData": "Gagal memuat data. Coba lagi.",
   "errorQris": "Pembayaran QRIS gagal. Coba lagi.",
   "errorTopup": "Pembelian gagal. Coba lagi.",
+  "errorPool": "Gagal memproses patungan. Coba lagi.",
 
   "balanceTotal": "Total Saldo",
 
@@ -94,6 +95,18 @@
   "topupTabData": "Paket Data",
   "topupBuy": "Beli",
   "topupSuccessTitle": "Pembelian Berhasil",
+  "poolTitle": "Patungan",
+  "poolNew": "Patungan Baru",
+  "poolTitleLabel": "Judul",
+  "poolTargetLabel": "Target",
+  "poolCreate": "Buat Patungan",
+  "poolEmpty": "Belum ada patungan.",
+  "poolContribute": "Tambah Patungan",
+  "poolContributorLabel": "Nama",
+  "poolClose": "Tutup & Cairkan",
+  "poolClosed": "Ditutup",
+  "poolOpen": "Aktif",
+  "homePool": "Patungan",
 
   "transactionsTitle": "Transaksi",
   "transactionsEmpty": "Belum ada transaksi.",

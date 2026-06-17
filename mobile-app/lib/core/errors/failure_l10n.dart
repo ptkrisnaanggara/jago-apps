@@ -25,5 +25,6 @@ String failureText(BuildContext context, AppFailure failure) {
     AppFailure.loadAccountFailed => l10n.errorLoadData,
     AppFailure.qrisFailed => l10n.errorQris,
     AppFailure.topupFailed => l10n.errorTopup,
+    AppFailure.poolFailed => l10n.errorPool,
   };
 }

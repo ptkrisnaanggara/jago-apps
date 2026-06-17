@@ -162,10 +162,38 @@ type Contact struct {
 	AccountNumber string `json:"accountNumber"`
 }
 
+// PoolStatus is a money pool's lifecycle state.
+type PoolStatus string
+
+const (
+	PoolOpen   PoolStatus = "open"
+	PoolClosed PoolStatus = "closed"
+)
+
+// MoneyPool is a "Patungan" — collect contributions toward a target, then cash
+// out to the owner's main pocket.
+type MoneyPool struct {
+	Base
+	OwnerUserID string     `gorm:"index;not null" json:"ownerUserId"`
+	Title       string     `json:"title"`
+	Target      int64      `json:"target"`
+	Collected   int64      `json:"collected"`
+	Status      PoolStatus `json:"status"`
+}
+
+// PoolContribution is one payment into a [MoneyPool].
+type PoolContribution struct {
+	Base
+	PoolID string `gorm:"index;not null" json:"poolId"`
+	Name   string `json:"name"`
+	Amount int64  `json:"amount"`
+}
+
 // All returns every model for AutoMigrate.
 func All() []any {
 	return []any{
 		&User{}, &Account{}, &Pocket{}, &Transaction{},
 		&Transfer{}, &Bill{}, &Card{}, &Notification{}, &Contact{},
+		&MoneyPool{}, &PoolContribution{},
 	}
 }

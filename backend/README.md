@@ -105,6 +105,18 @@ alongside `data`:
 | `POST` | `/api/v1/notifications/:id/read` | Mark one read. |
 | `POST` | `/api/v1/notifications/read-all` | Mark all read. |
 
+### Admin (web dashboard)
+
+These power the [`frontend/`](../frontend) admin dashboard. They are **not**
+JWT-secured; instead they require an `X-Admin-Key` header matching the
+`ADMIN_API_KEY` env var (default `admin-secret`). All are read-only.
+
+| Method | Path | Description |
+| --- | --- | --- |
+| `GET` | `/api/v1/admin/stats` | Aggregate counts + total account/pocket balances. |
+| `GET` | `/api/v1/admin/users` | Users with their account balance (paginated). |
+| `GET` | `/api/v1/admin/transactions` | Recent transactions across all users (paginated). |
+
 ## Logging
 
 Structured logging via the standard library [`log/slog`](https://pkg.go.dev/log/slog)

@@ -8,7 +8,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   document are relative to `mobile-app/`** (e.g. `mobile-app/lib/...`).
 - **`backend/`** — the Go API (Gin + GORM/Postgres + Redis + RabbitMQ). See
   [`backend/README.md`](backend/README.md).
-- **`frontend/`** — web frontend (scaffold, not started).
+- **`frontend/`** — web **admin dashboard** (Vite + React + TS) consuming the
+  backend's key-guarded `/api/v1/admin/*` endpoints. See
+  [`frontend/README.md`](frontend/README.md).
 
 ## Overview
 

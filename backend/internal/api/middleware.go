@@ -1,6 +1,7 @@
 package api
 
 import (
+	"crypto/subtle"
 	"strings"
 	"time"
 
@@ -81,6 +82,21 @@ func (s *Server) authRequired() gin.HandlerFunc {
 			return
 		}
 		c.Set(ctxUserID, uid)
+		c.Next()
+	}
+}
+
+// adminRequired guards the admin dashboard endpoints with a static API key
+// sent in the X-Admin-Key header (configured via ADMIN_API_KEY). It uses a
+// constant-time comparison so the check does not leak the key by timing.
+func (s *Server) adminRequired() gin.HandlerFunc {
+	want := []byte(s.cfg.AdminAPIKey)
+	return func(c *gin.Context) {
+		got := []byte(c.GetHeader("X-Admin-Key"))
+		if len(want) == 0 || subtle.ConstantTimeCompare(got, want) != 1 {
+			respondError(c, 401, "unauthorized", "Invalid or missing admin key")
+			return
+		}
 		c.Next()
 	}
 }

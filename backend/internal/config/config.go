@@ -19,6 +19,10 @@ type Config struct {
 	JWTSecret string
 	JWTTTL    time.Duration
 
+	// AdminAPIKey guards the /admin endpoints (sent as the X-Admin-Key header).
+	// The admin dashboard authenticates with this static key rather than a JWT.
+	AdminAPIKey string
+
 	// MigrateOnStart applies pending migrations when the API boots
 	// (TypeORM's `migrationsRun: true`). Disable to run them via the CLI.
 	MigrateOnStart bool
@@ -48,6 +52,7 @@ func Load() Config {
 		RabbitMQURL:    env("RABBITMQ_URL", "amqp://guest:guest@localhost:5672/"),
 		JWTSecret:      env("JWT_SECRET", "change-me-in-production"),
 		JWTTTL:         envDuration("JWT_TTL", 24*time.Hour),
+		AdminAPIKey:    env("ADMIN_API_KEY", "admin-secret"),
 		MigrateOnStart: envBool("MIGRATE_ON_START", true),
 		OTPTTL:         envDuration("OTP_TTL", 5*time.Minute),
 		OTPDemoMode:    envBool("OTP_DEMO_MODE", true),

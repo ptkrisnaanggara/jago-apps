@@ -69,6 +69,15 @@ func (s *Server) Router() *gin.Engine {
 			secured.POST("/notifications/:id/read", s.markNotificationRead)
 			secured.POST("/notifications/read-all", s.markAllNotificationsRead)
 		}
+
+		// Admin dashboard (frontend/) — guarded by a static X-Admin-Key, not JWT.
+		admin := v1.Group("/admin")
+		admin.Use(s.adminRequired())
+		{
+			admin.GET("/stats", s.getAdminStats)
+			admin.GET("/users", s.listAdminUsers)
+			admin.GET("/transactions", s.listAdminTransactions)
+		}
 	}
 
 	return r

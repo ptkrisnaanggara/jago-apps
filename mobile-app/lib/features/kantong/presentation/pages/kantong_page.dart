@@ -425,6 +425,17 @@ class _PocketTile extends StatelessWidget {
                           const Icon(Icons.autorenew_rounded,
                               size: 13, color: AppColors.primary),
                         ],
+                        if (pocket.shared) ...[
+                          const SizedBox(width: 6),
+                          const Icon(Icons.group_rounded,
+                              size: 13, color: AppColors.primary),
+                          const SizedBox(width: 3),
+                          Text(l10n.pocketSharedBadge,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelSmall
+                                  ?.copyWith(color: AppColors.primary)),
+                        ],
                       ],
                     ),
                   ],
@@ -527,73 +538,198 @@ class _PocketActionsSheetState extends State<_PocketActionsSheet> {
                   .titleLarge
                   ?.copyWith(fontWeight: FontWeight.w700)),
           const SizedBox(height: 16),
-          // Lock / unlock.
-          OutlinedButton.icon(
-            onPressed: () {
-              context
-                  .read<KantongBloc>()
-                  .add(KantongLockToggled(id: p.id, locked: !p.locked));
-              Navigator.pop(context);
-            },
-            icon: Icon(p.locked ? Icons.lock_open_rounded : Icons.lock_rounded),
-            label: Text(p.locked ? l10n.pocketUnlock : l10n.pocketLock),
-          ),
-          const SizedBox(height: 20),
-          Text(l10n.autosaveTitle,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(fontWeight: FontWeight.w600)),
-          const SizedBox(height: 8),
-          TextField(
-            controller: _amount,
-            keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            decoration: InputDecoration(
-              labelText: l10n.amountLabel,
-              prefixText: 'Rp ',
-              border: const OutlineInputBorder(),
+          // Owner-only actions: lock, autosave, share.
+          if (!p.isMember) ...[
+            OutlinedButton.icon(
+              onPressed: () {
+                context
+                    .read<KantongBloc>()
+                    .add(KantongLockToggled(id: p.id, locked: !p.locked));
+                Navigator.pop(context);
+              },
+              icon: Icon(
+                  p.locked ? Icons.lock_open_rounded : Icons.lock_rounded),
+              label: Text(p.locked ? l10n.pocketUnlock : l10n.pocketLock),
             ),
-          ),
-          const SizedBox(height: 8),
-          SegmentedButton<String>(
-            segments: [
-              for (final e in freqLabels.entries)
-                ButtonSegment(value: e.key, label: Text(e.value)),
-            ],
-            selected: {_freq},
-            onSelectionChanged: (s) => setState(() => _freq = s.first),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    final amt = double.tryParse(_amount.text.trim()) ?? 0;
-                    context.read<KantongBloc>().add(KantongAutosaveSet(
-                        id: p.id, amount: amt, frequency: _freq));
-                    Navigator.pop(context);
-                  },
-                  child: Text(l10n.autosaveSave),
-                ),
+            const SizedBox(height: 8),
+            OutlinedButton.icon(
+              onPressed: () => _promptShare(context),
+              icon: const Icon(Icons.group_add_rounded),
+              label: Text(l10n.pocketShare),
+            ),
+            const SizedBox(height: 20),
+            Text(l10n.autosaveTitle,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium
+                    ?.copyWith(fontWeight: FontWeight.w600)),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _amount,
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              decoration: InputDecoration(
+                labelText: l10n.amountLabel,
+                prefixText: 'Rp ',
+                border: const OutlineInputBorder(),
               ),
-              if (p.hasAutosave) ...[
-                const SizedBox(width: 12),
+            ),
+            const SizedBox(height: 8),
+            SegmentedButton<String>(
+              segments: [
+                for (final e in freqLabels.entries)
+                  ButtonSegment(value: e.key, label: Text(e.value)),
+              ],
+              selected: {_freq},
+              onSelectionChanged: (s) => setState(() => _freq = s.first),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
                 Expanded(
-                  child: OutlinedButton(
+                  child: ElevatedButton(
                     onPressed: () {
-                      context.read<KantongBloc>().add(KantongAutosaveRun(p.id));
+                      final amt = double.tryParse(_amount.text.trim()) ?? 0;
+                      context.read<KantongBloc>().add(KantongAutosaveSet(
+                          id: p.id, amount: amt, frequency: _freq));
                       Navigator.pop(context);
                     },
-                    child: Text(l10n.autosaveRun),
+                    child: Text(l10n.autosaveSave),
                   ),
                 ),
+                if (p.hasAutosave) ...[
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () {
+                        context
+                            .read<KantongBloc>()
+                            .add(KantongAutosaveRun(p.id));
+                        Navigator.pop(context);
+                      },
+                      child: Text(l10n.autosaveRun),
+                    ),
+                  ),
+                ],
               ],
-            ],
-          ),
+            ),
+          ],
+          // Shared pocket: deposit + members (visible to owner & members).
+          if (p.shared || p.isMember) ...[
+            const SizedBox(height: 12),
+            ElevatedButton.icon(
+              onPressed: () => _promptDeposit(context),
+              icon: const Icon(Icons.savings_rounded),
+              label: Text(l10n.pocketDeposit),
+            ),
+            const SizedBox(height: 12),
+            Text(l10n.pocketMembers,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleSmall
+                    ?.copyWith(fontWeight: FontWeight.w600)),
+            _MembersList(pocketId: p.id),
+          ],
         ],
       ),
+    );
+  }
+
+  Future<void> _promptShare(BuildContext context) async {
+    final bloc = context.read<KantongBloc>();
+    final l10n = AppLocalizations.of(context)!;
+    final phone = TextEditingController();
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (d) => AlertDialog(
+        title: Text(l10n.pocketShare),
+        content: TextField(
+          controller: phone,
+          keyboardType: TextInputType.phone,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          decoration: InputDecoration(
+            labelText: l10n.phoneLabel,
+            prefixText: '+62 ',
+          ),
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(d, false),
+              child: Text(l10n.actionCancel)),
+          TextButton(
+              onPressed: () => Navigator.pop(d, true),
+              child: Text(l10n.pocketShare)),
+        ],
+      ),
+    );
+    if (ok == true && phone.text.trim().isNotEmpty) {
+      bloc.add(KantongPocketShared(
+          id: widget.pocket.id, phone: phone.text.trim()));
+      if (context.mounted) Navigator.pop(context);
+    }
+  }
+
+  Future<void> _promptDeposit(BuildContext context) async {
+    final bloc = context.read<KantongBloc>();
+    final l10n = AppLocalizations.of(context)!;
+    final amount = TextEditingController();
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (d) => AlertDialog(
+        title: Text(l10n.pocketDeposit),
+        content: TextField(
+          controller: amount,
+          keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          decoration: InputDecoration(
+              labelText: l10n.amountLabel, prefixText: 'Rp '),
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(d, false),
+              child: Text(l10n.actionCancel)),
+          TextButton(
+              onPressed: () => Navigator.pop(d, true),
+              child: Text(l10n.pocketDeposit)),
+        ],
+      ),
+    );
+    final amt = double.tryParse(amount.text.trim()) ?? 0;
+    if (ok == true && amt > 0) {
+      bloc.add(KantongDeposited(id: widget.pocket.id, amount: amt));
+      if (context.mounted) Navigator.pop(context);
+    }
+  }
+}
+
+class _MembersList extends StatelessWidget {
+  final String pocketId;
+
+  const _MembersList({required this.pocketId});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: context.read<PocketRepository>().members(pocketId),
+      builder: (context, snapshot) {
+        final members = snapshot.data ?? const [];
+        return Column(
+          children: [
+            for (final m in members)
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                dense: true,
+                leading: const Icon(Icons.person_rounded, color: AppColors.grey),
+                title: Text(m.name),
+                trailing: Text(m.role,
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelSmall
+                        ?.copyWith(color: AppColors.grey)),
+              ),
+          ],
+        );
+      },
     );
   }
 }

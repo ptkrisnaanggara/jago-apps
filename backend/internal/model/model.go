@@ -68,6 +68,21 @@ type Pocket struct {
 	// means autosave is off. Frequency is none|daily|weekly|monthly.
 	AutosaveAmount    int64  `json:"autosaveAmount"`
 	AutosaveFrequency string `json:"autosaveFrequency"`
+
+	// Shared (Kantong Bersama): true once shared with another user.
+	Shared bool `json:"shared"`
+
+	// Role is the requesting user's role for this pocket ("owner"/"member").
+	// Computed per-request, not persisted.
+	Role string `gorm:"-" json:"role,omitempty"`
+}
+
+// PocketMember links an additional user to a shared pocket.
+type PocketMember struct {
+	Base
+	PocketID string `gorm:"index;not null" json:"pocketId"`
+	UserID   string `gorm:"index;not null" json:"userId"`
+	Role     string `json:"role"` // owner | member
 }
 
 // TxType distinguishes money in vs money out.
@@ -203,6 +218,6 @@ func All() []any {
 	return []any{
 		&User{}, &Account{}, &Pocket{}, &Transaction{},
 		&Transfer{}, &Bill{}, &Card{}, &Notification{}, &Contact{},
-		&MoneyPool{}, &PoolContribution{},
+		&MoneyPool{}, &PoolContribution{}, &PocketMember{},
 	}
 }

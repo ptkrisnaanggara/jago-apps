@@ -11,7 +11,7 @@ integration (implemented as a mock/simulation here).
 | Pocket types: Main / Spending / Saving | ✅ | `main` / `spending` / `saving` |
 | Saving target + progress | ✅ | `target` + progress bar |
 | Saving lock & autosave | ✅ | lock blocks moving out; autosave top-up from main |
-| Shared / joint pockets (Kantong Bersama) | ⏳ | needs multi‑user invites |
+| Shared / joint pockets (Kantong Bersama) | ✅ | share by phone, members see it + deposit from their main pocket |
 | Interest (bunga) on savings | ⏳ | |
 | Transfer & Pay (to contact / bank) | ✅ | contact picker → amount → receipt; event‑driven notification |
 | Move money between pockets | ✅ | this change |

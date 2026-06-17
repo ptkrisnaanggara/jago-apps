@@ -21,6 +21,10 @@ class Pocket extends Equatable {
   final double autosaveAmount;
   final String autosaveFrequency; // none | daily | weekly | monthly
 
+  /// Shared (Kantong Bersama) state + the current user's role.
+  final bool shared;
+  final String role; // owner | member | ''
+
   const Pocket({
     required this.id,
     required this.name,
@@ -32,7 +36,12 @@ class Pocket extends Equatable {
     this.lockUntil,
     this.autosaveAmount = 0,
     this.autosaveFrequency = 'none',
+    this.shared = false,
+    this.role = '',
   });
+
+  bool get isMember => role == 'member';
+  bool get isOwner => role == 'owner';
 
   /// Progress toward [target] in the range 0..1, or `null` when no target.
   double? get progress {
@@ -50,6 +59,7 @@ class Pocket extends Equatable {
     bool clearLockUntil = false,
     double? autosaveAmount,
     String? autosaveFrequency,
+    bool? shared,
   }) {
     return Pocket(
       id: id,
@@ -62,6 +72,8 @@ class Pocket extends Equatable {
       lockUntil: clearLockUntil ? null : (lockUntil ?? this.lockUntil),
       autosaveAmount: autosaveAmount ?? this.autosaveAmount,
       autosaveFrequency: autosaveFrequency ?? this.autosaveFrequency,
+      shared: shared ?? this.shared,
+      role: role,
     );
   }
 
@@ -77,5 +89,23 @@ class Pocket extends Equatable {
         lockUntil,
         autosaveAmount,
         autosaveFrequency,
+        shared,
+        role,
       ];
+}
+
+/// A member of a shared pocket.
+class PocketMember extends Equatable {
+  final String userId;
+  final String name;
+  final String role; // owner | member
+
+  const PocketMember({
+    required this.userId,
+    required this.name,
+    required this.role,
+  });
+
+  @override
+  List<Object?> get props => [userId, name, role];
 }

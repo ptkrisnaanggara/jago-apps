@@ -20,7 +20,21 @@ class KantongBloc extends Bloc<KantongEvent, KantongState> {
     on<KantongLockToggled>(_onLockToggled);
     on<KantongAutosaveSet>(_onAutosaveSet);
     on<KantongAutosaveRun>(_onAutosaveRun);
+    on<KantongPocketShared>(_onPocketShared);
+    on<KantongDeposited>(_onDeposited);
   }
+
+  Future<void> _onPocketShared(
+    KantongPocketShared event,
+    Emitter<KantongState> emit,
+  ) =>
+      _run(() => _repository.sharePocket(event.id, phone: event.phone), emit);
+
+  Future<void> _onDeposited(
+    KantongDeposited event,
+    Emitter<KantongState> emit,
+  ) =>
+      _run(() => _repository.deposit(event.id, amount: event.amount), emit);
 
   Future<void> _onLockToggled(
     KantongLockToggled event,

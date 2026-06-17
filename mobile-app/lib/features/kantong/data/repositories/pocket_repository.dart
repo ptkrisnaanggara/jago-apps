@@ -26,6 +26,14 @@ abstract class PocketRepository {
   });
 
   Future<List<Pocket>> runAutosave(String id);
+
+  /// Shares a pocket with another user (by phone); returns the updated list.
+  Future<List<Pocket>> sharePocket(String id, {required String phone});
+
+  /// Deposits from the caller's main pocket into a (shared) pocket.
+  Future<List<Pocket>> deposit(String id, {required double amount});
+
+  Future<List<PocketMember>> members(String id);
 }
 
 /// Temporary mock. Holds a mutable in-memory list so create/move persist for
@@ -129,6 +137,41 @@ class MockPocketRepository implements PocketRepository {
       _pockets[i] = _pockets[i].copyWith(balance: _pockets[i].balance + amt);
     }
     return List.unmodifiable(_pockets);
+  }
+
+  final Map<String, List<PocketMember>> _members = {};
+
+  @override
+  Future<List<Pocket>> sharePocket(String id, {required String phone}) async {
+    await Future<void>.delayed(_latency);
+    _update(id, (p) => p.copyWith(shared: true));
+    final list = _members.putIfAbsent(id, () => [
+          const PocketMember(userId: 'me', name: 'Saya', role: 'owner'),
+        ]);
+    if (!list.any((m) => m.name == '+62 $phone')) {
+      list.add(PocketMember(userId: phone, name: '+62 $phone', role: 'member'));
+    }
+    return List.unmodifiable(_pockets);
+  }
+
+  @override
+  Future<List<Pocket>> deposit(String id, {required double amount}) async {
+    await Future<void>.delayed(_latency);
+    final i = _pockets.indexWhere((p) => p.id == id);
+    final main = _pockets.indexWhere((p) => p.isMain);
+    if (i != -1 && main != -1 && _pockets[main].balance >= amount) {
+      _pockets[main] =
+          _pockets[main].copyWith(balance: _pockets[main].balance - amount);
+      _pockets[i] = _pockets[i].copyWith(balance: _pockets[i].balance + amount);
+    }
+    return List.unmodifiable(_pockets);
+  }
+
+  @override
+  Future<List<PocketMember>> members(String id) async {
+    await Future<void>.delayed(_latency);
+    return _members[id] ??
+        const [PocketMember(userId: 'me', name: 'Saya', role: 'owner')];
   }
 
   void _update(String id, Pocket Function(Pocket) f) {

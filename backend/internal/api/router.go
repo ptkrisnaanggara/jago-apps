@@ -36,6 +36,9 @@ func (s *Server) Router() *gin.Engine {
 			secured.POST("/pockets/:id/unlock", s.unlockPocket)
 			secured.POST("/pockets/:id/autosave", s.setAutosave)
 			secured.POST("/pockets/:id/autosave/run", s.runAutosave)
+			secured.POST("/pockets/:id/share", s.sharePocket)
+			secured.GET("/pockets/:id/members", s.listMembers)
+			secured.POST("/pockets/:id/deposit", s.depositPocket)
 			secured.GET("/transactions", s.listTransactions)
 
 			secured.GET("/contacts", s.listContacts)

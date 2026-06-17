@@ -242,10 +242,23 @@ func (s *Server) respondPockets(c *gin.Context, uid string) {
 }
 
 func (s *Server) userPockets(userID string) ([]model.Pocket, error) {
+	memberPocketIDs := s.db.Model(&model.PocketMember{}).
+		Select("pocket_id").Where("user_id = ?", userID)
+
 	var pockets []model.Pocket
 	err := s.db.
-		Where("user_id = ?", userID).
+		Where("user_id = ? OR id::text IN (?)", userID, memberPocketIDs).
 		Order("is_main DESC, created_at ASC").
 		Find(&pockets).Error
-	return pockets, err
+	if err != nil {
+		return nil, err
+	}
+	for i := range pockets {
+		if pockets[i].UserID == userID {
+			pockets[i].Role = "owner"
+		} else {
+			pockets[i].Role = "member"
+		}
+	}
+	return pockets, nil
 }

@@ -55,7 +55,12 @@ Legend: ✅ done · 🟡 in progress · ⏳ todo · 🚫 blocked (environment)
 - ✅ **Biometric unlock** — `local_auth` behind an injectable abstraction;
   Security page toggle, PIN lock screen auto-prompts + fingerprint button
   (Android: FlutterFragmentActivity + USE_BIOMETRIC). 41 tests.
-- ⏳ Shared pockets (multi-user)
+- ✅ **Shared pockets (Kantong Bersama)** — owner shares by phone → members see
+  the pocket + deposit from their own main pocket; members list + role. Backend
+  multi-user verified live (2 users); mobile analyze + 42 tests.
+
+All buildable Jago parity features are now implemented; remaining items are
+🔌 external-only (investments / insurance / e-wallet link).
 - 🔌 e-wallet link / investments / insurance (external integrations)
 
 ### Repo

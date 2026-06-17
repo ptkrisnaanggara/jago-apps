@@ -74,3 +74,23 @@ class KantongAutosaveRun extends KantongEvent {
   @override
   List<Object?> get props => [id];
 }
+
+class KantongPocketShared extends KantongEvent {
+  final String id;
+  final String phone;
+
+  const KantongPocketShared({required this.id, required this.phone});
+
+  @override
+  List<Object?> get props => [id, phone];
+}
+
+class KantongDeposited extends KantongEvent {
+  final String id;
+  final double amount;
+
+  const KantongDeposited({required this.id, required this.amount});
+
+  @override
+  List<Object?> get props => [id, amount];
+}

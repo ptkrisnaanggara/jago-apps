@@ -16,6 +16,16 @@ abstract class PocketRepository {
     required String toId,
     required double amount,
   });
+
+  Future<List<Pocket>> setLocked(String id, {required bool locked});
+
+  Future<List<Pocket>> setAutosave(
+    String id, {
+    required double amount,
+    required String frequency,
+  });
+
+  Future<List<Pocket>> runAutosave(String id);
 }
 
 /// Temporary mock. Holds a mutable in-memory list so create/move persist for
@@ -76,20 +86,53 @@ class MockPocketRepository implements PocketRepository {
     await Future<void>.delayed(_latency);
     final from = _pockets.indexWhere((p) => p.id == fromId);
     final to = _pockets.indexWhere((p) => p.id == toId);
-    if (from != -1 && to != -1 && _pockets[from].balance >= amount) {
+    if (from != -1 && to != -1 && !_pockets[from].locked &&
+        _pockets[from].balance >= amount) {
       _pockets[from] =
-          _copyBalance(_pockets[from], _pockets[from].balance - amount);
-      _pockets[to] = _copyBalance(_pockets[to], _pockets[to].balance + amount);
+          _pockets[from].copyWith(balance: _pockets[from].balance - amount);
+      _pockets[to] = _pockets[to].copyWith(balance: _pockets[to].balance + amount);
     }
     return List.unmodifiable(_pockets);
   }
 
-  Pocket _copyBalance(Pocket p, double balance) => Pocket(
-        id: p.id,
-        name: p.name,
-        type: p.type,
-        balance: balance,
-        target: p.target,
-        isMain: p.isMain,
-      );
+  @override
+  Future<List<Pocket>> setLocked(String id, {required bool locked}) async {
+    await Future<void>.delayed(_latency);
+    _update(id, (p) => p.copyWith(locked: locked, clearLockUntil: !locked));
+    return List.unmodifiable(_pockets);
+  }
+
+  @override
+  Future<List<Pocket>> setAutosave(
+    String id, {
+    required double amount,
+    required String frequency,
+  }) async {
+    await Future<void>.delayed(_latency);
+    final off = amount <= 0;
+    _update(
+        id,
+        (p) => p.copyWith(
+            autosaveAmount: off ? 0 : amount,
+            autosaveFrequency: off ? 'none' : frequency));
+    return List.unmodifiable(_pockets);
+  }
+
+  @override
+  Future<List<Pocket>> runAutosave(String id) async {
+    await Future<void>.delayed(_latency);
+    final i = _pockets.indexWhere((p) => p.id == id);
+    final main = _pockets.indexWhere((p) => p.isMain);
+    if (i != -1 && main != -1 && _pockets[i].autosaveAmount > 0) {
+      final amt = _pockets[i].autosaveAmount;
+      _pockets[main] = _pockets[main].copyWith(balance: _pockets[main].balance - amt);
+      _pockets[i] = _pockets[i].copyWith(balance: _pockets[i].balance + amt);
+    }
+    return List.unmodifiable(_pockets);
+  }
+
+  void _update(String id, Pocket Function(Pocket) f) {
+    final i = _pockets.indexWhere((p) => p.id == id);
+    if (i != -1) _pockets[i] = f(_pockets[i]);
+  }
 }

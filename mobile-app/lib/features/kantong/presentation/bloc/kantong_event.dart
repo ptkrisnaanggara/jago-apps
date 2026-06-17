@@ -40,3 +40,37 @@ class KantongMoneyMoved extends KantongEvent {
   @override
   List<Object?> get props => [fromId, toId, amount];
 }
+
+class KantongLockToggled extends KantongEvent {
+  final String id;
+  final bool locked;
+
+  const KantongLockToggled({required this.id, required this.locked});
+
+  @override
+  List<Object?> get props => [id, locked];
+}
+
+class KantongAutosaveSet extends KantongEvent {
+  final String id;
+  final double amount;
+  final String frequency;
+
+  const KantongAutosaveSet({
+    required this.id,
+    required this.amount,
+    required this.frequency,
+  });
+
+  @override
+  List<Object?> get props => [id, amount, frequency];
+}
+
+class KantongAutosaveRun extends KantongEvent {
+  final String id;
+
+  const KantongAutosaveRun(this.id);
+
+  @override
+  List<Object?> get props => [id];
+}

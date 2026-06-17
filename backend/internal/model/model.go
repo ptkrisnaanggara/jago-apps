@@ -59,6 +59,15 @@ type Pocket struct {
 	Balance int64      `json:"balance"`
 	Target  *int64     `json:"target,omitempty"`
 	IsMain  bool       `json:"isMain"`
+
+	// Saving lock: while locked, money cannot be moved out of the pocket.
+	Locked    bool       `json:"locked"`
+	LockUntil *time.Time `json:"lockUntil,omitempty"`
+
+	// Autosave: a recurring top-up from the main pocket. AutosaveAmount == 0
+	// means autosave is off. Frequency is none|daily|weekly|monthly.
+	AutosaveAmount    int64  `json:"autosaveAmount"`
+	AutosaveFrequency string `json:"autosaveFrequency"`
 }
 
 // TxType distinguishes money in vs money out.

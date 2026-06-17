@@ -10,7 +10,7 @@ integration (implemented as a mock/simulation here).
 | **Kantong (Pockets)** — up to 60 accounts | 🟡→✅ | List + **types, create, move money between pockets** (this change). Lock / autosave / shared ⏳ |
 | Pocket types: Main / Spending / Saving | ✅ | `main` / `spending` / `saving` |
 | Saving target + progress | ✅ | `target` + progress bar |
-| Saving lock & autosave | ⏳ | |
+| Saving lock & autosave | ✅ | lock blocks moving out; autosave top-up from main |
 | Shared / joint pockets (Kantong Bersama) | ⏳ | needs multi‑user invites |
 | Interest (bunga) on savings | ⏳ | |
 | Transfer & Pay (to contact / bank) | ✅ | contact picker → amount → receipt; event‑driven notification |

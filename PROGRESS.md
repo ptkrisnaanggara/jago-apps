@@ -49,7 +49,10 @@ Legend: ✅ done · 🟡 in progress · ⏳ todo · 🚫 blocked (environment)
   full-screen lock overlay + set/change/remove in Profile → Security.
 - ✅ **Money Pool (Patungan)** — create pool → contribute → close & cash out to
   the main pocket (backend model+migration+endpoints; mobile list + detail).
-- ⏳ Saving lock/autosave, shared pockets (multi-user), biometric unlock
+- ✅ **Saving lock + autosave** — lock a pocket (blocks moving money out, 423);
+  autosave config + run (top-up from main). Pocket actions sheet on the Kantong
+  tile. Backend verified live; mobile analyze + 40 tests.
+- ⏳ Shared pockets (multi-user), biometric unlock
 - 🔌 e-wallet link / investments / insurance (external integrations)
 
 ### Repo

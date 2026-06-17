@@ -53,6 +53,40 @@ void main() {
       },
     );
 
+    blocTest<KantongBloc, KantongState>(
+      'locks a pocket',
+      build: () => KantongBloc(repository: MockPocketRepository()),
+      act: (bloc) async {
+        bloc.add(const KantongStarted());
+        await Future<void>.delayed(const Duration(milliseconds: 700));
+        bloc.add(const KantongLockToggled(id: 'p1', locked: true));
+      },
+      wait: const Duration(milliseconds: 1400),
+      verify: (bloc) {
+        expect(bloc.state.pockets.firstWhere((p) => p.id == 'p1').locked, isTrue);
+      },
+    );
+
+    blocTest<KantongBloc, KantongState>(
+      'autosave set + run moves money from main into the pocket',
+      build: () => KantongBloc(repository: MockPocketRepository()),
+      act: (bloc) async {
+        bloc.add(const KantongStarted());
+        await Future<void>.delayed(const Duration(milliseconds: 700));
+        bloc.add(const KantongAutosaveSet(
+            id: 'p1', amount: 100000, frequency: 'weekly'));
+        await Future<void>.delayed(const Duration(milliseconds: 700));
+        bloc.add(const KantongAutosaveRun('p1'));
+      },
+      wait: const Duration(milliseconds: 1500),
+      verify: (bloc) {
+        final p0 = bloc.state.pockets.firstWhere((p) => p.id == 'p0');
+        final p1 = bloc.state.pockets.firstWhere((p) => p.id == 'p1');
+        expect(p0.balance, 900000);
+        expect(p1.balance, 4600000);
+      },
+    );
+
     test('totalBalance sums pocket balances', () async {
       final pockets = await MockPocketRepository().getPockets();
       final expected = pockets.fold<double>(0, (sum, p) => sum + p.balance);

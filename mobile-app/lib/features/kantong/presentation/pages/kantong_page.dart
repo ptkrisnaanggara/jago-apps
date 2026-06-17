@@ -365,7 +365,10 @@ class _PocketTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final progress = pocket.progress;
-    return Container(
+    return InkWell(
+      borderRadius: BorderRadius.circular(AppTheme.defaultRadius),
+      onTap: pocket.isMain ? null : () => _showActions(context),
+      child: Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -403,12 +406,26 @@ class _PocketTile extends StatelessWidget {
                           .titleMedium
                           ?.copyWith(fontWeight: FontWeight.w600),
                     ),
-                    Text(
-                      pocketTypeLabel(l10n, pocket.type),
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodySmall
-                          ?.copyWith(color: AppColors.grey),
+                    Row(
+                      children: [
+                        Text(
+                          pocketTypeLabel(l10n, pocket.type),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(color: AppColors.grey),
+                        ),
+                        if (pocket.locked) ...[
+                          const SizedBox(width: 6),
+                          const Icon(Icons.lock_rounded,
+                              size: 13, color: AppColors.grey),
+                        ],
+                        if (pocket.hasAutosave) ...[
+                          const SizedBox(width: 6),
+                          const Icon(Icons.autorenew_rounded,
+                              size: 13, color: AppColors.primary),
+                        ],
+                      ],
                     ),
                   ],
                 ),
@@ -439,6 +456,142 @@ class _PocketTile extends StatelessWidget {
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ],
+        ],
+      ),
+      ),
+    );
+  }
+
+  void _showActions(BuildContext context) {
+    final bloc = context.read<KantongBloc>();
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (_) => BlocProvider.value(
+        value: bloc,
+        child: _PocketActionsSheet(pocket: pocket),
+      ),
+    );
+  }
+}
+
+class _PocketActionsSheet extends StatefulWidget {
+  final Pocket pocket;
+
+  const _PocketActionsSheet({required this.pocket});
+
+  @override
+  State<_PocketActionsSheet> createState() => _PocketActionsSheetState();
+}
+
+class _PocketActionsSheetState extends State<_PocketActionsSheet> {
+  late final _amount = TextEditingController(
+    text: widget.pocket.autosaveAmount > 0
+        ? widget.pocket.autosaveAmount.round().toString()
+        : '',
+  );
+  late String _freq = widget.pocket.autosaveFrequency == 'none'
+      ? 'weekly'
+      : widget.pocket.autosaveFrequency;
+
+  @override
+  void dispose() {
+    _amount.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final p = widget.pocket;
+    final freqLabels = {
+      'daily': l10n.autosaveDaily,
+      'weekly': l10n.autosaveWeekly,
+      'monthly': l10n.autosaveMonthly,
+    };
+    return Padding(
+      padding: EdgeInsets.only(
+        left: AppTheme.defaultMargin,
+        right: AppTheme.defaultMargin,
+        top: 8,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('${l10n.pocketManage} · ${p.name}',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleLarge
+                  ?.copyWith(fontWeight: FontWeight.w700)),
+          const SizedBox(height: 16),
+          // Lock / unlock.
+          OutlinedButton.icon(
+            onPressed: () {
+              context
+                  .read<KantongBloc>()
+                  .add(KantongLockToggled(id: p.id, locked: !p.locked));
+              Navigator.pop(context);
+            },
+            icon: Icon(p.locked ? Icons.lock_open_rounded : Icons.lock_rounded),
+            label: Text(p.locked ? l10n.pocketUnlock : l10n.pocketLock),
+          ),
+          const SizedBox(height: 20),
+          Text(l10n.autosaveTitle,
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w600)),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _amount,
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            decoration: InputDecoration(
+              labelText: l10n.amountLabel,
+              prefixText: 'Rp ',
+              border: const OutlineInputBorder(),
+            ),
+          ),
+          const SizedBox(height: 8),
+          SegmentedButton<String>(
+            segments: [
+              for (final e in freqLabels.entries)
+                ButtonSegment(value: e.key, label: Text(e.value)),
+            ],
+            selected: {_freq},
+            onSelectionChanged: (s) => setState(() => _freq = s.first),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    final amt = double.tryParse(_amount.text.trim()) ?? 0;
+                    context.read<KantongBloc>().add(KantongAutosaveSet(
+                        id: p.id, amount: amt, frequency: _freq));
+                    Navigator.pop(context);
+                  },
+                  child: Text(l10n.autosaveSave),
+                ),
+              ),
+              if (p.hasAutosave) ...[
+                const SizedBox(width: 12),
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () {
+                      context.read<KantongBloc>().add(KantongAutosaveRun(p.id));
+                      Navigator.pop(context);
+                    },
+                    child: Text(l10n.autosaveRun),
+                  ),
+                ),
+              ],
+            ],
+          ),
         ],
       ),
     );

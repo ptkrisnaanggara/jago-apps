@@ -43,6 +43,30 @@ class ApiPocketRepository implements PocketRepository {
     return _mapList(list);
   }
 
+  @override
+  Future<List<Pocket>> setLocked(String id, {required bool locked}) async {
+    final list = await _api.post('/pockets/$id/${locked ? 'lock' : 'unlock'}')
+        as List<dynamic>;
+    return _mapList(list);
+  }
+
+  @override
+  Future<List<Pocket>> setAutosave(
+    String id, {
+    required double amount,
+    required String frequency,
+  }) async {
+    final list = await _api.post('/pockets/$id/autosave',
+        body: {'amount': amount.round(), 'frequency': frequency}) as List<dynamic>;
+    return _mapList(list);
+  }
+
+  @override
+  Future<List<Pocket>> runAutosave(String id) async {
+    final list = await _api.post('/pockets/$id/autosave/run') as List<dynamic>;
+    return _mapList(list);
+  }
+
   List<Pocket> _mapList(List<dynamic> list) =>
       list.map((e) => _pocketFromJson(e as Map<String, dynamic>)).toList();
 
@@ -55,6 +79,12 @@ class ApiPocketRepository implements PocketRepository {
       balance: (json['balance'] as num).toDouble(),
       target: target == null ? null : (target as num).toDouble(),
       isMain: json['isMain'] as bool? ?? false,
+      locked: json['locked'] as bool? ?? false,
+      lockUntil: json['lockUntil'] == null
+          ? null
+          : DateTime.tryParse(json['lockUntil'] as String),
+      autosaveAmount: (json['autosaveAmount'] as num?)?.toDouble() ?? 0,
+      autosaveFrequency: json['autosaveFrequency'] as String? ?? 'none',
     );
   }
 

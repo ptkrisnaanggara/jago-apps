@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
-import { api, type Credentials, type Stats } from "../api";
-import { formatRupiah } from "../format";
-import UsersTable from "./UsersTable";
-import TransactionsTable from "./TransactionsTable";
-import PoolsTable from "./PoolsTable";
-import Logo from "./Logo";
+import { api } from "@/lib/api";
+import type { Credentials } from "@/lib/credentials";
+import type { Stats } from "@/lib/types";
+import { formatRupiah } from "@/lib/format";
+import UsersTable from "@/components/UsersTable";
+import TransactionsTable from "@/components/TransactionsTable";
+import PoolsTable from "@/components/PoolsTable";
+import Logo from "@/components/Logo";
 
 interface Props {
   creds: Credentials;

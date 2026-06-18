@@ -1,42 +1,27 @@
-import { useEffect, useState } from "react";
-import { api, type AdminUser, type Credentials, type Meta } from "../api";
-import { formatDate, formatRupiah } from "../format";
-import Pager from "./Pager";
-import UserDetail from "./UserDetail";
+import { useCallback, useState } from "react";
+import { api } from "@/lib/api";
+import type { Credentials } from "@/lib/credentials";
+import type { AdminUser } from "@/lib/types";
+import { formatDate, formatRupiah } from "@/lib/format";
+import { usePagedList } from "@/hooks/usePagedList";
+import Pager from "@/components/Pager";
+import UserDetail from "@/components/UserDetail";
 
 interface Props {
   creds: Credentials;
 }
 
 export default function UsersTable({ creds }: Props) {
-  const [rows, setRows] = useState<AdminUser[]>([]);
-  const [meta, setMeta] = useState<Meta | null>(null);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [selected, setSelected] = useState<AdminUser | null>(null);
 
-  useEffect(() => {
-    let active = true;
-    setLoading(true);
-    setError(null);
-    api
-      .users(creds, page)
-      .then((res) => {
-        if (!active) return;
-        setRows(res.data);
-        setMeta(res.meta);
-      })
-      .catch((err: unknown) => {
-        if (active && err instanceof Error) setError(err.message);
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
-    return () => {
-      active = false;
-    };
-  }, [creds, page]);
+  const fetcher = useCallback(
+    (page: number) => api.users(creds, page),
+    [creds],
+  );
+  const { rows, meta, setPage, loading, error } = usePagedList<AdminUser>(
+    fetcher,
+    [creds],
+  );
 
   if (error) return <p className="error">{error}</p>;
   if (loading && rows.length === 0) return <p className="muted">Memuat…</p>;

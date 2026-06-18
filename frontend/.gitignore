@@ -3,6 +3,11 @@ dist
 dist-ssr
 *.local
 *.tsbuildinfo
+coverage
+
+# Env
+.env
+.env.*.local
 
 # Editor
 .vscode/*

@@ -1,4 +1,4 @@
-import type { Meta } from "../api";
+import type { Meta } from "@/lib/types";
 
 interface Props {
   meta: Meta | null;
@@ -13,10 +13,7 @@ export default function Pager({ meta, onPage, loading }: Props) {
   const { page, totalPages, total } = meta;
   return (
     <div className="pager">
-      <button
-        disabled={loading || page <= 1}
-        onClick={() => onPage(page - 1)}
-      >
+      <button disabled={loading || page <= 1} onClick={() => onPage(page - 1)}>
         ← Sebelumnya
       </button>
       <span className="muted">

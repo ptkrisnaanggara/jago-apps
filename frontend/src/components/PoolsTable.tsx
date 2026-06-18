@@ -1,40 +1,24 @@
-import { useEffect, useState } from "react";
-import { api, type AdminPool, type Credentials, type Meta } from "../api";
-import { formatDate, formatRupiah } from "../format";
-import Pager from "./Pager";
+import { useCallback } from "react";
+import { api } from "@/lib/api";
+import type { Credentials } from "@/lib/credentials";
+import type { AdminPool } from "@/lib/types";
+import { formatDate, formatRupiah } from "@/lib/format";
+import { usePagedList } from "@/hooks/usePagedList";
+import Pager from "@/components/Pager";
 
 interface Props {
   creds: Credentials;
 }
 
 export default function PoolsTable({ creds }: Props) {
-  const [rows, setRows] = useState<AdminPool[]>([]);
-  const [meta, setMeta] = useState<Meta | null>(null);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let active = true;
-    setLoading(true);
-    setError(null);
-    api
-      .pools(creds, page)
-      .then((res) => {
-        if (!active) return;
-        setRows(res.data);
-        setMeta(res.meta);
-      })
-      .catch((err: unknown) => {
-        if (active && err instanceof Error) setError(err.message);
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
-    return () => {
-      active = false;
-    };
-  }, [creds, page]);
+  const fetcher = useCallback(
+    (page: number) => api.pools(creds, page),
+    [creds],
+  );
+  const { rows, meta, setPage, loading, error } = usePagedList<AdminPool>(
+    fetcher,
+    [creds],
+  );
 
   if (error) return <p className="error">{error}</p>;
   if (loading && rows.length === 0) return <p className="muted">Memuat…</p>;
@@ -60,7 +44,9 @@ export default function PoolsTable({ creds }: Props) {
                 <td>{p.title}</td>
                 <td>{p.ownerName || "—"}</td>
                 <td>
-                  <span className={`chip${p.status === "open" ? "" : " chip-warn"}`}>
+                  <span
+                    className={`chip${p.status === "open" ? "" : " chip-warn"}`}
+                  >
                     {p.status === "open" ? "Aktif" : "Ditutup"}
                   </span>
                 </td>

@@ -1,6 +1,11 @@
 import { useState, type FormEvent } from "react";
-import { api, saveCredentials, type Credentials } from "../api";
-import Logo from "./Logo";
+import { api } from "@/lib/api";
+import {
+  DEFAULT_BASE_URL,
+  saveCredentials,
+  type Credentials,
+} from "@/lib/credentials";
+import Logo from "@/components/Logo";
 
 interface Props {
   onAuthenticated: (creds: Credentials) => void;
@@ -9,7 +14,7 @@ interface Props {
 // Login captures the API base URL + admin key, verifies them against
 // /admin/stats, and on success persists them and hands control to the app.
 export default function Login({ onAuthenticated }: Props) {
-  const [baseUrl, setBaseUrl] = useState("http://localhost:8080");
+  const [baseUrl, setBaseUrl] = useState(DEFAULT_BASE_URL);
   const [adminKey, setAdminKey] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);

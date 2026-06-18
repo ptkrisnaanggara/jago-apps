@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState, type ReactNode } from "react";
-import { api, type Credentials, type UserDetail as Detail } from "../api";
-import { formatDate, formatRupiah } from "../format";
+import { api } from "@/lib/api";
+import type { Credentials } from "@/lib/credentials";
+import type { UserDetail as Detail } from "@/lib/types";
+import { formatDate, formatRupiah } from "@/lib/format";
 
 interface Props {
   creds: Credentials;
@@ -83,9 +85,7 @@ export default function UserDetail({ creds, userId, onClose }: Props) {
               <div className="detail-account">
                 <span className="card-label">Saldo Rekening</span>
                 <span className="card-value">
-                  {detail.account
-                    ? formatRupiah(detail.account.balance)
-                    : "—"}
+                  {detail.account ? formatRupiah(detail.account.balance) : "—"}
                 </span>
                 {detail.account && (
                   <span className="mono muted">
@@ -199,7 +199,10 @@ export default function UserDetail({ creds, userId, onClose }: Props) {
                       <li key={t.id}>
                         <span>
                           {t.title}
-                          <span className="muted"> · {formatDate(t.createdAt)}</span>
+                          <span className="muted">
+                            {" "}
+                            · {formatDate(t.createdAt)}
+                          </span>
                         </span>
                         <span className={`num ${t.type}`}>
                           {t.type === "expense" ? "−" : "+"}
@@ -218,13 +221,7 @@ export default function UserDetail({ creds, userId, onClose }: Props) {
   );
 }
 
-function Section({
-  title,
-  children,
-}: {
-  title: string;
-  children: ReactNode;
-}) {
+function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="detail-section">
       <h3>{title}</h3>

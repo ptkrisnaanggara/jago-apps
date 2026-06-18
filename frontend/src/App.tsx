@@ -1,10 +1,16 @@
 import { useCallback, useState } from "react";
-import { clearCredentials, loadCredentials, type Credentials } from "./api";
-import Login from "./components/Login";
-import Dashboard from "./components/Dashboard";
+import {
+  clearCredentials,
+  loadCredentials,
+  type Credentials,
+} from "@/lib/credentials";
+import Login from "@/components/Login";
+import Dashboard from "@/components/Dashboard";
 
 export default function App() {
-  const [creds, setCreds] = useState<Credentials | null>(() => loadCredentials());
+  const [creds, setCreds] = useState<Credentials | null>(() =>
+    loadCredentials(),
+  );
 
   const handleLogout = useCallback(() => {
     clearCredentials();

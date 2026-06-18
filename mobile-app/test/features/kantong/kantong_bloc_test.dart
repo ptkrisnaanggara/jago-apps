@@ -87,6 +87,26 @@ void main() {
       },
     );
 
+    blocTest<KantongBloc, KantongState>(
+      'shares a pocket and deposits into it',
+      build: () => KantongBloc(repository: MockPocketRepository()),
+      act: (bloc) async {
+        bloc.add(const KantongStarted());
+        await Future<void>.delayed(const Duration(milliseconds: 700));
+        bloc.add(const KantongPocketShared(id: 'p1', phone: '81200001111'));
+        await Future<void>.delayed(const Duration(milliseconds: 700));
+        bloc.add(const KantongDeposited(id: 'p1', amount: 200000));
+      },
+      wait: const Duration(milliseconds: 1500),
+      verify: (bloc) {
+        final p0 = bloc.state.pockets.firstWhere((p) => p.id == 'p0');
+        final p1 = bloc.state.pockets.firstWhere((p) => p.id == 'p1');
+        expect(p1.shared, isTrue);
+        expect(p0.balance, 800000);
+        expect(p1.balance, 4700000);
+      },
+    );
+
     test('totalBalance sums pocket balances', () async {
       final pockets = await MockPocketRepository().getPockets();
       final expected = pockets.fold<double>(0, (sum, p) => sum + p.balance);

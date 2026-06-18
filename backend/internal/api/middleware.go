@@ -1,6 +1,8 @@
 package api
 
 import (
+	"crypto/subtle"
+	"net/http"
 	"strings"
 	"time"
 
@@ -81,6 +83,57 @@ func (s *Server) authRequired() gin.HandlerFunc {
 			return
 		}
 		c.Set(ctxUserID, uid)
+		c.Next()
+	}
+}
+
+// cors applies CORS headers so browser clients (the admin dashboard) can call
+// the API cross-origin. Auth uses the X-Admin-Key / Authorization headers (not
+// cookies), so a wildcard origin is safe; a configured allow-list echoes the
+// request's Origin when it matches. Preflight (OPTIONS) is short-circuited.
+func (s *Server) cors() gin.HandlerFunc {
+	allowAny := false
+	allowed := make(map[string]bool, len(s.cfg.CORSAllowedOrigins))
+	for _, o := range s.cfg.CORSAllowedOrigins {
+		if o == "*" {
+			allowAny = true
+		}
+		allowed[o] = true
+	}
+
+	return func(c *gin.Context) {
+		origin := c.GetHeader("Origin")
+		if origin != "" {
+			switch {
+			case allowAny:
+				c.Header("Access-Control-Allow-Origin", "*")
+			case allowed[origin]:
+				c.Header("Access-Control-Allow-Origin", origin)
+				c.Header("Vary", "Origin")
+			}
+			c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
+			c.Header("Access-Control-Allow-Headers", "Authorization, Content-Type, X-Admin-Key, X-Request-Id")
+			c.Header("Access-Control-Max-Age", "600")
+		}
+		if c.Request.Method == http.MethodOptions {
+			c.AbortWithStatus(http.StatusNoContent)
+			return
+		}
+		c.Next()
+	}
+}
+
+// adminRequired guards the admin dashboard endpoints with a static API key
+// sent in the X-Admin-Key header (configured via ADMIN_API_KEY). It uses a
+// constant-time comparison so the check does not leak the key by timing.
+func (s *Server) adminRequired() gin.HandlerFunc {
+	want := []byte(s.cfg.AdminAPIKey)
+	return func(c *gin.Context) {
+		got := []byte(c.GetHeader("X-Admin-Key"))
+		if len(want) == 0 || subtle.ConstantTimeCompare(got, want) != 1 {
+			respondError(c, 401, "unauthorized", "Invalid or missing admin key")
+			return
+		}
 		c.Next()
 	}
 }

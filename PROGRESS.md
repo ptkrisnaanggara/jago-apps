@@ -55,7 +55,12 @@ Legend: ✅ done · 🟡 in progress · ⏳ todo · 🚫 blocked (environment)
 - ✅ **Biometric unlock** — `local_auth` behind an injectable abstraction;
   Security page toggle, PIN lock screen auto-prompts + fingerprint button
   (Android: FlutterFragmentActivity + USE_BIOMETRIC). 41 tests.
-- ⏳ Shared pockets (multi-user)
+- ✅ **Shared pockets (Kantong Bersama)** — owner shares by phone → members see
+  the pocket + deposit from their own main pocket; members list + role. Backend
+  multi-user verified live (2 users); mobile analyze + 42 tests.
+
+All buildable Jago parity features are now implemented; remaining items are
+🔌 external-only (investments / insurance / e-wallet link).
 - 🔌 e-wallet link / investments / insurance (external integrations)
 
 ### Repo
@@ -110,11 +115,38 @@ Legend: ✅ done · 🟡 in progress · ⏳ todo · 🚫 blocked (environment)
 - ⏳ Visual QA on device (dark mode, cards/notifications, persistence)
 
 ### Frontend
-- ⏳ Pick a stack and scaffold `frontend/`
+- ✅ **Admin dashboard** (Vite + React + TS): on-brand (Jago logo/Poppins/
+  palette); login (admin key), stat cards, users table → per-user detail modal
+  (account/pockets/cards/bills/pools/txns) with card freeze, transactions with
+  type filters, money-pools table. Backend admin API + CORS. Verified live with
+  a headless browser.
+- ⏳ Customer-facing web app (the dashboard is internal/admin only).
 
 ---
 
 ## This session
+
+**Task:** Build the **web admin dashboard** in `frontend/` (Vite + React + TS),
+backed by new read-only admin endpoints. ✅
+
+Landed (`backend/`):
+- ✅ `ADMIN_API_KEY` config + `adminRequired()` middleware (static `X-Admin-Key`,
+  constant-time compare) — admin endpoints are key-guarded, not JWT.
+- ✅ `internal/api/admin.go`: `GET /admin/stats` (counts + total account/pocket
+  balances via `SUM`), `GET /admin/users` (users LEFT JOIN accounts, paginated),
+  `GET /admin/transactions` (cross-user, joined with owner name, paginated).
+- ✅ Verified live against the real stack: 401 without/with wrong key; stats,
+  users (20 seeded), and transactions (48) all return correct paginated data.
+  `gofmt`/`vet`/`test` pass.
+
+Landed (`frontend/`):
+- ✅ Vite + React + TS app: login (Base URL + Admin Key, verified on submit and
+  stored in `localStorage`), stat cards, tabbed **Users** / **Transactions**
+  tables with backend-`meta` pagination, Jago-orange styling, Rupiah/`id-ID`
+  formatting. `npm run build` (tsc + vite) is clean.
+- ✅ Dev proxy `/api → :8080`; README documents auth + structure.
+
+_(Previous session — mobile↔backend API wiring — retained below.)_
 
 **Task:** Wire the mobile app to the backend API (foundation + all repositories). ✅
 

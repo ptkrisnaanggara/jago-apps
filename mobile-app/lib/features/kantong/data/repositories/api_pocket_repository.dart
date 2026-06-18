@@ -67,6 +67,33 @@ class ApiPocketRepository implements PocketRepository {
     return _mapList(list);
   }
 
+  @override
+  Future<List<Pocket>> sharePocket(String id, {required String phone}) async {
+    final list = await _api.post('/pockets/$id/share', body: {'phone': phone})
+        as List<dynamic>;
+    return _mapList(list);
+  }
+
+  @override
+  Future<List<Pocket>> deposit(String id, {required double amount}) async {
+    final list = await _api.post('/pockets/$id/deposit',
+        body: {'amount': amount.round()}) as List<dynamic>;
+    return _mapList(list);
+  }
+
+  @override
+  Future<List<PocketMember>> members(String id) async {
+    final list = await _api.get('/pockets/$id/members') as List<dynamic>;
+    return list.map((e) {
+      final m = e as Map<String, dynamic>;
+      return PocketMember(
+        userId: m['userId'] as String,
+        name: m['name'] as String,
+        role: m['role'] as String,
+      );
+    }).toList();
+  }
+
   List<Pocket> _mapList(List<dynamic> list) =>
       list.map((e) => _pocketFromJson(e as Map<String, dynamic>)).toList();
 
@@ -85,6 +112,8 @@ class ApiPocketRepository implements PocketRepository {
           : DateTime.tryParse(json['lockUntil'] as String),
       autosaveAmount: (json['autosaveAmount'] as num?)?.toDouble() ?? 0,
       autosaveFrequency: json['autosaveFrequency'] as String? ?? 'none',
+      shared: json['shared'] as bool? ?? false,
+      role: json['role'] as String? ?? '',
     );
   }
 

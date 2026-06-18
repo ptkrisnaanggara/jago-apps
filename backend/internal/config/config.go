@@ -4,6 +4,7 @@ package config
 import (
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -18,6 +19,14 @@ type Config struct {
 
 	JWTSecret string
 	JWTTTL    time.Duration
+
+	// AdminAPIKey guards the /admin endpoints (sent as the X-Admin-Key header).
+	// The admin dashboard authenticates with this static key rather than a JWT.
+	AdminAPIKey string
+
+	// CORSAllowedOrigins lists the web origins permitted to call the API from a
+	// browser (the admin dashboard). "*" allows any origin.
+	CORSAllowedOrigins []string
 
 	// MigrateOnStart applies pending migrations when the API boots
 	// (TypeORM's `migrationsRun: true`). Disable to run them via the CLI.
@@ -42,16 +51,19 @@ func Load() Config {
 	_ = godotenv.Load()
 
 	return Config{
-		AppPort:        env("APP_PORT", "8080"),
-		DatabaseURL:    env("DATABASE_URL", "postgres://jago:jago@localhost:5432/jago?sslmode=disable"),
-		RedisURL:       env("REDIS_URL", "redis://localhost:6379/0"),
-		RabbitMQURL:    env("RABBITMQ_URL", "amqp://guest:guest@localhost:5672/"),
-		JWTSecret:      env("JWT_SECRET", "change-me-in-production"),
-		JWTTTL:         envDuration("JWT_TTL", 24*time.Hour),
-		MigrateOnStart: envBool("MIGRATE_ON_START", true),
-		OTPTTL:         envDuration("OTP_TTL", 5*time.Minute),
-		OTPDemoMode:    envBool("OTP_DEMO_MODE", true),
-		OTPDemoCode:    env("OTP_DEMO_CODE", "123456"),
+		AppPort:     env("APP_PORT", "8080"),
+		DatabaseURL: env("DATABASE_URL", "postgres://jago:jago@localhost:5432/jago?sslmode=disable"),
+		RedisURL:    env("REDIS_URL", "redis://localhost:6379/0"),
+		RabbitMQURL: env("RABBITMQ_URL", "amqp://guest:guest@localhost:5672/"),
+		JWTSecret:   env("JWT_SECRET", "change-me-in-production"),
+		JWTTTL:      envDuration("JWT_TTL", 24*time.Hour),
+		AdminAPIKey: env("ADMIN_API_KEY", "admin-secret"),
+
+		CORSAllowedOrigins: envList("CORS_ALLOWED_ORIGINS", []string{"*"}),
+		MigrateOnStart:     envBool("MIGRATE_ON_START", true),
+		OTPTTL:             envDuration("OTP_TTL", 5*time.Minute),
+		OTPDemoMode:        envBool("OTP_DEMO_MODE", true),
+		OTPDemoCode:        env("OTP_DEMO_CODE", "123456"),
 
 		OTPMaxRequests:       envInt("OTP_MAX_REQUESTS", 5),
 		OTPRateWindow:        envDuration("OTP_RATE_WINDOW", 15*time.Minute),
@@ -69,6 +81,25 @@ func envInt(key string, fallback int) int {
 		}
 	}
 	return fallback
+}
+
+// envList reads a comma-separated env var into a trimmed slice (empty → fallback).
+func envList(key string, fallback []string) []string {
+	v, ok := os.LookupEnv(key)
+	if !ok || v == "" {
+		return fallback
+	}
+	parts := strings.Split(v, ",")
+	out := make([]string, 0, len(parts))
+	for _, p := range parts {
+		if t := strings.TrimSpace(p); t != "" {
+			out = append(out, t)
+		}
+	}
+	if len(out) == 0 {
+		return fallback
+	}
+	return out
 }
 
 func env(key, fallback string) string {

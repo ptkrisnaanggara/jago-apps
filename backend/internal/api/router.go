@@ -9,7 +9,7 @@ import (
 // Router builds the Gin engine with all routes.
 func (s *Server) Router() *gin.Engine {
 	r := gin.New()
-	r.Use(requestID(), s.requestLogger(), gin.CustomRecovery(s.recovery()))
+	r.Use(requestID(), s.cors(), s.requestLogger(), gin.CustomRecovery(s.recovery()))
 
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
@@ -36,6 +36,9 @@ func (s *Server) Router() *gin.Engine {
 			secured.POST("/pockets/:id/unlock", s.unlockPocket)
 			secured.POST("/pockets/:id/autosave", s.setAutosave)
 			secured.POST("/pockets/:id/autosave/run", s.runAutosave)
+			secured.POST("/pockets/:id/share", s.sharePocket)
+			secured.GET("/pockets/:id/members", s.listMembers)
+			secured.POST("/pockets/:id/deposit", s.depositPocket)
 			secured.GET("/transactions", s.listTransactions)
 
 			secured.GET("/contacts", s.listContacts)
@@ -65,6 +68,18 @@ func (s *Server) Router() *gin.Engine {
 			secured.GET("/notifications", s.listNotifications)
 			secured.POST("/notifications/:id/read", s.markNotificationRead)
 			secured.POST("/notifications/read-all", s.markAllNotificationsRead)
+		}
+
+		// Admin dashboard (frontend/) — guarded by a static X-Admin-Key, not JWT.
+		admin := v1.Group("/admin")
+		admin.Use(s.adminRequired())
+		{
+			admin.GET("/stats", s.getAdminStats)
+			admin.GET("/users", s.listAdminUsers)
+			admin.GET("/users/:id", s.getAdminUser)
+			admin.GET("/transactions", s.listAdminTransactions)
+			admin.GET("/pools", s.listAdminPools)
+			admin.POST("/cards/:id/freeze", s.adminSetCardFrozen)
 		}
 	}
 

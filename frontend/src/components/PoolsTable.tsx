@@ -1,16 +1,13 @@
 import { useCallback } from "react";
 import { api } from "@/lib/api";
-import type { Credentials } from "@/lib/credentials";
 import type { AdminPool } from "@/lib/types";
 import { formatDate, formatRupiah } from "@/lib/format";
+import { useAuth } from "@/context/auth";
 import { usePagedList } from "@/hooks/usePagedList";
 import Pager from "@/components/Pager";
 
-interface Props {
-  creds: Credentials;
-}
-
-export default function PoolsTable({ creds }: Props) {
+export default function PoolsTable() {
+  const { creds } = useAuth();
   const fetcher = useCallback(
     (page: number) => api.pools(creds, page),
     [creds],

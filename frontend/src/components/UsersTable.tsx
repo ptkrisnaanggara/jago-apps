@@ -1,18 +1,15 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { api } from "@/lib/api";
-import type { Credentials } from "@/lib/credentials";
 import type { AdminUser } from "@/lib/types";
 import { formatDate, formatRupiah } from "@/lib/format";
+import { useAuth } from "@/context/auth";
 import { usePagedList } from "@/hooks/usePagedList";
 import Pager from "@/components/Pager";
-import UserDetail from "@/components/UserDetail";
 
-interface Props {
-  creds: Credentials;
-}
-
-export default function UsersTable({ creds }: Props) {
-  const [selected, setSelected] = useState<AdminUser | null>(null);
+export default function UsersTable() {
+  const { creds } = useAuth();
+  const navigate = useNavigate();
 
   const fetcher = useCallback(
     (page: number) => api.users(creds, page),
@@ -38,6 +35,7 @@ export default function UsersTable({ creds }: Props) {
               <th>No. Rekening</th>
               <th className="num">Saldo</th>
               <th>Bergabung</th>
+              <th aria-label="Detail"></th>
             </tr>
           </thead>
           <tbody>
@@ -45,7 +43,7 @@ export default function UsersTable({ creds }: Props) {
               <tr
                 key={u.id}
                 className="clickable"
-                onClick={() => setSelected(u)}
+                onClick={() => navigate(`/users/${u.id}`)}
                 title="Lihat detail"
               >
                 <td>{u.name}</td>
@@ -53,19 +51,15 @@ export default function UsersTable({ creds }: Props) {
                 <td className="mono">{u.accountNumber || "—"}</td>
                 <td className="num">{formatRupiah(u.balance)}</td>
                 <td className="muted">{formatDate(u.createdAt)}</td>
+                <td className="chevron" aria-hidden="true">
+                  ›
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
       <Pager meta={meta} onPage={setPage} loading={loading} />
-      {selected && (
-        <UserDetail
-          creds={creds}
-          userId={selected.id}
-          onClose={() => setSelected(null)}
-        />
-      )}
     </>
   );
 }

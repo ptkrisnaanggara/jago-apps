@@ -1,14 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { api } from "@/lib/api";
-import type { Credentials } from "@/lib/credentials";
 import type { AdminTransaction, TxFilter } from "@/lib/types";
 import { formatDate, formatRupiah } from "@/lib/format";
+import { useAuth } from "@/context/auth";
 import { usePagedList } from "@/hooks/usePagedList";
 import Pager from "@/components/Pager";
-
-interface Props {
-  creds: Credentials;
-}
 
 const FILTERS: { value: TxFilter; label: string }[] = [
   { value: "", label: "Semua" },
@@ -16,7 +12,8 @@ const FILTERS: { value: TxFilter; label: string }[] = [
   { value: "expense", label: "Keluar" },
 ];
 
-export default function TransactionsTable({ creds }: Props) {
+export default function TransactionsTable() {
+  const { creds } = useAuth();
   const [type, setType] = useState<TxFilter>("");
 
   const fetcher = useCallback(

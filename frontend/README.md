@@ -2,10 +2,10 @@
 
 An **operator dashboard** for JAGO, built with **Vite + React + TypeScript**. It
 consumes the [`backend`](../backend) admin API and gives an operator a cross-user
-view: headline stats; a users table that drills into a per-user detail modal
-(account, pockets, cards, bills, pools, recent transactions); transactions with
-type filters; and a money-pools table. The one write action is freezing/
-unfreezing a user's card from the detail modal.
+view: headline stats; URL-routed tabs for users, transactions (with type
+filters) and money pools; and a **full-page** per-user detail (account, pockets,
+cards, bills, pools, recent transactions) reached by clicking a row. The one
+write action is freezing/unfreezing a user's card from the detail page.
 
 > The customer-facing product is the Flutter [`mobile-app`](../mobile-app). This
 > web app is the **internal admin** surface only.
@@ -14,6 +14,8 @@ unfreezing a user's card from the detail modal.
 
 - [Vite](https://vite.dev/) 5 + [React](https://react.dev/) 18 + TypeScript 5
   (strict), `@/*` path alias → `src/`.
+- [React Router](https://reactrouter.com/) 6 for client-side routing
+  (`BrowserRouter`); auth credentials shared via a small React context.
 - No UI framework — hand-rolled CSS in `src/index.css` using the Jago palette
   (`--primary: #ff6b00`), mirroring the mobile app's brand.
 - `fetch` against the backend; no extra HTTP/state libraries.
@@ -62,23 +64,29 @@ src/
     credentials.ts     # Credentials type + localStorage + VITE_API_BASE_URL
     types.ts           # domain types mirroring the API responses
     format.ts          # Rupiah / date formatting (id-ID)
+  context/
+    auth.ts            # AuthContext + useAuth (creds + logout, no prop-drilling)
   hooks/
     usePagedList.ts    # shared paginated-fetch hook (cancels stale responses)
   components/
     Login.tsx          # base URL + admin key, verified on submit
-    Dashboard.tsx      # stat cards + tab switcher (Users/Transactions/Pools)
-    UsersTable.tsx     # paginated users (+ balance); rows open UserDetail
-    UserDetail.tsx     # per-user modal: pockets/cards/bills/pools/txns + freeze
+    AppLayout.tsx      # persistent brand topbar + <Outlet/>
+    DashboardShell.tsx # stat cards + NavLink tabs + <Outlet/> for list routes
+    UsersTable.tsx     # paginated users; rows navigate to /users/:id
     TransactionsTable.tsx # paginated cross-user transactions + type filter
     PoolsTable.tsx     # paginated money pools (+ owner name)
     Pager.tsx          # prev/next from the backend `meta` block
     Logo.tsx           # inline Jago wordmark (brand)
     ErrorBoundary.tsx  # catches render errors → recoverable fallback
-  App.tsx              # login gate → dashboard
+  pages/
+    UserDetailPage.tsx # full-page /users/:id: pockets/cards/bills/pools/txns + freeze
+  App.tsx              # login gate → routed dashboard
   test/setup.ts        # Testing Library / jsdom setup
 ```
 
-Tests live next to the code they cover (`*.test.ts[x]`).
+Routes: `/` (users) · `/transactions` · `/pools` · `/users/:id` (detail). All
+sit under `AppLayout`; the three list tabs also share `DashboardShell` (stats +
+tab nav). Tests live next to the code they cover (`*.test.ts[x]`).
 
 ## Backend endpoints used
 

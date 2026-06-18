@@ -52,6 +52,7 @@ code {
   align-items: center;
   gap: 0.6rem;
   color: var(--text);
+  text-decoration: none;
 }
 .brand-logo {
   display: block;
@@ -193,21 +194,28 @@ button.ghost:hover {
   font-weight: 700;
 }
 
-/* ---- Tabs ---- */
+/* ---- Tabs (NavLink) ---- */
 .tabs {
   display: flex;
-  gap: 0.5rem;
+  gap: 1.25rem;
   margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
 }
-.tabs button {
+.tabs a {
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
-  padding: 0.5rem 0.4rem;
+  padding: 0.6rem 0.2rem;
+  margin-bottom: -1px;
   font-weight: 600;
-  color: var(--muted);
+  font-size: 0.92rem;
+  color: var(--muted-dark);
+  text-decoration: none;
 }
-.tabs button.active {
+.tabs a:hover {
+  color: var(--text);
+}
+.tabs a.active {
   color: var(--primary);
   border-bottom-color: var(--primary);
 }
@@ -311,6 +319,15 @@ td.expense {
 tbody tr.clickable {
   cursor: pointer;
 }
+tbody tr.clickable:hover .chevron {
+  color: var(--primary);
+}
+.chevron {
+  text-align: right;
+  color: var(--muted);
+  font-size: 1.1rem;
+  width: 1.5rem;
+}
 .chip-warn {
   background: var(--primary-light);
   color: var(--primary-dark);
@@ -320,41 +337,42 @@ button.ghost.small {
   font-size: 0.8rem;
 }
 
-/* ---- Modal (user detail) ---- */
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(17, 17, 17, 0.45);
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 3rem 1rem;
-  z-index: 50;
-  overflow-y: auto;
+/* ---- User detail page ---- */
+.back-link {
+  display: inline-block;
+  margin-bottom: 1rem;
+  color: var(--muted-dark);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
 }
-.modal {
-  background: var(--surface);
-  border-radius: 16px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-  width: 100%;
-  max-width: 560px;
+.back-link:hover {
+  color: var(--primary);
 }
-.modal-head {
+.detail-header {
   display: flex;
-  align-items: flex-start;
+  flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
-  padding: 1.2rem 1.5rem;
-  border-bottom: 1px solid var(--border);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
-.modal-head h2 {
-  margin: 0 0 0.2rem;
-  font-size: 1.2rem;
+.detail-header h1 {
+  margin: 0 0 0.25rem;
+  font-size: 1.5rem;
 }
-.modal-head p {
+.detail-header p {
   margin: 0;
 }
-.modal-body {
-  padding: 1.2rem 1.5rem;
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+@media (max-width: 720px) {
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
 }
 .detail-account {
   display: flex;
@@ -362,14 +380,20 @@ button.ghost.small {
   gap: 0.2rem;
   background: var(--primary-light);
   border-radius: 12px;
-  padding: 1rem 1.2rem;
-  margin-bottom: 1.2rem;
+  padding: 0.9rem 1.2rem;
+  min-width: 220px;
 }
 .detail-account .card-value {
   color: var(--primary-dark);
 }
 .detail-section {
-  margin-bottom: 1.2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+}
+.detail-section-wide {
+  grid-column: 1 / -1;
 }
 .detail-section h3 {
   font-size: 0.8rem;

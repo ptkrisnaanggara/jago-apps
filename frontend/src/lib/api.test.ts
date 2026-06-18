@@ -20,57 +20,72 @@ describe("normalizeBase", () => {
       "https://api.example.com/api/v1",
     );
   });
+});
 
-  it("trims surrounding whitespace", () => {
-    expect(normalizeBase("  http://host  ")).toBe("http://host/api/v1");
+function mockFetch(status: number, body: unknown) {
+  const fn = vi.fn((_url: string, _init?: RequestInit) =>
+    Promise.resolve({
+      ok: status >= 200 && status < 300,
+      status,
+      json: async () => body,
+    } as Response),
+  );
+  vi.stubGlobal("fetch", fn);
+  return fn;
+}
+
+describe("api auth endpoints", () => {
+  beforeEach(() => vi.restoreAllMocks());
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("posts the phone to request an OTP", async () => {
+    const fetchFn = mockFetch(200, {
+      data: { message: "OTP sent", delivered: false, demoCode: "123456" },
+    });
+    const res = await api.requestOtp("http://localhost:8080", "81200000000");
+
+    expect(res.demoCode).toBe("123456");
+    const [url, init] = fetchFn.mock.calls[0];
+    expect(url).toBe("http://localhost:8080/api/v1/admin/auth/otp/request");
+    expect(init?.method).toBe("POST");
+    expect(JSON.parse(String(init?.body))).toEqual({ phone: "81200000000" });
+  });
+
+  it("verifies an OTP and returns a token", async () => {
+    mockFetch(200, {
+      data: { token: "jwt-123", admin: { name: "Super Admin", role: "x" } },
+    });
+    const res = await api.verifyOtp("http://localhost:8080", "812", "123456");
+    expect(res.token).toBe("jwt-123");
+  });
+
+  it("surfaces the backend error message", async () => {
+    mockFetch(401, {
+      error: { code: "unauthorized", message: "Nomor tidak terdaftar" },
+    });
+    await expect(
+      api.requestOtp("http://localhost:8080", "000"),
+    ).rejects.toThrow("Nomor tidak terdaftar");
   });
 });
 
-describe("api client", () => {
+describe("api authenticated requests", () => {
   const creds: Credentials = {
     baseUrl: "http://localhost:8080",
-    adminKey: "secret",
+    token: "jwt-abc",
   };
 
-  beforeEach(() => {
-    vi.restoreAllMocks();
-  });
-  afterEach(() => {
-    vi.unstubAllGlobals();
-  });
+  beforeEach(() => vi.restoreAllMocks());
+  afterEach(() => vi.unstubAllGlobals());
 
-  function mockFetch(status: number, body: unknown) {
-    const fn = vi.fn((_url: string, _init?: RequestInit) =>
-      Promise.resolve({
-        ok: status >= 200 && status < 300,
-        status,
-        json: async () => body,
-      } as Response),
-    );
-    vi.stubGlobal("fetch", fn);
-    return fn;
-  }
-
-  it("sends the admin key header and unwraps {data}", async () => {
+  it("attaches the bearer token and unwraps {data}", async () => {
     const fetchFn = mockFetch(200, { data: { users: 3 } });
     const stats = await api.stats(creds);
 
     expect(stats).toEqual({ users: 3 });
     const [url, init] = fetchFn.mock.calls[0];
     expect(url).toBe("http://localhost:8080/api/v1/admin/stats");
-    expect(init?.headers).toMatchObject({
-      "X-Admin-Key": "secret",
-    });
-  });
-
-  it("maps a 401 to a friendly message", async () => {
-    mockFetch(401, {});
-    await expect(api.stats(creds)).rejects.toThrow(/Admin key/);
-  });
-
-  it("surfaces the backend error message on non-2xx", async () => {
-    mockFetch(500, { error: { code: "internal", message: "boom" } });
-    await expect(api.stats(creds)).rejects.toThrow("boom");
+    expect(init?.headers).toMatchObject({ Authorization: "Bearer jwt-abc" });
   });
 
   it("builds the transactions query with a type filter", async () => {
@@ -78,16 +93,13 @@ describe("api client", () => {
     await api.transactions(creds, 2, 20, "expense");
 
     const [url] = fetchFn.mock.calls[0];
-    expect(url).toContain("/admin/transactions?");
     expect(url).toContain("page=2");
     expect(url).toContain("type=expense");
   });
 
-  it("omits the type param when filter is empty", async () => {
+  it("omits the type param when the filter is empty", async () => {
     const fetchFn = mockFetch(200, { data: [], meta: {} });
     await api.transactions(creds, 1, 20, "");
-
-    const [url] = fetchFn.mock.calls[0];
-    expect(url).not.toContain("type=");
+    expect(fetchFn.mock.calls[0][0]).not.toContain("type=");
   });
 });

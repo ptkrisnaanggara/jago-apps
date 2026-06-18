@@ -186,6 +186,24 @@ type Contact struct {
 	AccountNumber string `json:"accountNumber"`
 }
 
+// AdminStatus is an admin account's lifecycle state.
+type AdminStatus string
+
+const (
+	AdminActive   AdminStatus = "active"
+	AdminDisabled AdminStatus = "disabled"
+)
+
+// AdminUser is a dashboard operator. Login is phone + OTP (delivered over
+// WhatsApp via WAHA); only `active` admins may sign in.
+type AdminUser struct {
+	Base
+	Name   string      `gorm:"not null" json:"name"`
+	Phone  string      `gorm:"uniqueIndex;not null" json:"phone"`
+	Status AdminStatus `gorm:"not null;default:active" json:"status"`
+	Role   string      `json:"role"` // admin | superadmin
+}
+
 // PoolStatus is a money pool's lifecycle state.
 type PoolStatus string
 
@@ -218,6 +236,6 @@ func All() []any {
 	return []any{
 		&User{}, &Account{}, &Pocket{}, &Transaction{},
 		&Transfer{}, &Bill{}, &Card{}, &Notification{}, &Contact{},
-		&MoneyPool{}, &PoolContribution{}, &PocketMember{},
+		&MoneyPool{}, &PoolContribution{}, &PocketMember{}, &AdminUser{},
 	}
 }

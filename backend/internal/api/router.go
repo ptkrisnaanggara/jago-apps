@@ -70,10 +70,18 @@ func (s *Server) Router() *gin.Engine {
 			secured.POST("/notifications/read-all", s.markAllNotificationsRead)
 		}
 
-		// Admin dashboard (frontend/) — guarded by a static X-Admin-Key, not JWT.
+		// Admin login (phone + OTP over WhatsApp/WAHA) — public.
+		adminAuth := v1.Group("/admin/auth")
+		{
+			adminAuth.POST("/otp/request", s.requestAdminOTP)
+			adminAuth.POST("/otp/verify", s.verifyAdminOTP)
+		}
+
+		// Admin dashboard (frontend/) — bearer admin token or static X-Admin-Key.
 		admin := v1.Group("/admin")
 		admin.Use(s.adminRequired())
 		{
+			admin.GET("/me", s.adminMe)
 			admin.GET("/stats", s.getAdminStats)
 			admin.GET("/users", s.listAdminUsers)
 			admin.GET("/users/:id", s.getAdminUser)

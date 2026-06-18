@@ -1,8 +1,9 @@
-// Thin client for the JAGO backend admin API. Admin endpoints authenticate
-// with a static key in the X-Admin-Key header (no JWT).
+// Thin client for the JAGO backend admin API. The dashboard authenticates with
+// a bearer token obtained from the phone + OTP login (api.auth.*).
 
 import type { Credentials } from "./credentials";
 import type {
+  AdminInfo,
   AdminPool,
   AdminTransaction,
   AdminUser,
@@ -26,18 +27,19 @@ export function normalizeBase(baseUrl: string): string {
   return b;
 }
 
-async function request<T>(
-  creds: Credentials,
+// raw issues a request to `${baseUrl}/api/v1${path}`. Auth/extra headers are
+// supplied by the caller; used directly by the public auth endpoints.
+async function raw<T>(
+  baseUrl: string,
   path: string,
   init?: RequestInit,
 ): Promise<T> {
-  const url = `${normalizeBase(creds.baseUrl)}${path}`;
+  const url = `${normalizeBase(baseUrl)}${path}`;
   let res: Response;
   try {
     res = await fetch(url, {
       ...init,
       headers: {
-        "X-Admin-Key": creds.adminKey,
         ...(init?.body ? { "Content-Type": "application/json" } : {}),
         ...init?.headers,
       },
@@ -46,9 +48,6 @@ async function request<T>(
     throw new Error("Tidak dapat terhubung ke server. Periksa Base URL.");
   }
 
-  if (res.status === 401) {
-    throw new Error("Admin key salah atau tidak ada.");
-  }
   if (!res.ok) {
     let message = `Permintaan gagal (${res.status}).`;
     try {
@@ -57,9 +56,27 @@ async function request<T>(
     } catch {
       // keep the default message
     }
+    if (res.status === 401 && message.startsWith("Permintaan gagal")) {
+      message = "Sesi tidak valid. Masuk kembali.";
+    }
     throw new Error(message);
   }
   return (await res.json()) as T;
+}
+
+// request is an authenticated call: attaches the bearer token from creds.
+function request<T>(
+  creds: Credentials,
+  path: string,
+  init?: RequestInit,
+): Promise<T> {
+  return raw<T>(creds.baseUrl, path, {
+    ...init,
+    headers: {
+      Authorization: `Bearer ${creds.token}`,
+      ...init?.headers,
+    },
+  });
 }
 
 const qs = (params: Record<string, string | number>): string =>
@@ -68,7 +85,35 @@ const qs = (params: Record<string, string | number>): string =>
     .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
     .join("&");
 
+export interface OtpRequestResult {
+  message: string;
+  delivered: boolean;
+  demoCode?: string;
+}
+
+export interface VerifyResult {
+  token: string;
+  admin: AdminInfo;
+}
+
 export const api = {
+  // --- Auth (public: phone + OTP over WhatsApp/WAHA) ---
+  requestOtp: (baseUrl: string, phone: string) =>
+    raw<{ data: OtpRequestResult }>(baseUrl, "/admin/auth/otp/request", {
+      method: "POST",
+      body: JSON.stringify({ phone }),
+    }).then((r) => r.data),
+
+  verifyOtp: (baseUrl: string, phone: string, code: string) =>
+    raw<{ data: VerifyResult }>(baseUrl, "/admin/auth/otp/verify", {
+      method: "POST",
+      body: JSON.stringify({ phone, code }),
+    }).then((r) => r.data),
+
+  // --- Authenticated admin endpoints (bearer token) ---
+  me: (creds: Credentials) =>
+    request<{ data: AdminInfo }>(creds, "/admin/me").then((r) => r.data),
+
   stats: (creds: Credentials) =>
     request<{ data: Stats }>(creds, "/admin/stats").then((r) => r.data),
 

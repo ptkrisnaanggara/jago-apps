@@ -105,14 +105,33 @@ alongside `data`:
 | `POST` | `/api/v1/notifications/:id/read` | Mark one read. |
 | `POST` | `/api/v1/notifications/read-all` | Mark all read. |
 
-### Admin (web dashboard)
+### Admin login (phone + OTP)
 
-These power the [`frontend/`](../frontend) admin dashboard. They are **not**
-JWT-secured; instead they require an `X-Admin-Key` header matching the
-`ADMIN_API_KEY` env var (default `admin-secret`). All are read-only.
+Admins live in the **`admin_users`** table (`name`, `phone` unique, `status`
+active/disabled, `role`). On boot, if the table is empty, a default admin is
+seeded from `ADMIN_SEED_NAME` / `ADMIN_SEED_PHONE` (defaults `Super Admin` /
+`81200000000`). Login is phone + OTP; the code is delivered to the admin's
+WhatsApp via **WAHA** ([WhatsApp HTTP API](https://waha.devlike.pro)).
 
 | Method | Path | Description |
 | --- | --- | --- |
+| `POST` | `/api/v1/admin/auth/otp/request` | `{phone}` → look up active admin, store an OTP, send it via WAHA. In demo mode returns `demoCode`. |
+| `POST` | `/api/v1/admin/auth/otp/verify` | `{phone,code}` → returns `{token, admin}` (a bearer JWT). |
+
+In demo mode (`OTP_DEMO_MODE=true`) the code is `OTP_DEMO_CODE` (`123456`) and
+WhatsApp delivery is best-effort. With `WAHA_BASE_URL` unset, no message is sent
+(the demo code still works). Configure WAHA with `WAHA_BASE_URL`, `WAHA_SESSION`
+(default `default`) and optional `WAHA_API_KEY`.
+
+### Admin (web dashboard)
+
+These power the [`frontend/`](../frontend) admin dashboard. Each requires **either**
+a bearer admin token (from the OTP login) **or** an `X-Admin-Key` header matching
+`ADMIN_API_KEY` (default `admin-secret`, handy for curl/tooling).
+
+| Method | Path | Description |
+| --- | --- | --- |
+| `GET` | `/api/v1/admin/me` | The signed-in admin's profile. |
 | `GET` | `/api/v1/admin/stats` | Aggregate counts + total account/pocket balances. |
 | `GET` | `/api/v1/admin/users` | Users with their account balance (paginated). |
 | `GET` | `/api/v1/admin/users/:id` | One user's full detail (account, pockets, cards, bills, pools, recent transactions). |

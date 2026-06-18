@@ -45,6 +45,12 @@ services:
       RABBITMQ_URL: "amqp://guest:guest@rabbitmq:5672/"
       JWT_SECRET: "dev-secret-change-me"
       ADMIN_API_KEY: "admin-secret"
+      ADMIN_SEED_PHONE: "81200000000"
+      # WhatsApp OTP delivery (WAHA). Leave WAHA_BASE_URL empty to disable;
+      # the demo OTP (123456) still works for admin login.
+      WAHA_BASE_URL: ""
+      WAHA_SESSION: "default"
+      WAHA_API_KEY: ""
     ports:
       - "8080:8080"
     depends_on:

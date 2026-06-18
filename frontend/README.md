@@ -41,30 +41,29 @@ Client config is via `VITE_*` env vars (see [`.env.example`](.env.example)):
 
 - `VITE_API_BASE_URL` — default backend origin pre-filled on the login form
   (defaults to `http://localhost:8080`; the client appends `/api/v1`).
-- `VITE_DEMO_OTP` — accepted OTP code for the demo login (defaults to `123456`).
 
 ## Authentication
 
-The admin endpoints are guarded by a static key, **not** a user JWT. Login is a
-two-step flow:
+Login is **phone + OTP**:
 
-1. **Base URL** (the backend origin, e.g. `http://localhost:8080`; the client
-   appends `/api/v1`) + **Admin Key** (the backend's `ADMIN_API_KEY`, default
-   `admin-secret`, sent as the `X-Admin-Key` header). These are verified against
-   `/admin/stats`.
-2. **OTP** — a one-time code. The demo code is `123456` (configurable via
-   `VITE_DEMO_OTP`), mirroring the mobile app / backend demo code.
+1. **Nomor HP Admin** — an admin phone registered in the backend `admin_users`
+   table (the seeded demo admin is `81200000000`). The backend sends a one-time
+   code to that number's WhatsApp via WAHA.
+2. **OTP** — the 6-digit code. In demo mode the backend accepts `123456` and the
+   login screen shows it as a hint.
 
-On success the credentials are persisted in `localStorage`; "Keluar" clears them.
+On success the backend returns a bearer token; it's stored (with the base URL)
+in `localStorage` and sent as `Authorization: Bearer …` on every admin request.
+The topbar shows the signed-in admin; "Keluar" clears the session.
 
 ## Structure
 
 ```
 src/
   lib/
-    api.ts             # typed fetch client (X-Admin-Key); normalizeBase
-    config.ts          # env config (VITE_API_BASE_URL, VITE_DEMO_OTP)
-    credentials.ts     # Credentials type + localStorage helpers
+    api.ts             # typed fetch client (bearer token) + auth endpoints
+    config.ts          # env config (VITE_API_BASE_URL)
+    credentials.ts     # Credentials type (baseUrl + token) + localStorage
     types.ts           # domain types mirroring the API responses
     format.ts          # Rupiah / date formatting (id-ID)
   context/
@@ -72,8 +71,8 @@ src/
   hooks/
     usePagedList.ts    # shared paginated-fetch hook (cancels stale responses)
   components/
-    Login.tsx          # base URL + admin key, verified on submit
-    AppLayout.tsx      # persistent brand topbar + <Outlet/>
+    Login.tsx          # phone + OTP login (WhatsApp/WAHA, demo 123456)
+    AppLayout.tsx      # persistent brand topbar (signed-in admin) + <Outlet/>
     DashboardShell.tsx # stat cards + NavLink tabs + <Outlet/> for list routes
     UsersTable.tsx     # paginated users; rows navigate to /users/:id
     TransactionsTable.tsx # paginated cross-user transactions + type filter
@@ -93,7 +92,8 @@ tab nav). Tests live next to the code they cover (`*.test.ts[x]`).
 
 ## Backend endpoints used
 
-See [`backend/README.md`](../backend/README.md) → **Admin**:
-`GET /api/v1/admin/{stats,users,users/:id,transactions,pools}` and
+See [`backend/README.md`](../backend/README.md) → **Admin**: the public
+`POST /api/v1/admin/auth/otp/{request,verify}` login pair, plus the bearer-token
+`GET /api/v1/admin/{me,stats,users,users/:id,transactions,pools}` and
 `POST /api/v1/admin/cards/:id/freeze` (list endpoints accept `?page=&limit=`;
 transactions also `?type=` and `?userId=`).

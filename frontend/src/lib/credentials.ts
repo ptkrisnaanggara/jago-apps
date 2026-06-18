@@ -1,9 +1,10 @@
-// Admin credentials: the API base URL + static admin key. Persisted in
-// localStorage so a refresh keeps the operator signed in.
+// Admin credentials: the API base URL + the bearer token returned by the
+// phone + OTP login. Persisted in localStorage so a refresh keeps the operator
+// signed in.
 
 export interface Credentials {
   baseUrl: string;
-  adminKey: string;
+  token: string;
 }
 
 const STORAGE_KEY = "jago.admin.credentials";

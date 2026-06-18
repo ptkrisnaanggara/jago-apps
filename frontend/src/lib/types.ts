@@ -1,5 +1,13 @@
 // Domain types mirroring the backend admin API response shapes.
 
+export interface AdminInfo {
+  id?: string;
+  name: string;
+  phone: string;
+  status?: "active" | "disabled";
+  role: string;
+}
+
 export interface Stats {
   users: number;
   accounts: number;

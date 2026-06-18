@@ -150,6 +150,18 @@ code {
 .link-button:hover {
   color: var(--primary);
 }
+.login-card label.advanced {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.admin-id {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--text);
+}
 
 /* ---- App shell ---- */
 .app {

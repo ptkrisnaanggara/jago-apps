@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { api } from "@/lib/api";
-import { DEFAULT_BASE_URL, DEMO_OTP } from "@/lib/config";
+import { DEFAULT_BASE_URL } from "@/lib/config";
 import { saveCredentials, type Credentials } from "@/lib/credentials";
 import Logo from "@/components/Logo";
 
@@ -8,62 +8,81 @@ interface Props {
   onAuthenticated: (creds: Credentials) => void;
 }
 
-type Step = "credentials" | "otp";
+type Step = "phone" | "otp";
 
-// Login is a two-step flow: (1) verify the Base URL + Admin Key against the API,
-// then (2) confirm a one-time code. The demo OTP is 123456 (see VITE_DEMO_OTP).
+// Login is a phone + OTP flow: (1) the admin enters their phone and we ask the
+// backend to send a one-time code over WhatsApp (WAHA); (2) they enter the code
+// to receive a bearer token. The demo backend accepts 123456.
 export default function Login({ onAuthenticated }: Props) {
-  const [step, setStep] = useState<Step>("credentials");
+  const [step, setStep] = useState<Step>("phone");
   const [baseUrl, setBaseUrl] = useState(DEFAULT_BASE_URL);
-  const [adminKey, setAdminKey] = useState("");
+  const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
+  const [demoCode, setDemoCode] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  async function handleCredentials(e: FormEvent) {
+  async function handlePhone(e: FormEvent) {
     e.preventDefault();
     setError(null);
     setLoading(true);
     try {
-      // A successful stats call validates both the URL and the key before we
-      // move on to the OTP step.
-      await api.stats({ baseUrl, adminKey });
+      const res = await api.requestOtp(baseUrl, phone);
+      setDemoCode(res.demoCode ?? null);
       setStep("otp");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Login gagal.");
+      setError(err instanceof Error ? err.message : "Gagal mengirim OTP.");
     } finally {
       setLoading(false);
     }
   }
 
-  function handleOtp(e: FormEvent) {
+  async function handleOtp(e: FormEvent) {
     e.preventDefault();
     setError(null);
-    if (otp.trim() !== DEMO_OTP) {
-      setError("Kode OTP salah. Coba lagi.");
-      return;
+    setLoading(true);
+    try {
+      const { token } = await api.verifyOtp(baseUrl, phone, otp);
+      const creds: Credentials = { baseUrl, token };
+      saveCredentials(creds);
+      onAuthenticated(creds);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Verifikasi gagal.");
+    } finally {
+      setLoading(false);
     }
-    const creds: Credentials = { baseUrl, adminKey };
-    saveCredentials(creds);
-    onAuthenticated(creds);
   }
 
-  function backToCredentials() {
-    setStep("credentials");
+  function backToPhone() {
+    setStep("phone");
     setOtp("");
     setError(null);
   }
 
   return (
     <div className="login">
-      {step === "credentials" ? (
-        <form className="login-card" onSubmit={handleCredentials}>
+      {step === "phone" ? (
+        <form className="login-card" onSubmit={handlePhone}>
           <div className="brand">
             <Logo height={32} className="brand-logo" />
             <span className="brand-sub">Admin Dashboard</span>
           </div>
 
           <label>
+            Nomor HP Admin
+            <input
+              type="tel"
+              inputMode="numeric"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value.replace(/[^\d]/g, ""))}
+              placeholder="81200000000"
+              autoComplete="off"
+              autoFocus
+              required
+            />
+          </label>
+
+          <label className="advanced">
             Base URL
             <input
               type="text"
@@ -75,27 +94,14 @@ export default function Login({ onAuthenticated }: Props) {
             />
           </label>
 
-          <label>
-            Admin Key
-            <input
-              type="password"
-              value={adminKey}
-              onChange={(e) => setAdminKey(e.target.value)}
-              placeholder="X-Admin-Key"
-              autoComplete="off"
-              required
-            />
-          </label>
-
           {error && <p className="error">{error}</p>}
 
-          <button type="submit" disabled={loading}>
-            {loading ? "Menghubungkan…" : "Kirim OTP"}
+          <button type="submit" disabled={loading || phone.length < 6}>
+            {loading ? "Mengirim…" : "Kirim OTP"}
           </button>
 
           <p className="hint">
-            Gunakan <code>ADMIN_API_KEY</code> dari backend (default{" "}
-            <code>admin-secret</code>).
+            Kode OTP dikirim ke WhatsApp nomor admin terdaftar.
           </p>
         </form>
       ) : (
@@ -106,7 +112,7 @@ export default function Login({ onAuthenticated }: Props) {
           </div>
 
           <p className="muted otp-intro">
-            Masukkan 6 digit kode OTP untuk masuk.
+            Masukkan 6 digit kode yang dikirim ke WhatsApp +{phone}.
           </p>
 
           <label>
@@ -129,21 +135,19 @@ export default function Login({ onAuthenticated }: Props) {
 
           {error && <p className="error">{error}</p>}
 
-          <button type="submit" disabled={otp.length < 6}>
-            Verifikasi
+          <button type="submit" disabled={loading || otp.length < 6}>
+            {loading ? "Memverifikasi…" : "Verifikasi"}
           </button>
 
-          <button
-            type="button"
-            className="link-button"
-            onClick={backToCredentials}
-          >
-            ← Kembali
+          <button type="button" className="link-button" onClick={backToPhone}>
+            ← Ganti nomor
           </button>
 
-          <p className="hint">
-            Demo: gunakan kode <code>{DEMO_OTP}</code>.
-          </p>
+          {demoCode && (
+            <p className="hint">
+              Demo: gunakan kode <code>{demoCode}</code>.
+            </p>
+          )}
         </form>
       )}
     </div>

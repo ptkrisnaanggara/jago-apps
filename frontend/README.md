@@ -41,19 +41,21 @@ Client config is via `VITE_*` env vars (see [`.env.example`](.env.example)):
 
 - `VITE_API_BASE_URL` — default backend origin pre-filled on the login form
   (defaults to `http://localhost:8080`; the client appends `/api/v1`).
+- `VITE_DEMO_OTP` — accepted OTP code for the demo login (defaults to `123456`).
 
 ## Authentication
 
-The admin endpoints are guarded by a static key, **not** a user JWT. On the
-login screen, enter:
+The admin endpoints are guarded by a static key, **not** a user JWT. Login is a
+two-step flow:
 
-- **Base URL** — the backend origin, e.g. `http://localhost:8080` (the client
-  appends `/api/v1` if you omit it).
-- **Admin Key** — the backend's `ADMIN_API_KEY` (default `admin-secret`), sent
-  as the `X-Admin-Key` header.
+1. **Base URL** (the backend origin, e.g. `http://localhost:8080`; the client
+   appends `/api/v1`) + **Admin Key** (the backend's `ADMIN_API_KEY`, default
+   `admin-secret`, sent as the `X-Admin-Key` header). These are verified against
+   `/admin/stats`.
+2. **OTP** — a one-time code. The demo code is `123456` (configurable via
+   `VITE_DEMO_OTP`), mirroring the mobile app / backend demo code.
 
-Credentials are verified against `/admin/stats` and then persisted in
-`localStorage`; "Keluar" clears them.
+On success the credentials are persisted in `localStorage`; "Keluar" clears them.
 
 ## Structure
 
@@ -61,7 +63,8 @@ Credentials are verified against `/admin/stats` and then persisted in
 src/
   lib/
     api.ts             # typed fetch client (X-Admin-Key); normalizeBase
-    credentials.ts     # Credentials type + localStorage + VITE_API_BASE_URL
+    config.ts          # env config (VITE_API_BASE_URL, VITE_DEMO_OTP)
+    credentials.ts     # Credentials type + localStorage helpers
     types.ts           # domain types mirroring the API responses
     format.ts          # Rupiah / date formatting (id-ID)
   context/

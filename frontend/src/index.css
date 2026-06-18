@@ -128,6 +128,28 @@ code {
   color: var(--muted);
   text-align: center;
 }
+.otp-intro {
+  margin: 0;
+  text-align: center;
+}
+.otp-input {
+  text-align: center;
+  font-size: 1.5rem;
+  letter-spacing: 0.5em;
+  font-variant-numeric: tabular-nums;
+  padding-left: 0.5em;
+}
+.link-button {
+  background: transparent;
+  border: none;
+  color: var(--muted-dark);
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.2rem;
+}
+.link-button:hover {
+  color: var(--primary);
+}
 
 /* ---- App shell ---- */
 .app {

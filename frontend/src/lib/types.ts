@@ -8,6 +8,15 @@ export interface AdminInfo {
   role: string;
 }
 
+export interface Admin {
+  id: string;
+  name: string;
+  phone: string;
+  status: "active" | "disabled";
+  role: string;
+  createdAt: string;
+}
+
 export interface Stats {
   users: number;
   accounts: number;

@@ -88,6 +88,11 @@ func (s *Server) Router() *gin.Engine {
 			admin.GET("/transactions", s.listAdminTransactions)
 			admin.GET("/pools", s.listAdminPools)
 			admin.POST("/cards/:id/freeze", s.adminSetCardFrozen)
+
+			// Admin management (superadmin only).
+			admin.GET("/admins", s.listAdmins)
+			admin.POST("/admins", s.createAdmin)
+			admin.POST("/admins/:id/status", s.setAdminStatus)
 		}
 	}
 

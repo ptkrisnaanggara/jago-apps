@@ -139,6 +139,14 @@ a bearer admin token (from the OTP login) **or** an `X-Admin-Key` header matchin
 | `GET` | `/api/v1/admin/pools` | Money pools across all users with owner name (paginated). |
 | `POST` | `/api/v1/admin/cards/:id/freeze` | Freeze/unfreeze any card (`{"frozen":true}`). |
 
+Admin management (**superadmin only**; the static service key also qualifies):
+
+| Method | Path | Description |
+| --- | --- | --- |
+| `GET` | `/api/v1/admin/admins` | List admins (paginated). |
+| `POST` | `/api/v1/admin/admins` | Create an admin (`{name, phone, role}`; 409 on duplicate phone). |
+| `POST` | `/api/v1/admin/admins/:id/status` | Enable/disable (`{"status":"active\|disabled"}`; cannot disable yourself). |
+
 The dashboard is a browser client, so the API sends **CORS** headers (the mobile
 app, being native, needs none). Allowed origins come from `CORS_ALLOWED_ORIGINS`
 (comma-separated, default `*`); auth is header-based (not cookies) so a wildcard

@@ -10,6 +10,7 @@ function renderWithRouter() {
     <AuthContext.Provider
       value={{
         creds: { baseUrl: "http://localhost:8080", token: "t" },
+        admin: null,
         logout: vi.fn(),
       }}
     >

@@ -3,6 +3,7 @@
 
 import type { Credentials } from "./credentials";
 import type {
+  Admin,
   AdminInfo,
   AdminPool,
   AdminTransaction,
@@ -143,5 +144,28 @@ export const api = {
     request<{ data: Card }>(creds, `/admin/cards/${cardId}/freeze`, {
       method: "POST",
       body: JSON.stringify({ frozen }),
+    }).then((r) => r.data),
+
+  // --- Admin management (superadmin only) ---
+  admins: (creds: Credentials, page = 1, limit = 20) =>
+    request<Page<Admin>>(creds, `/admin/admins?${qs({ page, limit })}`),
+
+  createAdmin: (
+    creds: Credentials,
+    input: { name: string; phone: string; role: string },
+  ) =>
+    request<{ data: Admin }>(creds, "/admin/admins", {
+      method: "POST",
+      body: JSON.stringify(input),
+    }).then((r) => r.data),
+
+  setAdminStatus: (
+    creds: Credentials,
+    id: string,
+    status: "active" | "disabled",
+  ) =>
+    request<{ data: Admin }>(creds, `/admin/admins/${id}/status`, {
+      method: "POST",
+      body: JSON.stringify({ status }),
     }).then((r) => r.data),
 };

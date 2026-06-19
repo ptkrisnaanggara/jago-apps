@@ -163,6 +163,50 @@ code {
   color: var(--text);
 }
 
+/* ---- Admin create form ---- */
+.admin-create {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+.admin-create input,
+.admin-create select {
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--surface);
+}
+.admin-create input:focus,
+.admin-create select:focus {
+  outline: 2px solid var(--primary);
+  border-color: transparent;
+}
+.admin-create input[type="text"] {
+  flex: 1 1 12rem;
+}
+.admin-create input[type="tel"] {
+  flex: 1 1 14rem;
+}
+.admin-create button[type="submit"] {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.55rem 1.1rem;
+  font-weight: 700;
+}
+.admin-create button[type="submit"]:hover {
+  background: var(--primary-dark);
+}
+.admin-create button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* ---- App shell ---- */
 .app {
   min-height: 100vh;

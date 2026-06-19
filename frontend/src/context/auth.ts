@@ -1,8 +1,11 @@
 import { createContext, useContext } from "react";
 import type { Credentials } from "@/lib/credentials";
+import type { AdminInfo } from "@/lib/types";
 
 export interface AuthContextValue {
   creds: Credentials;
+  /** The signed-in admin's profile (null until /admin/me resolves). */
+  admin: AdminInfo | null;
   logout: () => void;
 }
 

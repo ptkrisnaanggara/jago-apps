@@ -8,7 +8,8 @@ import { useAuth } from "@/context/auth";
 // DashboardShell wraps the list routes (Users / Transactions / Pools) with the
 // headline stat cards and the tab navigation, which stay put as you switch tabs.
 export default function DashboardShell() {
-  const { creds } = useAuth();
+  const { creds, admin } = useAuth();
+  const isSuperadmin = admin?.role === "superadmin";
   const [stats, setStats] = useState<Stats | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -55,6 +56,7 @@ export default function DashboardShell() {
         </NavLink>
         <NavLink to="/transactions">Transaksi</NavLink>
         <NavLink to="/pools">Patungan</NavLink>
+        {isSuperadmin && <NavLink to="/admins">Admin</NavLink>}
       </nav>
 
       <Outlet />

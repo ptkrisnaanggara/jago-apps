@@ -145,6 +145,7 @@ Admin management (**superadmin only**; the static service key also qualifies):
 | --- | --- | --- |
 | `GET` | `/api/v1/admin/admins` | List admins (paginated). |
 | `POST` | `/api/v1/admin/admins` | Create an admin (`{name, phone, role}`; 409 on duplicate phone). |
+| `PATCH` | `/api/v1/admin/admins/:id` | Edit name/phone/role (partial; 409 on duplicate phone; cannot demote your own role). |
 | `POST` | `/api/v1/admin/admins/:id/status` | Enable/disable (`{"status":"active\|disabled"}`; cannot disable yourself). |
 
 The dashboard is a browser client, so the API sends **CORS** headers (the mobile

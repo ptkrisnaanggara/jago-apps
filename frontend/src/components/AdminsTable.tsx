@@ -5,6 +5,7 @@ import { formatDate } from "@/lib/format";
 import { useAuth } from "@/context/auth";
 import { usePagedList } from "@/hooks/usePagedList";
 import Pager from "@/components/Pager";
+import AdminEditModal from "@/components/AdminEditModal";
 
 export default function AdminsTable() {
   const { creds, admin: current } = useAuth();
@@ -27,6 +28,7 @@ export default function AdminsTable() {
   const [creating, setCreating] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [editing, setEditing] = useState<Admin | null>(null);
 
   async function handleCreate(e: FormEvent) {
     e.preventDefault();
@@ -133,12 +135,20 @@ export default function AdminsTable() {
                         </span>
                       </td>
                       <td className="muted">{formatDate(a.createdAt)}</td>
-                      <td className="num">
+                      <td className="num row-actions">
+                        <button
+                          className="ghost small"
+                          onClick={() => setEditing(a)}
+                        >
+                          Ubah
+                        </button>
                         <button
                           className="ghost small"
                           disabled={busyId === a.id || isSelf}
                           title={
-                            isSelf ? "Tidak dapat mengubah akun sendiri" : ""
+                            isSelf
+                              ? "Tidak dapat menonaktifkan akun sendiri"
+                              : ""
                           }
                           onClick={() => toggleStatus(a)}
                         >
@@ -157,6 +167,14 @@ export default function AdminsTable() {
           </div>
           <Pager meta={meta} onPage={setPage} loading={loading} />
         </>
+      )}
+
+      {editing && (
+        <AdminEditModal
+          admin={editing}
+          onClose={() => setEditing(null)}
+          onSaved={reload}
+        />
       )}
     </>
   );

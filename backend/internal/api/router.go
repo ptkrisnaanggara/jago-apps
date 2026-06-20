@@ -92,6 +92,7 @@ func (s *Server) Router() *gin.Engine {
 			// Admin management (superadmin only).
 			admin.GET("/admins", s.listAdmins)
 			admin.POST("/admins", s.createAdmin)
+			admin.PATCH("/admins/:id", s.updateAdmin)
 			admin.POST("/admins/:id/status", s.setAdminStatus)
 		}
 	}

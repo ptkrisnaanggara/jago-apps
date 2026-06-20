@@ -99,6 +99,92 @@ func (s *Server) createAdmin(c *gin.Context) {
 	respondCreated(c, admin)
 }
 
+type updateAdminRequest struct {
+	Name  *string `json:"name"`
+	Phone *string `json:"phone"`
+	Role  *string `json:"role"`
+}
+
+// updateAdmin edits an admin's name, phone, and/or role. Phone stays unique; a
+// superadmin cannot demote their own role (avoids locking themselves out).
+func (s *Server) updateAdmin(c *gin.Context) {
+	if !s.requireSuperadmin(c) {
+		return
+	}
+	var req updateAdminRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		respondError(c, 400, "bad_request", "invalid body")
+		return
+	}
+
+	id := c.Param("id")
+	var admin model.AdminUser
+	if err := s.db.First(&admin, "id = ?", id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			respondError(c, 404, "not_found", "admin not found")
+			return
+		}
+		respondError(c, 500, "internal", "failed to load admin")
+		return
+	}
+
+	updates := map[string]any{}
+
+	if req.Name != nil {
+		name := strings.TrimSpace(*req.Name)
+		if name == "" {
+			respondError(c, 400, "bad_request", "name cannot be empty")
+			return
+		}
+		updates["name"] = name
+	}
+
+	if req.Phone != nil {
+		phone := strings.TrimSpace(*req.Phone)
+		if phone == "" {
+			respondError(c, 400, "bad_request", "phone cannot be empty")
+			return
+		}
+		if phone != admin.Phone {
+			var clash model.AdminUser
+			err := s.db.First(&clash, "phone = ? AND id <> ?", phone, id).Error
+			if err == nil {
+				respondError(c, 409, "conflict", "Nomor HP sudah terdaftar")
+				return
+			}
+			if !errors.Is(err, gorm.ErrRecordNotFound) {
+				respondError(c, 500, "internal", "failed to check phone")
+				return
+			}
+		}
+		updates["phone"] = phone
+	}
+
+	if req.Role != nil {
+		role := *req.Role
+		if role != "superadmin" {
+			role = "admin"
+		}
+		if id == currentAdminID(c) && role != "superadmin" {
+			respondError(c, 400, "bad_request", "Tidak dapat menurunkan peran sendiri")
+			return
+		}
+		updates["role"] = role
+	}
+
+	if len(updates) == 0 {
+		respondOK(c, admin) // nothing to change
+		return
+	}
+
+	if err := s.db.Model(&admin).Updates(updates).Error; err != nil {
+		respondError(c, 500, "internal", "failed to update admin")
+		return
+	}
+	s.log.Info("admin_updated", "admin_id", id)
+	respondOK(c, admin)
+}
+
 type setAdminStatusRequest struct {
 	Status string `json:"status" binding:"required"`
 }

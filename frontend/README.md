@@ -6,7 +6,7 @@ view: headline stats; URL-routed tabs for users, transactions (with type
 filters), money pools, and — for superadmins — admin management; plus a
 **full-page** per-user detail (account, pockets, cards, bills, pools, recent
 transactions) reached by clicking a row. Write actions: freeze/unfreeze a user's
-card, and create / enable / disable admins.
+card, and create / edit / enable / disable admins.
 
 > The customer-facing product is the Flutter [`mobile-app`](../mobile-app). This
 > web app is the **internal admin** surface only.
@@ -78,7 +78,8 @@ src/
     UsersTable.tsx     # paginated users; rows navigate to /users/:id
     TransactionsTable.tsx # paginated cross-user transactions + type filter
     PoolsTable.tsx     # paginated money pools (+ owner name)
-    AdminsTable.tsx    # superadmin: list/create + enable/disable admins
+    AdminsTable.tsx    # superadmin: list/create + edit + enable/disable admins
+    AdminEditModal.tsx # edit an admin's name/phone/role (role locked on self)
     Pager.tsx          # prev/next from the backend `meta` block
     Logo.tsx           # inline Jago wordmark (brand)
     ErrorBoundary.tsx  # catches render errors → recoverable fallback
@@ -100,5 +101,6 @@ See [`backend/README.md`](../backend/README.md) → **Admin**: the public
 `POST /api/v1/admin/auth/otp/{request,verify}` login pair, plus the bearer-token
 `GET /api/v1/admin/{me,stats,users,users/:id,transactions,pools,admins}`,
 `POST /api/v1/admin/cards/:id/freeze`, and the superadmin
-`POST /api/v1/admin/admins` + `POST /api/v1/admin/admins/:id/status` (list
-endpoints accept `?page=&limit=`; transactions also `?type=` and `?userId=`).
+`POST /api/v1/admin/admins`, `PATCH /api/v1/admin/admins/:id`, and
+`POST /api/v1/admin/admins/:id/status` (list endpoints accept `?page=&limit=`;
+transactions also `?type=` and `?userId=`).

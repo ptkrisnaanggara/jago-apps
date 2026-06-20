@@ -159,6 +159,16 @@ export const api = {
       body: JSON.stringify(input),
     }).then((r) => r.data),
 
+  updateAdmin: (
+    creds: Credentials,
+    id: string,
+    input: { name?: string; phone?: string; role?: string },
+  ) =>
+    request<{ data: Admin }>(creds, `/admin/admins/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(input),
+    }).then((r) => r.data),
+
   setAdminStatus: (
     creds: Credentials,
     id: string,

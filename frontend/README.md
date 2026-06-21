@@ -3,10 +3,11 @@
 An **operator dashboard** for JAGO, built with **Vite + React + TypeScript**. It
 consumes the [`backend`](../backend) admin API and gives an operator a cross-user
 view: headline stats; URL-routed tabs for users, transactions (with type
-filters), money pools, and — for superadmins — admin management; plus a
-**full-page** per-user detail (account, pockets, cards, bills, pools, recent
-transactions) reached by clicking a row. Write actions: freeze/unfreeze a user's
-card, and create / edit / enable / disable admins.
+filters), money pools, and — for superadmins — admin management and an audit
+log; plus a **full-page** per-user detail (account, pockets, cards, bills,
+pools, recent transactions) reached by clicking a row. Write actions:
+freeze/unfreeze a user's card, and create / edit / enable / disable admins — all
+recorded to the audit log.
 
 > The customer-facing product is the Flutter [`mobile-app`](../mobile-app). This
 > web app is the **internal admin** surface only.
@@ -80,6 +81,7 @@ src/
     PoolsTable.tsx     # paginated money pools (+ owner name)
     AdminsTable.tsx    # superadmin: list/create + edit + enable/disable admins
     AdminEditModal.tsx # edit an admin's name/phone/role (role locked on self)
+    AuditTable.tsx     # superadmin: paginated audit log of admin actions
     Pager.tsx          # prev/next from the backend `meta` block
     Logo.tsx           # inline Jago wordmark (brand)
     ErrorBoundary.tsx  # catches render errors → recoverable fallback
@@ -89,17 +91,17 @@ src/
   test/setup.ts        # Testing Library / jsdom setup
 ```
 
-Routes: `/` (users) · `/transactions` · `/pools` · `/admins` (superadmin) ·
-`/users/:id` (detail). All sit under `AppLayout`; the list tabs also share
-`DashboardShell` (stats + tab nav). The `/admins` tab is shown only when the
-signed-in admin's role is `superadmin`. Tests live next to the code they cover
-(`*.test.ts[x]`).
+Routes: `/` (users) · `/transactions` · `/pools` · `/admins` + `/audit`
+(superadmin) · `/users/:id` (detail). All sit under `AppLayout`; the list tabs
+also share `DashboardShell` (stats + tab nav). The `/admins` and `/audit` tabs
+are shown only when the signed-in admin's role is `superadmin`. Tests live next
+to the code they cover (`*.test.ts[x]`).
 
 ## Backend endpoints used
 
 See [`backend/README.md`](../backend/README.md) → **Admin**: the public
 `POST /api/v1/admin/auth/otp/{request,verify}` login pair, plus the bearer-token
-`GET /api/v1/admin/{me,stats,users,users/:id,transactions,pools,admins}`,
+`GET /api/v1/admin/{me,stats,users,users/:id,transactions,pools,admins,audit-logs}`,
 `POST /api/v1/admin/cards/:id/freeze`, and the superadmin
 `POST /api/v1/admin/admins`, `PATCH /api/v1/admin/admins/:id`, and
 `POST /api/v1/admin/admins/:id/status` (list endpoints accept `?page=&limit=`;

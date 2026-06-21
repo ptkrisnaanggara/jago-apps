@@ -204,6 +204,19 @@ type AdminUser struct {
 	Role   string      `json:"role"` // admin | superadmin
 }
 
+// AuditLog records a privileged admin action for accountability. Actor fields
+// snapshot who acted; target fields say what was acted on.
+type AuditLog struct {
+	Base
+	ActorAdminID string `gorm:"index" json:"actorAdminId"`
+	ActorName    string `json:"actorName"`
+	Action       string `gorm:"index" json:"action"` // e.g. admin.create, card.freeze
+	TargetType   string `json:"targetType"`          // e.g. admin, card
+	TargetID     string `json:"targetId"`
+	Detail       string `json:"detail"`
+	IP           string `json:"ip"`
+}
+
 // PoolStatus is a money pool's lifecycle state.
 type PoolStatus string
 
@@ -237,5 +250,6 @@ func All() []any {
 		&User{}, &Account{}, &Pocket{}, &Transaction{},
 		&Transfer{}, &Bill{}, &Card{}, &Notification{}, &Contact{},
 		&MoneyPool{}, &PoolContribution{}, &PocketMember{}, &AdminUser{},
+		&AuditLog{},
 	}
 }

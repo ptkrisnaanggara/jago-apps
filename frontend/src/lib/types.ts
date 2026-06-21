@@ -17,6 +17,18 @@ export interface Admin {
   createdAt: string;
 }
 
+export interface AuditLog {
+  id: string;
+  actorAdminId: string;
+  actorName: string;
+  action: string;
+  targetType: string;
+  targetId: string;
+  detail: string;
+  ip: string;
+  createdAt: string;
+}
+
 export interface Stats {
   users: number;
   accounts: number;

@@ -273,5 +273,10 @@ func (s *Server) adminSetCardFrozen(c *gin.Context) {
 		return
 	}
 	s.log.Info("admin_card_freeze", "card_id", id, "frozen", req.Frozen)
+	action, detail := "card.unfreeze", "Aktifkan kartu "+card.Label
+	if req.Frozen {
+		action, detail = "card.freeze", "Bekukan kartu "+card.Label
+	}
+	s.audit(c, action, "card", id, detail)
 	respondOK(c, card)
 }

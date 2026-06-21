@@ -15,6 +15,7 @@ import UsersTable from "@/components/UsersTable";
 import TransactionsTable from "@/components/TransactionsTable";
 import PoolsTable from "@/components/PoolsTable";
 import AdminsTable from "@/components/AdminsTable";
+import AuditTable from "@/components/AuditTable";
 import UserDetailPage from "@/pages/UserDetailPage";
 
 export default function App() {
@@ -66,6 +67,7 @@ export default function App() {
               <Route path="transactions" element={<TransactionsTable />} />
               <Route path="pools" element={<PoolsTable />} />
               <Route path="admins" element={<AdminsTable />} />
+              <Route path="audit" element={<AuditTable />} />
             </Route>
             <Route path="users/:id" element={<UserDetailPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />

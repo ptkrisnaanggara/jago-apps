@@ -96,6 +96,8 @@ func (s *Server) createAdmin(c *gin.Context) {
 		respondError(c, 500, "internal", "failed to create admin")
 		return
 	}
+	s.audit(c, "admin.create", "admin", admin.ID,
+		"Buat admin "+admin.Name+" ("+admin.Phone+", "+admin.Role+")")
 	respondCreated(c, admin)
 }
 
@@ -182,6 +184,7 @@ func (s *Server) updateAdmin(c *gin.Context) {
 		return
 	}
 	s.log.Info("admin_updated", "admin_id", id)
+	s.audit(c, "admin.update", "admin", id, "Ubah admin "+admin.Name)
 	respondOK(c, admin)
 }
 
@@ -229,5 +232,10 @@ func (s *Server) setAdminStatus(c *gin.Context) {
 		return
 	}
 	s.log.Info("admin_status_changed", "admin_id", id, "status", status)
+	verb := "Aktifkan"
+	if status == model.AdminDisabled {
+		verb = "Nonaktifkan"
+	}
+	s.audit(c, "admin.status", "admin", id, verb+" admin "+admin.Name)
 	respondOK(c, admin)
 }

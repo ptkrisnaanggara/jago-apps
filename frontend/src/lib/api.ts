@@ -8,6 +8,7 @@ import type {
   AdminPool,
   AdminTransaction,
   AdminUser,
+  AuditLog,
   Card,
   Page,
   Stats,
@@ -139,6 +140,9 @@ export const api = {
 
   pools: (creds: Credentials, page = 1, limit = 20) =>
     request<Page<AdminPool>>(creds, `/admin/pools?${qs({ page, limit })}`),
+
+  auditLogs: (creds: Credentials, page = 1, limit = 20) =>
+    request<Page<AuditLog>>(creds, `/admin/audit-logs?${qs({ page, limit })}`),
 
   freezeCard: (creds: Credentials, cardId: string, frozen: boolean) =>
     request<{ data: Card }>(creds, `/admin/cards/${cardId}/freeze`, {

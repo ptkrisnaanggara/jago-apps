@@ -102,4 +102,32 @@ describe("api authenticated requests", () => {
     await api.transactions(creds, 1, 20, "");
     expect(fetchFn.mock.calls[0][0]).not.toContain("type=");
   });
+
+  it("includes from/to date range when provided", async () => {
+    const fetchFn = mockFetch(200, { data: [], meta: {} });
+    await api.transactions(creds, 1, 20, "", "2026-06-01", "2026-06-15");
+    const [url] = fetchFn.mock.calls[0];
+    expect(url).toContain("from=2026-06-01");
+    expect(url).toContain("to=2026-06-15");
+  });
+
+  it("forwards filters to a CSV export URL", async () => {
+    const fetchFn = vi.fn(async (_url: string) => ({
+      ok: true,
+      status: 200,
+      blob: async () => new Blob(["csv"]),
+    }));
+    vi.stubGlobal("fetch", fetchFn);
+
+    await api.exportCsv(creds, "transactions", {
+      type: "income",
+      from: "2026-06-01",
+      to: "",
+    });
+    const [url] = fetchFn.mock.calls[0];
+    expect(url).toContain("/admin/export/transactions?");
+    expect(url).toContain("type=income");
+    expect(url).toContain("from=2026-06-01");
+    expect(url).not.toContain("to="); // empty values are dropped
+  });
 });

@@ -114,31 +114,33 @@ type adminTransaction struct {
 	CreatedAt string `json:"createdAt"`
 }
 
+// txBase builds the filtered transaction query shared by the list and CSV
+// export: `?type=income|expense`, `?userId=`, and `?from=&to=` date range.
+func (s *Server) txBase(c *gin.Context) *gorm.DB {
+	q := s.db.Model(&model.Transaction{})
+	if t := c.Query("type"); t == string(model.TxIncome) || t == string(model.TxExpense) {
+		q = q.Where("transactions.type = ?", t)
+	}
+	if uid := c.Query("userId"); uid != "" {
+		q = q.Where("transactions.user_id = ?", uid)
+	}
+	return applyDateRange(c, q, "transactions.created_at")
+}
+
 // listAdminTransactions returns a page of transactions across all users with
 // the owner's name, newest first. Supports `?page=&limit=`, `?type=income|
-// expense`, and `?userId=` to scope to one user.
+// expense`, `?userId=`, and `?from=&to=` (YYYY-MM-DD).
 func (s *Server) listAdminTransactions(c *gin.Context) {
 	p := parsePage(c)
 
-	base := func() *gorm.DB {
-		q := s.db.Model(&model.Transaction{})
-		if t := c.Query("type"); t == string(model.TxIncome) || t == string(model.TxExpense) {
-			q = q.Where("transactions.type = ?", t)
-		}
-		if uid := c.Query("userId"); uid != "" {
-			q = q.Where("transactions.user_id = ?", uid)
-		}
-		return q
-	}
-
 	var total int64
-	if err := base().Count(&total).Error; err != nil {
+	if err := s.txBase(c).Count(&total).Error; err != nil {
 		respondError(c, 500, "internal", "failed to load transactions")
 		return
 	}
 
 	var rows []adminTransaction
-	if err := base().
+	if err := s.txBase(c).
 		Select("transactions.id, transactions.user_id, users.name AS user_name, " +
 			"transactions.title, transactions.category, transactions.amount, " +
 			"transactions.type, transactions.created_at").

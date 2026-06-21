@@ -6,6 +6,7 @@ import { useAuth } from "@/context/auth";
 import { usePagedList } from "@/hooks/usePagedList";
 import Pager from "@/components/Pager";
 import ExportCsvButton from "@/components/ExportCsvButton";
+import DateRangeFilter from "@/components/DateRangeFilter";
 
 const FILTERS: { value: TxFilter; label: string }[] = [
   { value: "", label: "Semua" },
@@ -16,20 +17,22 @@ const FILTERS: { value: TxFilter; label: string }[] = [
 export default function TransactionsTable() {
   const { creds } = useAuth();
   const [type, setType] = useState<TxFilter>("");
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
 
   const fetcher = useCallback(
-    (page: number) => api.transactions(creds, page, 20, type),
-    [creds, type],
+    (page: number) => api.transactions(creds, page, 20, type, from, to),
+    [creds, type, from, to],
   );
   const { rows, meta, page, setPage, loading, error } =
-    usePagedList<AdminTransaction>(fetcher, [creds, type]);
+    usePagedList<AdminTransaction>(fetcher, [creds, type, from, to]);
 
-  // Switching the filter resets to the first page.
+  // Changing any filter resets to the first page.
   useEffect(() => {
     if (page !== 1) setPage(1);
     // Only react to filter changes here.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [type]);
+  }, [type, from, to]);
 
   const filterChips = (
     <div className="chips-row">
@@ -42,8 +45,16 @@ export default function TransactionsTable() {
           {f.label}
         </button>
       ))}
+      <DateRangeFilter
+        from={from}
+        to={to}
+        onChange={(r) => {
+          setFrom(r.from);
+          setTo(r.to);
+        }}
+      />
       <span className="chips-spacer" />
-      <ExportCsvButton kind="transactions" />
+      <ExportCsvButton kind="transactions" params={{ type, from, to }} />
     </div>
   );
 

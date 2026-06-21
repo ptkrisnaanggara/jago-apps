@@ -50,9 +50,10 @@ func (s *Server) exportUsersCSV(c *gin.Context) {
 }
 
 // exportTransactionsCSV streams transactions across all users with owner name.
+// Honors the same `?type=`, `?userId=`, `?from=&to=` filters as the list.
 func (s *Server) exportTransactionsCSV(c *gin.Context) {
 	var rows []adminTransaction
-	if err := s.db.Model(&model.Transaction{}).
+	if err := s.txBase(c).
 		Select("transactions.id, transactions.user_id, users.name AS user_name, " +
 			"transactions.title, transactions.category, transactions.amount, " +
 			"transactions.type, transactions.created_at").
@@ -75,10 +76,10 @@ func (s *Server) exportTransactionsCSV(c *gin.Context) {
 	}
 }
 
-// exportAuditLogsCSV streams the audit log.
+// exportAuditLogsCSV streams the audit log. Honors `?action=` and `?from=&to=`.
 func (s *Server) exportAuditLogsCSV(c *gin.Context) {
 	var logs []model.AuditLog
-	if err := s.db.
+	if err := s.auditBase(c).
 		Order("created_at DESC").
 		Limit(exportMaxRows).
 		Find(&logs).Error; err != nil {

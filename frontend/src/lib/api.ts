@@ -10,6 +10,7 @@ import type {
   AdminUser,
   AuditLog,
   Card,
+  ChartsData,
   Page,
   Stats,
   TxFilter,
@@ -118,6 +119,12 @@ export const api = {
 
   stats: (creds: Credentials) =>
     request<{ data: Stats }>(creds, "/admin/stats").then((r) => r.data),
+
+  charts: (creds: Credentials, days = 14) =>
+    request<{ data: ChartsData }>(
+      creds,
+      `/admin/stats/charts?${qs({ days })}`,
+    ).then((r) => r.data),
 
   users: (creds: Credentials, page = 1, limit = 20) =>
     request<Page<AdminUser>>(creds, `/admin/users?${qs({ page, limit })}`),

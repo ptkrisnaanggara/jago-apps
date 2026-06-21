@@ -17,6 +17,24 @@ export interface Admin {
   createdAt: string;
 }
 
+export interface ChartDaily {
+  date: string;
+  income: number;
+  expense: number;
+}
+
+export interface ChartCategory {
+  category: string;
+  total: number;
+  count: number;
+}
+
+export interface ChartsData {
+  days: number;
+  daily: ChartDaily[];
+  topCategories: ChartCategory[];
+}
+
 export interface AuditLog {
   id: string;
   actorAdminId: string;

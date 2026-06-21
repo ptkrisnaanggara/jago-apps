@@ -14,6 +14,7 @@ import DashboardShell from "@/components/DashboardShell";
 import UsersTable from "@/components/UsersTable";
 import TransactionsTable from "@/components/TransactionsTable";
 import PoolsTable from "@/components/PoolsTable";
+import ChartsPage from "@/components/ChartsPage";
 import AdminsTable from "@/components/AdminsTable";
 import AuditTable from "@/components/AuditTable";
 import UserDetailPage from "@/pages/UserDetailPage";
@@ -66,6 +67,7 @@ export default function App() {
               <Route index element={<UsersTable />} />
               <Route path="transactions" element={<TransactionsTable />} />
               <Route path="pools" element={<PoolsTable />} />
+              <Route path="charts" element={<ChartsPage />} />
               <Route path="admins" element={<AdminsTable />} />
               <Route path="audit" element={<AuditTable />} />
             </Route>

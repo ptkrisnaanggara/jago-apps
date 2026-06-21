@@ -83,6 +83,7 @@ func (s *Server) Router() *gin.Engine {
 		{
 			admin.GET("/me", s.adminMe)
 			admin.GET("/stats", s.getAdminStats)
+			admin.GET("/stats/charts", s.getAdminCharts)
 			admin.GET("/users", s.listAdminUsers)
 			admin.GET("/users/:id", s.getAdminUser)
 			admin.PATCH("/users/:id", s.updateAdminUser)

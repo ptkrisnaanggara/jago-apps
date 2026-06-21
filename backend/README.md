@@ -133,6 +133,7 @@ a bearer admin token (from the OTP login) **or** an `X-Admin-Key` header matchin
 | --- | --- | --- |
 | `GET` | `/api/v1/admin/me` | The signed-in admin's profile. |
 | `GET` | `/api/v1/admin/stats` | Aggregate counts + total account/pocket balances. |
+| `GET` | `/api/v1/admin/stats/charts` | Daily income/expense series (`?days=`, 1–90) + top expense categories. |
 | `GET` | `/api/v1/admin/users` | Users with their account balance (paginated). |
 | `GET` | `/api/v1/admin/users/:id` | One user's full detail (account, pockets, cards, bills, pools, recent transactions). |
 | `PATCH` | `/api/v1/admin/users/:id` | Edit a user's name/phone (partial; 409 on duplicate phone). |

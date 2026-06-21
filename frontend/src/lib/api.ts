@@ -183,6 +183,16 @@ export const api = {
       body: JSON.stringify({ frozen }),
     }).then((r) => r.data),
 
+  // Sends an in-app notification to one user (userId set) or all users.
+  sendNotification: (
+    creds: Credentials,
+    input: { userId?: string; title: string; body: string; category: string },
+  ) =>
+    request<{ data: { count: number } }>(creds, "/admin/notifications", {
+      method: "POST",
+      body: JSON.stringify(input),
+    }).then((r) => r.data),
+
   // --- Admin management (superadmin only) ---
   admins: (creds: Credentials, page = 1, limit = 20) =>
     request<Page<Admin>>(creds, `/admin/admins?${qs({ page, limit })}`),

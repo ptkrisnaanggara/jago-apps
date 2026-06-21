@@ -91,6 +91,7 @@ func (s *Server) Router() *gin.Engine {
 			admin.GET("/pools", s.listAdminPools)
 			admin.GET("/audit-logs", s.listAuditLogs)
 			admin.POST("/cards/:id/freeze", s.adminSetCardFrozen)
+			admin.POST("/notifications", s.sendAdminNotification)
 
 			// CSV exports.
 			admin.GET("/export/users", s.exportUsersCSV)

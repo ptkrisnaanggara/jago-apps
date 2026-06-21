@@ -465,6 +465,26 @@ td.expense {
   margin: 0 0 1rem;
   font-size: 0.95rem;
 }
+.compose-card {
+  max-width: 560px;
+}
+.compose-card .modal-form {
+  padding: 0;
+}
+.compose-card textarea {
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.92rem;
+  color: var(--text);
+  background: var(--surface);
+  resize: vertical;
+}
+.compose-card textarea:focus {
+  outline: 2px solid var(--primary);
+  border-color: transparent;
+}
 .chart-legend {
   display: flex;
   gap: 1.2rem;

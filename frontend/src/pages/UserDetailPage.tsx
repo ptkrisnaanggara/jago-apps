@@ -4,6 +4,7 @@ import { api } from "@/lib/api";
 import type { UserDetail as Detail } from "@/lib/types";
 import { formatDate, formatRupiah } from "@/lib/format";
 import { useAuth } from "@/context/auth";
+import UserEditModal from "@/components/UserEditModal";
 
 // UserDetailPage is a full-page drill-down for one user: account, pockets,
 // cards (with an operator freeze toggle), bills, pools, and recent transactions.
@@ -14,6 +15,7 @@ export default function UserDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [busyCard, setBusyCard] = useState<string | null>(null);
+  const [editing, setEditing] = useState(false);
 
   const load = useCallback(() => {
     setError(null);
@@ -61,6 +63,9 @@ export default function UserDetailPage() {
                 {detail.user.phone} · Bergabung{" "}
                 {formatDate(detail.user.createdAt)}
               </p>
+              <button className="ghost small" onClick={() => setEditing(true)}>
+                Ubah pengguna
+              </button>
             </div>
             <div className="detail-account">
               <span className="card-label">Saldo Rekening</span>
@@ -196,6 +201,16 @@ export default function UserDetailPage() {
               )}
             </Section>
           </div>
+
+          {editing && (
+            <UserEditModal
+              userId={detail.user.id}
+              initialName={detail.user.name}
+              initialPhone={detail.user.phone}
+              onClose={() => setEditing(false)}
+              onSaved={load}
+            />
+          )}
         </>
       )}
     </div>

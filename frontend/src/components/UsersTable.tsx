@@ -6,6 +6,7 @@ import { formatDate, formatRupiah } from "@/lib/format";
 import { useAuth } from "@/context/auth";
 import { usePagedList } from "@/hooks/usePagedList";
 import Pager from "@/components/Pager";
+import ExportCsvButton from "@/components/ExportCsvButton";
 
 export default function UsersTable() {
   const { creds } = useAuth();
@@ -26,6 +27,9 @@ export default function UsersTable() {
 
   return (
     <>
+      <div className="table-toolbar">
+        <ExportCsvButton kind="users" />
+      </div>
       <div className="table-wrap">
         <table>
           <thead>

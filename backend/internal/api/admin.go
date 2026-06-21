@@ -2,6 +2,7 @@ package api
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/ptkrisnaanggara/jago-apps/backend/internal/model"
@@ -153,7 +154,73 @@ func (s *Server) listAdminTransactions(c *gin.Context) {
 	respondPaginated(c, rows, p, total)
 }
 
-// adminUserDetail bundles everything an operator needs about one user.
+// adminUpdateUserRequest is a partial edit of a user's profile.
+type adminUpdateUserRequest struct {
+	Name  *string `json:"name"`
+	Phone *string `json:"phone"`
+}
+
+// updateAdminUser edits a user's name and/or phone (phone stays unique).
+func (s *Server) updateAdminUser(c *gin.Context) {
+	var req adminUpdateUserRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		respondError(c, 400, "bad_request", "invalid body")
+		return
+	}
+
+	id := c.Param("id")
+	var user model.User
+	if err := s.db.First(&user, "id = ?", id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			respondError(c, 404, "not_found", "user not found")
+			return
+		}
+		respondError(c, 500, "internal", "failed to load user")
+		return
+	}
+
+	updates := map[string]any{}
+	if req.Name != nil {
+		name := strings.TrimSpace(*req.Name)
+		if name == "" {
+			respondError(c, 400, "bad_request", "name cannot be empty")
+			return
+		}
+		updates["name"] = name
+	}
+	if req.Phone != nil {
+		phone := strings.TrimSpace(*req.Phone)
+		if phone == "" {
+			respondError(c, 400, "bad_request", "phone cannot be empty")
+			return
+		}
+		if phone != user.Phone {
+			var clash model.User
+			err := s.db.First(&clash, "phone = ? AND id <> ?", phone, id).Error
+			if err == nil {
+				respondError(c, 409, "conflict", "Nomor HP sudah digunakan")
+				return
+			}
+			if !errors.Is(err, gorm.ErrRecordNotFound) {
+				respondError(c, 500, "internal", "failed to check phone")
+				return
+			}
+		}
+		updates["phone"] = phone
+	}
+
+	if len(updates) == 0 {
+		respondOK(c, user)
+		return
+	}
+	if err := s.db.Model(&user).Updates(updates).Error; err != nil {
+		respondError(c, 500, "internal", "failed to update user")
+		return
+	}
+	s.audit(c, "user.update", "user", id, "Ubah pengguna "+user.Name)
+	respondOK(c, user)
+}
+
 type adminUserDetail struct {
 	User         model.User          `json:"user"`
 	Account      *model.Account      `json:"account"`

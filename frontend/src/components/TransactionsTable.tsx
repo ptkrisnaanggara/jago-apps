@@ -5,6 +5,7 @@ import { formatDate, formatRupiah } from "@/lib/format";
 import { useAuth } from "@/context/auth";
 import { usePagedList } from "@/hooks/usePagedList";
 import Pager from "@/components/Pager";
+import ExportCsvButton from "@/components/ExportCsvButton";
 
 const FILTERS: { value: TxFilter; label: string }[] = [
   { value: "", label: "Semua" },
@@ -41,6 +42,8 @@ export default function TransactionsTable() {
           {f.label}
         </button>
       ))}
+      <span className="chips-spacer" />
+      <ExportCsvButton kind="transactions" />
     </div>
   );
 

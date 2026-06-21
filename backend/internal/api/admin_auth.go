@@ -169,6 +169,12 @@ func (s *Server) verifyAdminOTP(c *gin.Context) {
 		respondError(c, 500, "internal", "failed to issue token")
 		return
 	}
+
+	// Record the login as the admin who just authenticated (this endpoint is
+	// public, so set the actor explicitly before auditing).
+	c.Set(ctxAdminID, admin.ID)
+	s.audit(c, "admin.login", "admin", admin.ID, "Login admin "+admin.Name)
+
 	respondOK(c, gin.H{"token": tok, "admin": admin})
 }
 

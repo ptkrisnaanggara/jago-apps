@@ -141,8 +141,34 @@ export const api = {
   pools: (creds: Credentials, page = 1, limit = 20) =>
     request<Page<AdminPool>>(creds, `/admin/pools?${qs({ page, limit })}`),
 
-  auditLogs: (creds: Credentials, page = 1, limit = 20) =>
-    request<Page<AuditLog>>(creds, `/admin/audit-logs?${qs({ page, limit })}`),
+  auditLogs: (creds: Credentials, page = 1, limit = 20, action = "") =>
+    request<Page<AuditLog>>(
+      creds,
+      `/admin/audit-logs?${qs({ page, limit, action })}`,
+    ),
+
+  updateUser: (
+    creds: Credentials,
+    id: string,
+    input: { name?: string; phone?: string },
+  ) =>
+    request<{ data: { id: string; name: string; phone: string } }>(
+      creds,
+      `/admin/users/${id}`,
+      { method: "PATCH", body: JSON.stringify(input) },
+    ).then((r) => r.data),
+
+  // Fetches a CSV export with auth and returns it as a Blob for download.
+  exportCsv: (
+    creds: Credentials,
+    kind: "users" | "transactions" | "audit-logs",
+  ) =>
+    fetch(`${normalizeBase(creds.baseUrl)}/admin/export/${kind}`, {
+      headers: { Authorization: `Bearer ${creds.token}` },
+    }).then((res) => {
+      if (!res.ok) throw new Error(`Ekspor gagal (${res.status}).`);
+      return res.blob();
+    }),
 
   freezeCard: (creds: Credentials, cardId: string, frozen: boolean) =>
     request<{ data: Card }>(creds, `/admin/cards/${cardId}/freeze`, {

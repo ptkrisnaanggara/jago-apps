@@ -48,8 +48,9 @@ describe("AuditTable", () => {
     renderTable();
 
     expect(await screen.findByText("Super Admin")).toBeInTheDocument();
-    // The action code is mapped to a friendly label.
-    expect(screen.getByText("Bekukan kartu")).toBeInTheDocument();
+    // The action code is mapped to a friendly label (chip in the row + the
+    // filter <option>, so there are at least two matches).
+    expect(screen.getAllByText("Bekukan kartu").length).toBeGreaterThan(0);
     expect(screen.getByText("Bekukan kartu Kartu Utama")).toBeInTheDocument();
     expect(screen.getByText("127.0.0.1")).toBeInTheDocument();
   });

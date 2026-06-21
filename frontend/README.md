@@ -6,8 +6,9 @@ view: headline stats; URL-routed tabs for users, transactions (with type
 filters), money pools, and — for superadmins — admin management and an audit
 log; plus a **full-page** per-user detail (account, pockets, cards, bills,
 pools, recent transactions) reached by clicking a row. Write actions:
-freeze/unfreeze a user's card, and create / edit / enable / disable admins — all
-recorded to the audit log.
+edit a user, freeze/unfreeze a card, and create / edit / enable / disable
+admins — all recorded to the audit log. Users, transactions, and the audit log
+can be exported to CSV.
 
 > The customer-facing product is the Flutter [`mobile-app`](../mobile-app). This
 > web app is the **internal admin** surface only.
@@ -63,11 +64,12 @@ The topbar shows the signed-in admin; "Keluar" clears the session.
 ```
 src/
   lib/
-    api.ts             # typed fetch client (bearer token) + auth endpoints
+    api.ts             # typed fetch client (bearer token) + auth/export endpoints
     config.ts          # env config (VITE_API_BASE_URL)
     credentials.ts     # Credentials type (baseUrl + token) + localStorage
     types.ts           # domain types mirroring the API responses
     format.ts          # Rupiah / date formatting (id-ID)
+    download.ts        # trigger a browser download for a Blob (CSV)
   context/
     auth.ts            # AuthContext + useAuth (creds + signed-in admin + logout)
   hooks/
@@ -81,7 +83,9 @@ src/
     PoolsTable.tsx     # paginated money pools (+ owner name)
     AdminsTable.tsx    # superadmin: list/create + edit + enable/disable admins
     AdminEditModal.tsx # edit an admin's name/phone/role (role locked on self)
-    AuditTable.tsx     # superadmin: paginated audit log of admin actions
+    AuditTable.tsx     # superadmin: audit log + action filter + CSV export
+    UserEditModal.tsx  # edit a customer's name/phone
+    ExportCsvButton.tsx# downloads a CSV export (users/transactions/audit-logs)
     Pager.tsx          # prev/next from the backend `meta` block
     Logo.tsx           # inline Jago wordmark (brand)
     ErrorBoundary.tsx  # catches render errors → recoverable fallback
@@ -102,6 +106,8 @@ to the code they cover (`*.test.ts[x]`).
 See [`backend/README.md`](../backend/README.md) → **Admin**: the public
 `POST /api/v1/admin/auth/otp/{request,verify}` login pair, plus the bearer-token
 `GET /api/v1/admin/{me,stats,users,users/:id,transactions,pools,admins,audit-logs}`,
+the CSV `GET /api/v1/admin/export/{users,transactions,audit-logs}`,
+`PATCH /api/v1/admin/users/:id`,
 `POST /api/v1/admin/cards/:id/freeze`, and the superadmin
 `POST /api/v1/admin/admins`, `PATCH /api/v1/admin/admins/:id`, and
 `POST /api/v1/admin/admins/:id/status` (list endpoints accept `?page=&limit=`;

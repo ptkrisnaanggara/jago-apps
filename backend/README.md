@@ -135,14 +135,23 @@ a bearer admin token (from the OTP login) **or** an `X-Admin-Key` header matchin
 | `GET` | `/api/v1/admin/stats` | Aggregate counts + total account/pocket balances. |
 | `GET` | `/api/v1/admin/users` | Users with their account balance (paginated). |
 | `GET` | `/api/v1/admin/users/:id` | One user's full detail (account, pockets, cards, bills, pools, recent transactions). |
+| `PATCH` | `/api/v1/admin/users/:id` | Edit a user's name/phone (partial; 409 on duplicate phone). |
 | `GET` | `/api/v1/admin/transactions` | Transactions across all users (paginated; `?type=income\|expense`, `?userId=`). |
 | `GET` | `/api/v1/admin/pools` | Money pools across all users with owner name (paginated). |
 | `GET` | `/api/v1/admin/audit-logs` | Privileged admin actions (paginated; `?action=`). |
 | `POST` | `/api/v1/admin/cards/:id/freeze` | Freeze/unfreeze any card (`{"frozen":true}`). |
 
-Mutating admin actions (card freeze, admin create/edit/status) are recorded in
-the **`audit_logs`** table (actor, action, target, detail, IP) and surfaced via
-`/admin/audit-logs`.
+Mutating admin actions — **admin login**, user edit, card freeze, and admin
+create/edit/status — are recorded in the **`audit_logs`** table (actor, action,
+target, detail, IP) and surfaced via `/admin/audit-logs` (filter with `?action=`).
+
+CSV exports (attachment downloads, up to 50k rows):
+
+| Method | Path | Description |
+| --- | --- | --- |
+| `GET` | `/api/v1/admin/export/users` | Users + balances as CSV. |
+| `GET` | `/api/v1/admin/export/transactions` | All transactions as CSV. |
+| `GET` | `/api/v1/admin/export/audit-logs` | Audit log as CSV. |
 
 Admin management (**superadmin only**; the static service key also qualifies):
 

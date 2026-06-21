@@ -7,8 +7,8 @@ filters), money pools, charts, and — for superadmins — admin management and 
 audit log; plus a **full-page** per-user detail (account, pockets, cards, bills,
 pools, recent transactions) reached by clicking a row. Write actions:
 edit a user, freeze/unfreeze a card, and create / edit / enable / disable
-admins — all recorded to the audit log. Users, transactions, and the audit log
-can be exported to CSV.
+admins, and adjust (credit/debit) a user's balance — all recorded to the audit
+log. Users, transactions, and the audit log can be exported to CSV.
 
 > The customer-facing product is the Flutter [`mobile-app`](../mobile-app). This
 > web app is the **internal admin** surface only.
@@ -86,6 +86,7 @@ src/
     AdminEditModal.tsx # edit an admin's name/phone/role (role locked on self)
     AuditTable.tsx     # superadmin: audit log + action filter + CSV export
     UserEditModal.tsx  # edit a customer's name/phone
+    BalanceAdjustModal.tsx # credit/debit a user's balance (reason + preview)
     ExportCsvButton.tsx# downloads a CSV export (users/transactions/audit-logs)
     Pager.tsx          # prev/next from the backend `meta` block
     Logo.tsx           # inline Jago wordmark (brand)

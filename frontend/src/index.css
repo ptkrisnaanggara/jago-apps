@@ -222,6 +222,32 @@ code {
   outline: 2px solid var(--primary);
   border-color: transparent;
 }
+.seg {
+  display: flex;
+  gap: 0.4rem;
+}
+.seg-btn {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--muted-dark);
+}
+.seg-btn.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+.preview {
+  margin: 0;
+  font-weight: 600;
+}
+.preview.over {
+  color: var(--expense);
+}
 .modal-actions {
   display: flex;
   justify-content: flex-end;

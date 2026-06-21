@@ -5,6 +5,7 @@ import type { UserDetail as Detail } from "@/lib/types";
 import { formatDate, formatRupiah } from "@/lib/format";
 import { useAuth } from "@/context/auth";
 import UserEditModal from "@/components/UserEditModal";
+import BalanceAdjustModal from "@/components/BalanceAdjustModal";
 
 // UserDetailPage is a full-page drill-down for one user: account, pockets,
 // cards (with an operator freeze toggle), bills, pools, and recent transactions.
@@ -16,6 +17,7 @@ export default function UserDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [busyCard, setBusyCard] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
+  const [adjusting, setAdjusting] = useState(false);
 
   const load = useCallback(() => {
     setError(null);
@@ -76,6 +78,14 @@ export default function UserDetailPage() {
                 <span className="mono muted">
                   {detail.account.accountNumber}
                 </span>
+              )}
+              {detail.account && (
+                <button
+                  className="ghost small"
+                  onClick={() => setAdjusting(true)}
+                >
+                  Sesuaikan saldo
+                </button>
               )}
             </div>
           </header>
@@ -208,6 +218,16 @@ export default function UserDetailPage() {
               initialName={detail.user.name}
               initialPhone={detail.user.phone}
               onClose={() => setEditing(false)}
+              onSaved={load}
+            />
+          )}
+
+          {adjusting && detail.account && (
+            <BalanceAdjustModal
+              userId={detail.user.id}
+              userName={detail.user.name}
+              currentBalance={detail.account.balance}
+              onClose={() => setAdjusting(false)}
               onSaved={load}
             />
           )}

@@ -137,14 +137,16 @@ a bearer admin token (from the OTP login) **or** an `X-Admin-Key` header matchin
 | `GET` | `/api/v1/admin/users` | Users with their account balance (paginated). |
 | `GET` | `/api/v1/admin/users/:id` | One user's full detail (account, pockets, cards, bills, pools, recent transactions). |
 | `PATCH` | `/api/v1/admin/users/:id` | Edit a user's name/phone (partial; 409 on duplicate phone). |
+| `POST` | `/api/v1/admin/users/:id/adjust` | Credit/debit balance (`{type:"credit\|debit",amount,reason}`; records a transaction; 400 if debit > balance). |
 | `GET` | `/api/v1/admin/transactions` | Transactions across all users (paginated; `?type=income\|expense`, `?userId=`). |
 | `GET` | `/api/v1/admin/pools` | Money pools across all users with owner name (paginated). |
 | `GET` | `/api/v1/admin/audit-logs` | Privileged admin actions (paginated; `?action=`). |
 | `POST` | `/api/v1/admin/cards/:id/freeze` | Freeze/unfreeze any card (`{"frozen":true}`). |
 
-Mutating admin actions — **admin login**, user edit, card freeze, and admin
-create/edit/status — are recorded in the **`audit_logs`** table (actor, action,
-target, detail, IP) and surfaced via `/admin/audit-logs` (filter with `?action=`).
+Mutating admin actions — **admin login**, user edit, **balance adjust**, card
+freeze, and admin create/edit/status — are recorded in the **`audit_logs`** table
+(actor, action, target, detail, IP) and surfaced via `/admin/audit-logs` (filter
+with `?action=`).
 
 CSV exports (attachment downloads, up to 50k rows):
 

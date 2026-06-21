@@ -8,10 +8,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/ptkrisnaanggara/jago-apps/backend/internal/model"
 )
 
 const (
 	ctxUserID       = "userID"
+	ctxAdminID      = "adminID"
 	ctxRequestID    = "requestID"
 	headerRequestID = "X-Request-Id"
 )
@@ -123,18 +125,35 @@ func (s *Server) cors() gin.HandlerFunc {
 	}
 }
 
-// adminRequired guards the admin dashboard endpoints with a static API key
-// sent in the X-Admin-Key header (configured via ADMIN_API_KEY). It uses a
-// constant-time comparison so the check does not leak the key by timing.
+// adminRequired guards the admin dashboard endpoints. It accepts either:
+//   - a static API key in X-Admin-Key (configured via ADMIN_API_KEY), for
+//     tooling/curl; checked in constant time, or
+//   - a Bearer JWT issued by the admin OTP login whose subject is an active
+//     admin_users row (the dashboard's normal path).
 func (s *Server) adminRequired() gin.HandlerFunc {
 	want := []byte(s.cfg.AdminAPIKey)
 	return func(c *gin.Context) {
-		got := []byte(c.GetHeader("X-Admin-Key"))
-		if len(want) == 0 || subtle.ConstantTimeCompare(got, want) != 1 {
-			respondError(c, 401, "unauthorized", "Invalid or missing admin key")
+		if got := c.GetHeader("X-Admin-Key"); got != "" && len(want) > 0 &&
+			subtle.ConstantTimeCompare([]byte(got), want) == 1 {
+			c.Next()
 			return
 		}
-		c.Next()
+
+		header := c.GetHeader("Authorization")
+		raw := strings.TrimPrefix(header, "Bearer ")
+		if raw != header && raw != "" {
+			if id, err := s.tokens.Parse(raw); err == nil {
+				var admin model.AdminUser
+				if err := s.db.First(&admin, "id = ? AND status = ?",
+					id, model.AdminActive).Error; err == nil {
+					c.Set(ctxAdminID, admin.ID)
+					c.Next()
+					return
+				}
+			}
+		}
+
+		respondError(c, 401, "unauthorized", "Admin authentication required")
 	}
 }
 

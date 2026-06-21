@@ -70,16 +70,38 @@ func (s *Server) Router() *gin.Engine {
 			secured.POST("/notifications/read-all", s.markAllNotificationsRead)
 		}
 
-		// Admin dashboard (frontend/) — guarded by a static X-Admin-Key, not JWT.
+		// Admin login (phone + OTP over WhatsApp/WAHA) — public.
+		adminAuth := v1.Group("/admin/auth")
+		{
+			adminAuth.POST("/otp/request", s.requestAdminOTP)
+			adminAuth.POST("/otp/verify", s.verifyAdminOTP)
+		}
+
+		// Admin dashboard (frontend/) — bearer admin token or static X-Admin-Key.
 		admin := v1.Group("/admin")
 		admin.Use(s.adminRequired())
 		{
+			admin.GET("/me", s.adminMe)
 			admin.GET("/stats", s.getAdminStats)
+			admin.GET("/stats/charts", s.getAdminCharts)
 			admin.GET("/users", s.listAdminUsers)
 			admin.GET("/users/:id", s.getAdminUser)
+			admin.PATCH("/users/:id", s.updateAdminUser)
 			admin.GET("/transactions", s.listAdminTransactions)
 			admin.GET("/pools", s.listAdminPools)
+			admin.GET("/audit-logs", s.listAuditLogs)
 			admin.POST("/cards/:id/freeze", s.adminSetCardFrozen)
+
+			// CSV exports.
+			admin.GET("/export/users", s.exportUsersCSV)
+			admin.GET("/export/transactions", s.exportTransactionsCSV)
+			admin.GET("/export/audit-logs", s.exportAuditLogsCSV)
+
+			// Admin management (superadmin only).
+			admin.GET("/admins", s.listAdmins)
+			admin.POST("/admins", s.createAdmin)
+			admin.PATCH("/admins/:id", s.updateAdmin)
+			admin.POST("/admins/:id/status", s.setAdminStatus)
 		}
 	}
 

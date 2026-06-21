@@ -1,4 +1,4 @@
-// Display helpers shared across the dashboard.
+// Display helpers shared across the dashboard (Indonesian locale).
 
 const rupiah = new Intl.NumberFormat("id-ID", {
   style: "currency",
@@ -8,12 +8,6 @@ const rupiah = new Intl.NumberFormat("id-ID", {
 
 export function formatRupiah(amount: number): string {
   return rupiah.format(amount);
-}
-
-const compact = new Intl.NumberFormat("id-ID", { notation: "compact" });
-
-export function formatCompact(n: number): string {
-  return compact.format(n);
 }
 
 export function formatDate(iso: string): string {

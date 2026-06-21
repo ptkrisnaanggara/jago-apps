@@ -105,20 +105,63 @@ alongside `data`:
 | `POST` | `/api/v1/notifications/:id/read` | Mark one read. |
 | `POST` | `/api/v1/notifications/read-all` | Mark all read. |
 
-### Admin (web dashboard)
+### Admin login (phone + OTP)
 
-These power the [`frontend/`](../frontend) admin dashboard. They are **not**
-JWT-secured; instead they require an `X-Admin-Key` header matching the
-`ADMIN_API_KEY` env var (default `admin-secret`). All are read-only.
+Admins live in the **`admin_users`** table (`name`, `phone` unique, `status`
+active/disabled, `role`). On boot, if the table is empty, a default admin is
+seeded from `ADMIN_SEED_NAME` / `ADMIN_SEED_PHONE` (defaults `Super Admin` /
+`81200000000`). Login is phone + OTP; the code is delivered to the admin's
+WhatsApp via **WAHA** ([WhatsApp HTTP API](https://waha.devlike.pro)).
 
 | Method | Path | Description |
 | --- | --- | --- |
+| `POST` | `/api/v1/admin/auth/otp/request` | `{phone}` → look up active admin, store an OTP, send it via WAHA. In demo mode returns `demoCode`. |
+| `POST` | `/api/v1/admin/auth/otp/verify` | `{phone,code}` → returns `{token, admin}` (a bearer JWT). |
+
+In demo mode (`OTP_DEMO_MODE=true`) the code is `OTP_DEMO_CODE` (`123456`) and
+WhatsApp delivery is best-effort. With `WAHA_BASE_URL` unset, no message is sent
+(the demo code still works). Configure WAHA with `WAHA_BASE_URL`, `WAHA_SESSION`
+(default `default`) and optional `WAHA_API_KEY`.
+
+### Admin (web dashboard)
+
+These power the [`frontend/`](../frontend) admin dashboard. Each requires **either**
+a bearer admin token (from the OTP login) **or** an `X-Admin-Key` header matching
+`ADMIN_API_KEY` (default `admin-secret`, handy for curl/tooling).
+
+| Method | Path | Description |
+| --- | --- | --- |
+| `GET` | `/api/v1/admin/me` | The signed-in admin's profile. |
 | `GET` | `/api/v1/admin/stats` | Aggregate counts + total account/pocket balances. |
+| `GET` | `/api/v1/admin/stats/charts` | Daily income/expense series (`?days=`, 1–90) + top expense categories. |
 | `GET` | `/api/v1/admin/users` | Users with their account balance (paginated). |
 | `GET` | `/api/v1/admin/users/:id` | One user's full detail (account, pockets, cards, bills, pools, recent transactions). |
+| `PATCH` | `/api/v1/admin/users/:id` | Edit a user's name/phone (partial; 409 on duplicate phone). |
 | `GET` | `/api/v1/admin/transactions` | Transactions across all users (paginated; `?type=income\|expense`, `?userId=`). |
 | `GET` | `/api/v1/admin/pools` | Money pools across all users with owner name (paginated). |
+| `GET` | `/api/v1/admin/audit-logs` | Privileged admin actions (paginated; `?action=`). |
 | `POST` | `/api/v1/admin/cards/:id/freeze` | Freeze/unfreeze any card (`{"frozen":true}`). |
+
+Mutating admin actions — **admin login**, user edit, card freeze, and admin
+create/edit/status — are recorded in the **`audit_logs`** table (actor, action,
+target, detail, IP) and surfaced via `/admin/audit-logs` (filter with `?action=`).
+
+CSV exports (attachment downloads, up to 50k rows):
+
+| Method | Path | Description |
+| --- | --- | --- |
+| `GET` | `/api/v1/admin/export/users` | Users + balances as CSV. |
+| `GET` | `/api/v1/admin/export/transactions` | All transactions as CSV. |
+| `GET` | `/api/v1/admin/export/audit-logs` | Audit log as CSV. |
+
+Admin management (**superadmin only**; the static service key also qualifies):
+
+| Method | Path | Description |
+| --- | --- | --- |
+| `GET` | `/api/v1/admin/admins` | List admins (paginated). |
+| `POST` | `/api/v1/admin/admins` | Create an admin (`{name, phone, role}`; 409 on duplicate phone). |
+| `PATCH` | `/api/v1/admin/admins/:id` | Edit name/phone/role (partial; 409 on duplicate phone; cannot demote your own role). |
+| `POST` | `/api/v1/admin/admins/:id/status` | Enable/disable (`{"status":"active\|disabled"}`; cannot disable yourself). |
 
 The dashboard is a browser client, so the API sends **CORS** headers (the mobile
 app, being native, needs none). Allowed origins come from `CORS_ALLOWED_ORIGINS`

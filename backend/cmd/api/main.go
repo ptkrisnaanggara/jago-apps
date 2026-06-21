@@ -56,6 +56,11 @@ func main() {
 	tokens := token.NewManager(cfg.JWTSecret, cfg.JWTTTL)
 	server := api.New(cfg, gdb, rdb, br, tokens, logger)
 
+	if err := server.EnsureAdminSeed(); err != nil {
+		logger.Error("admin seed failed", "error", err)
+		os.Exit(1)
+	}
+
 	srv := &http.Server{
 		Addr:    ":" + cfg.AppPort,
 		Handler: server.Router(),

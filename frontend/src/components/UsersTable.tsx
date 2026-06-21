@@ -1,42 +1,25 @@
-import { useEffect, useState } from "react";
-import { api, type AdminUser, type Credentials, type Meta } from "../api";
-import { formatDate, formatRupiah } from "../format";
-import Pager from "./Pager";
-import UserDetail from "./UserDetail";
+import { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { api } from "@/lib/api";
+import type { AdminUser } from "@/lib/types";
+import { formatDate, formatRupiah } from "@/lib/format";
+import { useAuth } from "@/context/auth";
+import { usePagedList } from "@/hooks/usePagedList";
+import Pager from "@/components/Pager";
+import ExportCsvButton from "@/components/ExportCsvButton";
 
-interface Props {
-  creds: Credentials;
-}
+export default function UsersTable() {
+  const { creds } = useAuth();
+  const navigate = useNavigate();
 
-export default function UsersTable({ creds }: Props) {
-  const [rows, setRows] = useState<AdminUser[]>([]);
-  const [meta, setMeta] = useState<Meta | null>(null);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [selected, setSelected] = useState<AdminUser | null>(null);
-
-  useEffect(() => {
-    let active = true;
-    setLoading(true);
-    setError(null);
-    api
-      .users(creds, page)
-      .then((res) => {
-        if (!active) return;
-        setRows(res.data);
-        setMeta(res.meta);
-      })
-      .catch((err: unknown) => {
-        if (active && err instanceof Error) setError(err.message);
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
-    return () => {
-      active = false;
-    };
-  }, [creds, page]);
+  const fetcher = useCallback(
+    (page: number) => api.users(creds, page),
+    [creds],
+  );
+  const { rows, meta, setPage, loading, error } = usePagedList<AdminUser>(
+    fetcher,
+    [creds],
+  );
 
   if (error) return <p className="error">{error}</p>;
   if (loading && rows.length === 0) return <p className="muted">Memuat…</p>;
@@ -44,6 +27,9 @@ export default function UsersTable({ creds }: Props) {
 
   return (
     <>
+      <div className="table-toolbar">
+        <ExportCsvButton kind="users" />
+      </div>
       <div className="table-wrap">
         <table>
           <thead>
@@ -53,6 +39,7 @@ export default function UsersTable({ creds }: Props) {
               <th>No. Rekening</th>
               <th className="num">Saldo</th>
               <th>Bergabung</th>
+              <th aria-label="Detail"></th>
             </tr>
           </thead>
           <tbody>
@@ -60,7 +47,7 @@ export default function UsersTable({ creds }: Props) {
               <tr
                 key={u.id}
                 className="clickable"
-                onClick={() => setSelected(u)}
+                onClick={() => navigate(`/users/${u.id}`)}
                 title="Lihat detail"
               >
                 <td>{u.name}</td>
@@ -68,19 +55,15 @@ export default function UsersTable({ creds }: Props) {
                 <td className="mono">{u.accountNumber || "—"}</td>
                 <td className="num">{formatRupiah(u.balance)}</td>
                 <td className="muted">{formatDate(u.createdAt)}</td>
+                <td className="chevron" aria-hidden="true">
+                  ›
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
       <Pager meta={meta} onPage={setPage} loading={loading} />
-      {selected && (
-        <UserDetail
-          creds={creds}
-          userId={selected.id}
-          onClose={() => setSelected(null)}
-        />
-      )}
     </>
   );
 }

@@ -186,6 +186,37 @@ type Contact struct {
 	AccountNumber string `json:"accountNumber"`
 }
 
+// AdminStatus is an admin account's lifecycle state.
+type AdminStatus string
+
+const (
+	AdminActive   AdminStatus = "active"
+	AdminDisabled AdminStatus = "disabled"
+)
+
+// AdminUser is a dashboard operator. Login is phone + OTP (delivered over
+// WhatsApp via WAHA); only `active` admins may sign in.
+type AdminUser struct {
+	Base
+	Name   string      `gorm:"not null" json:"name"`
+	Phone  string      `gorm:"uniqueIndex;not null" json:"phone"`
+	Status AdminStatus `gorm:"not null;default:active" json:"status"`
+	Role   string      `json:"role"` // admin | superadmin
+}
+
+// AuditLog records a privileged admin action for accountability. Actor fields
+// snapshot who acted; target fields say what was acted on.
+type AuditLog struct {
+	Base
+	ActorAdminID string `gorm:"index" json:"actorAdminId"`
+	ActorName    string `json:"actorName"`
+	Action       string `gorm:"index" json:"action"` // e.g. admin.create, card.freeze
+	TargetType   string `json:"targetType"`          // e.g. admin, card
+	TargetID     string `json:"targetId"`
+	Detail       string `json:"detail"`
+	IP           string `json:"ip"`
+}
+
 // PoolStatus is a money pool's lifecycle state.
 type PoolStatus string
 
@@ -218,6 +249,7 @@ func All() []any {
 	return []any{
 		&User{}, &Account{}, &Pocket{}, &Transaction{},
 		&Transfer{}, &Bill{}, &Card{}, &Notification{}, &Contact{},
-		&MoneyPool{}, &PoolContribution{}, &PocketMember{},
+		&MoneyPool{}, &PoolContribution{}, &PocketMember{}, &AdminUser{},
+		&AuditLog{},
 	}
 }

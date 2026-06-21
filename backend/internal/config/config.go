@@ -28,6 +28,18 @@ type Config struct {
 	// browser (the admin dashboard). "*" allows any origin.
 	CORSAllowedOrigins []string
 
+	// WAHA (WhatsApp HTTP API, https://waha.devlike.pro) delivers admin OTPs over
+	// WhatsApp. When WAHABaseURL is empty, sending is disabled (demo mode still
+	// works because the OTP is the demo code).
+	WAHABaseURL string
+	WAHASession string
+	WAHAAPIKey  string
+
+	// AdminSeed bootstraps a first admin (admin_users) on boot when the table is
+	// empty, so phone+OTP login works out of the box.
+	AdminSeedName  string
+	AdminSeedPhone string
+
 	// MigrateOnStart applies pending migrations when the API boots
 	// (TypeORM's `migrationsRun: true`). Disable to run them via the CLI.
 	MigrateOnStart bool
@@ -60,10 +72,18 @@ func Load() Config {
 		AdminAPIKey: env("ADMIN_API_KEY", "admin-secret"),
 
 		CORSAllowedOrigins: envList("CORS_ALLOWED_ORIGINS", []string{"*"}),
-		MigrateOnStart:     envBool("MIGRATE_ON_START", true),
-		OTPTTL:             envDuration("OTP_TTL", 5*time.Minute),
-		OTPDemoMode:        envBool("OTP_DEMO_MODE", true),
-		OTPDemoCode:        env("OTP_DEMO_CODE", "123456"),
+
+		WAHABaseURL: env("WAHA_BASE_URL", ""),
+		WAHASession: env("WAHA_SESSION", "default"),
+		WAHAAPIKey:  env("WAHA_API_KEY", ""),
+
+		AdminSeedName:  env("ADMIN_SEED_NAME", "Super Admin"),
+		AdminSeedPhone: env("ADMIN_SEED_PHONE", "81200000000"),
+
+		MigrateOnStart: envBool("MIGRATE_ON_START", true),
+		OTPTTL:         envDuration("OTP_TTL", 5*time.Minute),
+		OTPDemoMode:    envBool("OTP_DEMO_MODE", true),
+		OTPDemoCode:    env("OTP_DEMO_CODE", "123456"),
 
 		OTPMaxRequests:       envInt("OTP_MAX_REQUESTS", 5),
 		OTPRateWindow:        envDuration("OTP_RATE_WINDOW", 15*time.Minute),

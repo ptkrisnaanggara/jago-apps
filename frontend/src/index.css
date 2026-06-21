@@ -637,6 +637,20 @@ tbody tr.clickable:hover .chevron {
   background: var(--primary-light);
   color: var(--primary-dark);
 }
+.chip-ok {
+  background: rgba(31, 181, 122, 0.14);
+  color: var(--income);
+}
+.chip-danger {
+  background: rgba(229, 72, 77, 0.14);
+  color: var(--expense);
+}
+.badge-row {
+  display: flex;
+  gap: 0.4rem;
+  margin: 0.5rem 0;
+  flex-wrap: wrap;
+}
 button.ghost.small {
   padding: 0.3rem 0.7rem;
   font-size: 0.8rem;

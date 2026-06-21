@@ -19,6 +19,8 @@ function renderModal(
         userId="u-1"
         initialName="Nasabah"
         initialPhone="81200001111"
+        initialKyc="none"
+        initialStatus="active"
         onClose={over.onClose ?? vi.fn()}
         onSaved={over.onSaved ?? vi.fn()}
       />
@@ -53,7 +55,38 @@ describe("UserEditModal", () => {
     const [url, init] = fetchFn.mock.calls[0];
     expect(url).toContain("/admin/users/u-1");
     expect(init?.method).toBe("PATCH");
-    expect(body).toMatchObject({ name: "Nasabah Baru" });
+    expect(body).toMatchObject({
+      name: "Nasabah Baru",
+      kycStatus: "none",
+      status: "active",
+    });
+  });
+
+  it("submits an updated KYC + access status", async () => {
+    let body: unknown;
+    const fetchFn = vi.fn(async (_url: string, init?: RequestInit) => {
+      body = JSON.parse(String(init?.body));
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({
+          data: { id: "u-1", name: "Nasabah", phone: "8" },
+        }),
+      } as Response;
+    });
+    vi.stubGlobal("fetch", fetchFn);
+    const onSaved = vi.fn();
+
+    renderModal({ onSaved });
+    await userEvent.selectOptions(
+      screen.getByDisplayValue("Belum KYC"),
+      "verified",
+    );
+    await userEvent.selectOptions(screen.getByDisplayValue("Aktif"), "blocked");
+    await userEvent.click(screen.getByRole("button", { name: "Simpan" }));
+
+    await waitFor(() => expect(onSaved).toHaveBeenCalledTimes(1));
+    expect(body).toMatchObject({ kycStatus: "verified", status: "blocked" });
   });
 
   it("surfaces a duplicate-phone error and stays open", async () => {

@@ -70,6 +70,8 @@ type adminUser struct {
 	ID            string `json:"id"`
 	Name          string `json:"name"`
 	Phone         string `json:"phone"`
+	KYCStatus     string `json:"kycStatus"`
+	Status        string `json:"status"`
 	AccountNumber string `json:"accountNumber"`
 	Balance       int64  `json:"balance"`
 	CreatedAt     string `json:"createdAt"`
@@ -88,8 +90,8 @@ func (s *Server) listAdminUsers(c *gin.Context) {
 
 	var rows []adminUser
 	if err := s.db.Model(&model.User{}).
-		Select("users.id, users.name, users.phone, users.created_at, " +
-			"accounts.account_number, COALESCE(accounts.balance, 0) AS balance").
+		Select("users.id, users.name, users.phone, users.kyc_status, users.status, " +
+			"users.created_at, accounts.account_number, COALESCE(accounts.balance, 0) AS balance").
 		Joins("LEFT JOIN accounts ON accounts.user_id = users.id::text AND accounts.deleted_at IS NULL").
 		Where("users.deleted_at IS NULL").
 		Order("users.created_at DESC").
@@ -156,11 +158,14 @@ func (s *Server) listAdminTransactions(c *gin.Context) {
 
 // adminUpdateUserRequest is a partial edit of a user's profile.
 type adminUpdateUserRequest struct {
-	Name  *string `json:"name"`
-	Phone *string `json:"phone"`
+	Name      *string `json:"name"`
+	Phone     *string `json:"phone"`
+	KYCStatus *string `json:"kycStatus"`
+	Status    *string `json:"status"`
 }
 
-// updateAdminUser edits a user's name and/or phone (phone stays unique).
+// updateAdminUser edits a user's name, phone, KYC status, and/or access status
+// (phone stays unique).
 func (s *Server) updateAdminUser(c *gin.Context) {
 	var req adminUpdateUserRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -207,6 +212,24 @@ func (s *Server) updateAdminUser(c *gin.Context) {
 			}
 		}
 		updates["phone"] = phone
+	}
+	if req.KYCStatus != nil {
+		switch model.KYCStatus(*req.KYCStatus) {
+		case model.KYCNone, model.KYCPending, model.KYCVerified, model.KYCRejected:
+			updates["kyc_status"] = *req.KYCStatus
+		default:
+			respondError(c, 400, "bad_request", "invalid kycStatus")
+			return
+		}
+	}
+	if req.Status != nil {
+		switch model.UserStatus(*req.Status) {
+		case model.UserActive, model.UserBlocked:
+			updates["status"] = *req.Status
+		default:
+			respondError(c, 400, "bad_request", "status must be active or blocked")
+			return
+		}
 	}
 
 	if len(updates) == 0 {

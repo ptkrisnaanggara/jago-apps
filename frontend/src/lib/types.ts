@@ -60,10 +60,15 @@ export interface Stats {
   pocketBalance: number;
 }
 
+export type KycStatus = "none" | "pending" | "verified" | "rejected";
+export type UserStatus = "active" | "blocked";
+
 export interface AdminUser {
   id: string;
   name: string;
   phone: string;
+  kycStatus: KycStatus;
+  status: UserStatus;
   accountNumber: string;
   balance: number;
   createdAt: string;
@@ -126,7 +131,14 @@ export interface AdminPool extends Pool {
 }
 
 export interface UserDetail {
-  user: { id: string; name: string; phone: string; createdAt: string };
+  user: {
+    id: string;
+    name: string;
+    phone: string;
+    kycStatus: KycStatus;
+    status: UserStatus;
+    createdAt: string;
+  };
   account: { accountNumber: string; balance: number } | null;
   pockets: Pocket[];
   cards: Card[];

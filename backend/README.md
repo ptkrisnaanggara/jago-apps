@@ -92,6 +92,7 @@ alongside `data`:
 | `POST` | `/api/v1/auth/otp/request` | Send an OTP for a phone number. |
 | `POST` | `/api/v1/auth/otp/verify` | Verify OTP, create/seed user, return JWT. |
 | `GET` | `/api/v1/me` | Current user. |
+| _(login)_ | `/api/v1/auth/otp/verify` | A user whose `status` is `blocked` is rejected with `403`. |
 | `GET` | `/api/v1/account` | Balance (Redis-cached). |
 | `GET` | `/api/v1/pockets` | Savings pockets. |
 | `GET` | `/api/v1/transactions` | Transaction history. |
@@ -136,7 +137,7 @@ a bearer admin token (from the OTP login) **or** an `X-Admin-Key` header matchin
 | `GET` | `/api/v1/admin/stats/charts` | Daily income/expense series (`?days=`, 1–90) + top expense categories. |
 | `GET` | `/api/v1/admin/users` | Users with their account balance (paginated). |
 | `GET` | `/api/v1/admin/users/:id` | One user's full detail (account, pockets, cards, bills, pools, recent transactions). |
-| `PATCH` | `/api/v1/admin/users/:id` | Edit a user's name/phone (partial; 409 on duplicate phone). |
+| `PATCH` | `/api/v1/admin/users/:id` | Edit a user's name/phone/`kycStatus`/`status` (partial; 409 on duplicate phone). |
 | `GET` | `/api/v1/admin/transactions` | Transactions across all users (paginated; `?type=income\|expense`, `?userId=`). |
 | `GET` | `/api/v1/admin/pools` | Money pools across all users with owner name (paginated). |
 | `GET` | `/api/v1/admin/audit-logs` | Privileged admin actions (paginated; `?action=`). |

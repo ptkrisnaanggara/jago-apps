@@ -139,6 +139,7 @@ a bearer admin token (from the OTP login) **or** an `X-Admin-Key` header matchin
 | `PATCH` | `/api/v1/admin/users/:id` | Edit a user's name/phone (partial; 409 on duplicate phone). |
 | `GET` | `/api/v1/admin/transactions` | Transactions across all users (paginated; `?type=income\|expense`, `?userId=`). |
 | `GET` | `/api/v1/admin/pools` | Money pools across all users with owner name (paginated). |
+| `GET` | `/api/v1/admin/cards` | Cards across all users with owner + masked PAN (paginated; `?frozen=true\|false`). |
 | `GET` | `/api/v1/admin/audit-logs` | Privileged admin actions (paginated; `?action=`). |
 | `POST` | `/api/v1/admin/cards/:id/freeze` | Freeze/unfreeze any card (`{"frozen":true}`). |
 

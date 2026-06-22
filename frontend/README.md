@@ -3,8 +3,9 @@
 An **operator dashboard** for JAGO, built with **Vite + React + TypeScript**. It
 consumes the [`backend`](../backend) admin API and gives an operator a cross-user
 view: headline stats; URL-routed tabs for users, transactions (with type
-filters), money pools, charts, and — for superadmins — admin management and an
-audit log; plus a **full-page** per-user detail (account, pockets, cards, bills,
+filters), money pools, cards, charts, and — for superadmins — admin management
+and an audit log; plus a **full-page** per-user detail (account, pockets, cards,
+bills,
 pools, recent transactions) reached by clicking a row. Write actions:
 edit a user, freeze/unfreeze a card, and create / edit / enable / disable
 admins — all recorded to the audit log. Users, transactions, and the audit log
@@ -81,6 +82,7 @@ src/
     UsersTable.tsx     # paginated users; rows navigate to /users/:id
     TransactionsTable.tsx # paginated cross-user transactions + type filter
     PoolsTable.tsx     # paginated money pools (+ owner name)
+    CardsTable.tsx     # all cards (owner + masked PAN) + freeze toggle/filter
     ChartsPage.tsx     # daily cash-flow bars + top categories (hand-rolled SVG/CSS)
     AdminsTable.tsx    # superadmin: list/create + edit + enable/disable admins
     AdminEditModal.tsx # edit an admin's name/phone/role (role locked on self)
@@ -96,8 +98,8 @@ src/
   test/setup.ts        # Testing Library / jsdom setup
 ```
 
-Routes: `/` (users) · `/transactions` · `/pools` · `/charts` · `/admins` +
-`/audit` (superadmin) · `/users/:id` (detail). All sit under `AppLayout`; the list tabs
+Routes: `/` (users) · `/transactions` · `/pools` · `/cards` · `/charts` ·
+`/admins` + `/audit` (superadmin) · `/users/:id` (detail). All sit under `AppLayout`; the list tabs
 also share `DashboardShell` (stats + tab nav). The `/admins` and `/audit` tabs
 are shown only when the signed-in admin's role is `superadmin`. Tests live next
 to the code they cover (`*.test.ts[x]`).

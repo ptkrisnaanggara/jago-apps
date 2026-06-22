@@ -4,6 +4,7 @@
 import type { Credentials } from "./credentials";
 import type {
   Admin,
+  AdminCard,
   AdminInfo,
   AdminPool,
   AdminTransaction,
@@ -147,6 +148,12 @@ export const api = {
 
   pools: (creds: Credentials, page = 1, limit = 20) =>
     request<Page<AdminPool>>(creds, `/admin/pools?${qs({ page, limit })}`),
+
+  cards: (creds: Credentials, page = 1, limit = 20, frozen = "") =>
+    request<Page<AdminCard>>(
+      creds,
+      `/admin/cards?${qs({ page, limit, frozen })}`,
+    ),
 
   auditLogs: (creds: Credentials, page = 1, limit = 20, action = "") =>
     request<Page<AuditLog>>(

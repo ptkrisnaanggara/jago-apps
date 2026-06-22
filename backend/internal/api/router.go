@@ -87,6 +87,7 @@ func (s *Server) Router() *gin.Engine {
 			admin.GET("/users", s.listAdminUsers)
 			admin.GET("/users/:id", s.getAdminUser)
 			admin.PATCH("/users/:id", s.updateAdminUser)
+			admin.POST("/users/:id/adjust", s.adjustUserBalance)
 			admin.GET("/transactions", s.listAdminTransactions)
 			admin.GET("/pools", s.listAdminPools)
 			admin.GET("/cards", s.listAdminCards)

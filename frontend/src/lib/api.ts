@@ -181,6 +181,17 @@ export const api = {
       { method: "PATCH", body: JSON.stringify(input) },
     ).then((r) => r.data),
 
+  adjustBalance: (
+    creds: Credentials,
+    id: string,
+    input: { type: "credit" | "debit"; amount: number; reason: string },
+  ) =>
+    request<{ data: { id: string; balance: number } }>(
+      creds,
+      `/admin/users/${id}/adjust`,
+      { method: "POST", body: JSON.stringify(input) },
+    ).then((r) => r.data),
+
   // Fetches a CSV export with auth and returns it as a Blob for download. Any
   // params (type/action/from/to) are forwarded so the export matches the view.
   exportCsv: (

@@ -138,6 +138,12 @@ func (s *Server) verifyOTP(c *gin.Context) {
 		return
 	}
 
+	// A blocked account cannot sign in (an operator can re-activate it).
+	if user.Status == model.UserBlocked {
+		respondError(c, 403, "account_blocked", "Akun Anda diblokir. Hubungi dukungan.")
+		return
+	}
+
 	tok, err := s.tokens.Generate(user.ID)
 	if err != nil {
 		respondError(c, 500, "internal", "failed to issue token")

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { api } from "@/lib/api";
 import type { AdminUser } from "@/lib/types";
 import { formatDate, formatRupiah } from "@/lib/format";
+import { KYC_LABELS, kycChipClass } from "@/lib/userStatus";
 import { useAuth } from "@/context/auth";
 import { usePagedList } from "@/hooks/usePagedList";
 import Pager from "@/components/Pager";
@@ -36,7 +37,7 @@ export default function UsersTable() {
             <tr>
               <th>Nama</th>
               <th>Nomor HP</th>
-              <th>No. Rekening</th>
+              <th>KYC</th>
               <th className="num">Saldo</th>
               <th>Bergabung</th>
               <th aria-label="Detail"></th>
@@ -50,9 +51,18 @@ export default function UsersTable() {
                 onClick={() => navigate(`/users/${u.id}`)}
                 title="Lihat detail"
               >
-                <td>{u.name}</td>
+                <td>
+                  {u.name}
+                  {u.status === "blocked" && (
+                    <span className="chip chip-danger">Diblokir</span>
+                  )}
+                </td>
                 <td>{u.phone}</td>
-                <td className="mono">{u.accountNumber || "—"}</td>
+                <td>
+                  <span className={kycChipClass(u.kycStatus)}>
+                    {KYC_LABELS[u.kycStatus]}
+                  </span>
+                </td>
                 <td className="num">{formatRupiah(u.balance)}</td>
                 <td className="muted">{formatDate(u.createdAt)}</td>
                 <td className="chevron" aria-hidden="true">

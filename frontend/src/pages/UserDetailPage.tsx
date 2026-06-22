@@ -3,6 +3,12 @@ import { Link, useParams } from "react-router-dom";
 import { api } from "@/lib/api";
 import type { UserDetail as Detail } from "@/lib/types";
 import { formatDate, formatRupiah } from "@/lib/format";
+import {
+  KYC_LABELS,
+  STATUS_LABELS,
+  kycChipClass,
+  statusChipClass,
+} from "@/lib/userStatus";
 import { useAuth } from "@/context/auth";
 import UserEditModal from "@/components/UserEditModal";
 import BalanceAdjustModal from "@/components/BalanceAdjustModal";
@@ -65,6 +71,14 @@ export default function UserDetailPage() {
                 {detail.user.phone} · Bergabung{" "}
                 {formatDate(detail.user.createdAt)}
               </p>
+              <div className="badge-row">
+                <span className={kycChipClass(detail.user.kycStatus)}>
+                  {KYC_LABELS[detail.user.kycStatus]}
+                </span>
+                <span className={statusChipClass(detail.user.status)}>
+                  {STATUS_LABELS[detail.user.status]}
+                </span>
+              </div>
               <button className="ghost small" onClick={() => setEditing(true)}>
                 Ubah pengguna
               </button>
@@ -217,6 +231,8 @@ export default function UserDetailPage() {
               userId={detail.user.id}
               initialName={detail.user.name}
               initialPhone={detail.user.phone}
+              initialKyc={detail.user.kycStatus}
+              initialStatus={detail.user.status}
               onClose={() => setEditing(false)}
               onSaved={load}
             />

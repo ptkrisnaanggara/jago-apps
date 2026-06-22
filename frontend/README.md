@@ -7,10 +7,11 @@ date-range filters), money pools, cards, charts, and — for superadmins — adm
 management and an audit log; plus a **full-page** per-user detail (account,
 pockets, cards, bills,
 pools, recent transactions) reached by clicking a row. Write actions:
-edit a user, adjust (credit/debit) a user's balance, freeze/unfreeze a card,
-broadcast a notification to all users, and create / edit / enable / disable
-admins — all recorded to the audit log. Users, transactions, and the audit log
-can be exported to CSV.
+edit a user (incl. KYC + access status; blocked users can't log in), adjust
+(credit/debit) a user's balance, freeze/unfreeze a card, broadcast a
+notification to all users, and create / edit / enable / disable admins — all
+recorded to the audit log. Users, transactions, and the audit log can be
+exported to CSV.
 
 > The customer-facing product is the Flutter [`mobile-app`](../mobile-app). This
 > web app is the **internal admin** surface only.
@@ -71,6 +72,7 @@ src/
     credentials.ts     # Credentials type (baseUrl + token) + localStorage
     types.ts           # domain types mirroring the API responses
     format.ts          # Rupiah / date formatting (id-ID)
+    userStatus.ts      # KYC/access-status labels + chip styling
     download.ts        # trigger a browser download for a Blob (CSV)
   context/
     auth.ts            # AuthContext + useAuth (creds + signed-in admin + logout)
@@ -89,7 +91,7 @@ src/
     AdminsTable.tsx    # superadmin: list/create + edit + enable/disable admins
     AdminEditModal.tsx # edit an admin's name/phone/role (role locked on self)
     AuditTable.tsx     # superadmin: audit log + action filter + CSV export
-    UserEditModal.tsx  # edit a customer's name/phone
+    UserEditModal.tsx  # edit a customer's name/phone/KYC/status
     BalanceAdjustModal.tsx # credit/debit a user's balance (reason + preview)
     ExportCsvButton.tsx# downloads a CSV export (users/transactions/audit-logs)
     DateRangeFilter.tsx# from/to date inputs (transactions + audit)

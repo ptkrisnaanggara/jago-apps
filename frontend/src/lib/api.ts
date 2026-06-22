@@ -173,7 +173,12 @@ export const api = {
   updateUser: (
     creds: Credentials,
     id: string,
-    input: { name?: string; phone?: string },
+    input: {
+      name?: string;
+      phone?: string;
+      kycStatus?: string;
+      status?: string;
+    },
   ) =>
     request<{ data: { id: string; name: string; phone: string } }>(
       creds,

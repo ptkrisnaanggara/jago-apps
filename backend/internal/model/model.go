@@ -25,11 +25,31 @@ func (b *Base) BeforeCreate(*gorm.DB) error {
 	return nil
 }
 
+// KYCStatus tracks a user's identity-verification state.
+type KYCStatus string
+
+const (
+	KYCNone     KYCStatus = "none"
+	KYCPending  KYCStatus = "pending"
+	KYCVerified KYCStatus = "verified"
+	KYCRejected KYCStatus = "rejected"
+)
+
+// UserStatus is an account's access state.
+type UserStatus string
+
+const (
+	UserActive  UserStatus = "active"
+	UserBlocked UserStatus = "blocked"
+)
+
 // User is an authenticated account holder (phone is the login identity).
 type User struct {
 	Base
-	Name  string `gorm:"not null" json:"name"`
-	Phone string `gorm:"uniqueIndex;not null" json:"phone"`
+	Name      string     `gorm:"not null" json:"name"`
+	Phone     string     `gorm:"uniqueIndex;not null" json:"phone"`
+	KYCStatus KYCStatus  `gorm:"not null;default:none" json:"kycStatus"`
+	Status    UserStatus `gorm:"not null;default:active" json:"status"`
 }
 
 // Account is the user's primary balance (one per user).

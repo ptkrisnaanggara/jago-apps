@@ -37,6 +37,8 @@ describe("UsersTable", () => {
               id: "u-1",
               name: "Nasabah Jago",
               phone: "8120001",
+              kycStatus: "verified",
+              status: "active",
               accountNumber: "100 1",
               balance: 12750000,
               createdAt: "2026-06-17T08:19:48Z",

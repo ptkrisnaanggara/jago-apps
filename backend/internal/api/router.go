@@ -91,6 +91,7 @@ func (s *Server) Router() *gin.Engine {
 			admin.GET("/transactions", s.listAdminTransactions)
 			admin.GET("/pools", s.listAdminPools)
 			admin.GET("/cards", s.listAdminCards)
+			admin.GET("/bills", s.listAdminBills)
 			admin.GET("/audit-logs", s.listAuditLogs)
 			admin.POST("/cards/:id/freeze", s.adminSetCardFrozen)
 			admin.POST("/notifications", s.sendAdminNotification)

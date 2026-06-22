@@ -3,7 +3,7 @@
 An **operator dashboard** for JAGO, built with **Vite + React + TypeScript**. It
 consumes the [`backend`](../backend) admin API and gives an operator a cross-user
 view: headline stats; URL-routed tabs for users, transactions (with type and
-date-range filters), money pools, cards, charts, and — for superadmins — admin
+date-range filters), money pools, cards, bills, charts, and — for superadmins — admin
 management and an audit log; plus a **full-page** per-user detail (account,
 pockets, cards, bills,
 pools, recent transactions) reached by clicking a row. Write actions:
@@ -86,6 +86,7 @@ src/
     TransactionsTable.tsx # paginated cross-user transactions + type filter
     PoolsTable.tsx     # paginated money pools (+ owner name)
     CardsTable.tsx     # all cards (owner + masked PAN) + freeze toggle/filter
+    BillsTable.tsx     # all bills (owner, due, status) + paid/unpaid filter
     ChartsPage.tsx     # daily cash-flow bars + top categories (hand-rolled SVG/CSS)
     NotificationsPage.tsx # broadcast an in-app notification to all users
     AdminsTable.tsx    # superadmin: list/create + edit + enable/disable admins
@@ -104,7 +105,7 @@ src/
   test/setup.ts        # Testing Library / jsdom setup
 ```
 
-Routes: `/` (users) · `/transactions` · `/pools` · `/cards` · `/charts` ·
+Routes: `/` (users) · `/transactions` · `/pools` · `/cards` · `/bills` · `/charts` ·
 `/notifications` · `/admins` + `/audit` (superadmin) · `/users/:id` (detail). All
 sit under `AppLayout`; the list tabs
 also share `DashboardShell` (stats + tab nav). The `/admins` and `/audit` tabs

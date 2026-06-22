@@ -57,6 +57,7 @@ export default function DashboardShell() {
         <NavLink to="/transactions">Transaksi</NavLink>
         <NavLink to="/pools">Patungan</NavLink>
         <NavLink to="/cards">Kartu</NavLink>
+        <NavLink to="/bills">Tagihan</NavLink>
         <NavLink to="/charts">Grafik</NavLink>
         <NavLink to="/notifications">Notifikasi</NavLink>
         {isSuperadmin && <NavLink to="/admins">Admin</NavLink>}

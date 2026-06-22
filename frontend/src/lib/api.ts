@@ -140,10 +140,12 @@ export const api = {
     page = 1,
     limit = 20,
     type: TxFilter = "",
+    from = "",
+    to = "",
   ) =>
     request<Page<AdminTransaction>>(
       creds,
-      `/admin/transactions?${qs({ page, limit, type })}`,
+      `/admin/transactions?${qs({ page, limit, type, from, to })}`,
     ),
 
   pools: (creds: Credentials, page = 1, limit = 20) =>
@@ -155,10 +157,17 @@ export const api = {
       `/admin/cards?${qs({ page, limit, frozen })}`,
     ),
 
-  auditLogs: (creds: Credentials, page = 1, limit = 20, action = "") =>
+  auditLogs: (
+    creds: Credentials,
+    page = 1,
+    limit = 20,
+    action = "",
+    from = "",
+    to = "",
+  ) =>
     request<Page<AuditLog>>(
       creds,
-      `/admin/audit-logs?${qs({ page, limit, action })}`,
+      `/admin/audit-logs?${qs({ page, limit, action, from, to })}`,
     ),
 
   updateUser: (
@@ -172,17 +181,24 @@ export const api = {
       { method: "PATCH", body: JSON.stringify(input) },
     ).then((r) => r.data),
 
-  // Fetches a CSV export with auth and returns it as a Blob for download.
+  // Fetches a CSV export with auth and returns it as a Blob for download. Any
+  // params (type/action/from/to) are forwarded so the export matches the view.
   exportCsv: (
     creds: Credentials,
     kind: "users" | "transactions" | "audit-logs",
-  ) =>
-    fetch(`${normalizeBase(creds.baseUrl)}/admin/export/${kind}`, {
+    params: Record<string, string> = {},
+  ) => {
+    const query = qs(params);
+    const url = `${normalizeBase(creds.baseUrl)}/admin/export/${kind}${
+      query ? `?${query}` : ""
+    }`;
+    return fetch(url, {
       headers: { Authorization: `Bearer ${creds.token}` },
     }).then((res) => {
       if (!res.ok) throw new Error(`Ekspor gagal (${res.status}).`);
       return res.blob();
-    }),
+    });
+  },
 
   freezeCard: (creds: Credentials, cardId: string, frozen: boolean) =>
     request<{ data: Card }>(creds, `/admin/cards/${cardId}/freeze`, {

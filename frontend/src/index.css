@@ -598,6 +598,26 @@ td.expense {
   flex: 1;
 }
 
+/* ---- Date range filter ---- */
+.date-range {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.date-range input[type="date"] {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.82rem;
+  color: var(--text);
+  background: var(--surface);
+}
+.date-range input[type="date"]:focus {
+  outline: 2px solid var(--primary);
+  border-color: transparent;
+}
+
 /* ---- Filter chips ---- */
 .chips-row {
   display: flex;

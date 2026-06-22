@@ -5,10 +5,12 @@ import { downloadBlob } from "@/lib/download";
 
 interface Props {
   kind: "users" | "transactions" | "audit-logs";
+  params?: Record<string, string>;
 }
 
-// ExportCsvButton fetches a CSV export (with auth) and downloads it.
-export default function ExportCsvButton({ kind }: Props) {
+// ExportCsvButton fetches a CSV export (with auth, forwarding any active
+// filters) and downloads it.
+export default function ExportCsvButton({ kind, params }: Props) {
   const { creds } = useAuth();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);
@@ -17,7 +19,7 @@ export default function ExportCsvButton({ kind }: Props) {
     setBusy(true);
     setError(false);
     try {
-      const blob = await api.exportCsv(creds, kind);
+      const blob = await api.exportCsv(creds, kind, params ?? {});
       const stamp = new Date().toISOString().slice(0, 10);
       downloadBlob(blob, `${kind}-${stamp}.csv`);
     } catch {

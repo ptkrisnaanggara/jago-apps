@@ -2,10 +2,10 @@
 
 An **operator dashboard** for JAGO, built with **Vite + React + TypeScript**. It
 consumes the [`backend`](../backend) admin API and gives an operator a cross-user
-view: headline stats; URL-routed tabs for users, transactions (with type
-filters), money pools, cards, charts, and — for superadmins — admin management
-and an audit log; plus a **full-page** per-user detail (account, pockets, cards,
-bills,
+view: headline stats; URL-routed tabs for users, transactions (with type and
+date-range filters), money pools, cards, charts, and — for superadmins — admin
+management and an audit log; plus a **full-page** per-user detail (account,
+pockets, cards, bills,
 pools, recent transactions) reached by clicking a row. Write actions:
 edit a user, freeze/unfreeze a card, and create / edit / enable / disable
 admins — all recorded to the audit log. Users, transactions, and the audit log
@@ -89,6 +89,7 @@ src/
     AuditTable.tsx     # superadmin: audit log + action filter + CSV export
     UserEditModal.tsx  # edit a customer's name/phone
     ExportCsvButton.tsx# downloads a CSV export (users/transactions/audit-logs)
+    DateRangeFilter.tsx# from/to date inputs (transactions + audit)
     Pager.tsx          # prev/next from the backend `meta` block
     Logo.tsx           # inline Jago wordmark (brand)
     ErrorBoundary.tsx  # catches render errors → recoverable fallback

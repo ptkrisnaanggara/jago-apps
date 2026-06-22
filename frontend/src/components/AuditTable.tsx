@@ -6,6 +6,7 @@ import { useAuth } from "@/context/auth";
 import { usePagedList } from "@/hooks/usePagedList";
 import Pager from "@/components/Pager";
 import ExportCsvButton from "@/components/ExportCsvButton";
+import DateRangeFilter from "@/components/DateRangeFilter";
 
 // Maps an action code to a human label + a CSS modifier for its chip.
 const ACTIONS: Record<string, { label: string; warn?: boolean }> = {
@@ -21,21 +22,23 @@ const ACTIONS: Record<string, { label: string; warn?: boolean }> = {
 export default function AuditTable() {
   const { creds } = useAuth();
   const [action, setAction] = useState("");
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
 
   const fetcher = useCallback(
-    (page: number) => api.auditLogs(creds, page, 20, action),
-    [creds, action],
+    (page: number) => api.auditLogs(creds, page, 20, action, from, to),
+    [creds, action, from, to],
   );
   const { rows, meta, page, setPage, loading, error } = usePagedList<AuditLog>(
     fetcher,
-    [creds, action],
+    [creds, action, from, to],
   );
 
-  // Changing the filter resets to the first page.
+  // Changing any filter resets to the first page.
   useEffect(() => {
     if (page !== 1) setPage(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [action]);
+  }, [action, from, to]);
 
   const toolbar = (
     <div className="table-toolbar">
@@ -47,8 +50,16 @@ export default function AuditTable() {
           </option>
         ))}
       </select>
+      <DateRangeFilter
+        from={from}
+        to={to}
+        onChange={(r) => {
+          setFrom(r.from);
+          setTo(r.to);
+        }}
+      />
       <span className="chips-spacer" />
-      <ExportCsvButton kind="audit-logs" />
+      <ExportCsvButton kind="audit-logs" params={{ action, from, to }} />
     </div>
   );
 

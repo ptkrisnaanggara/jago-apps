@@ -142,11 +142,13 @@ a bearer admin token (from the OTP login) **or** an `X-Admin-Key` header matchin
 | `GET` | `/api/v1/admin/cards` | Cards across all users with owner + masked PAN (paginated; `?frozen=true\|false`). |
 | `GET` | `/api/v1/admin/audit-logs` | Privileged admin actions (paginated; `?action=`). |
 | `POST` | `/api/v1/admin/cards/:id/freeze` | Freeze/unfreeze any card (`{"frozen":true}`). |
+| `POST` | `/api/v1/admin/notifications` | Send an in-app notification to one user (`userId`) or all (`{title,body,category}`). |
 
-Mutating admin actions — **admin login**, user edit, card freeze, and admin
-create/edit/status — are recorded in the **`audit_logs`** table (actor, action,
-target, detail, IP) and surfaced via `/admin/audit-logs` (filter with `?action=` and `?from=&to=`). The transaction
-and audit CSV exports accept the same filters so the file matches the view.
+Mutating admin actions — **admin login**, user edit, card freeze, **notification
+send**, and admin create/edit/status — are recorded in the **`audit_logs`** table
+(actor, action, target, detail, IP) and surfaced via `/admin/audit-logs` (filter
+with `?action=` and `?from=&to=`). The transaction and audit CSV exports accept
+the same filters so the file matches the view.
 
 CSV exports (attachment downloads, up to 50k rows):
 

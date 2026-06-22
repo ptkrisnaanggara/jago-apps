@@ -7,9 +7,9 @@ date-range filters), money pools, cards, charts, and — for superadmins — adm
 management and an audit log; plus a **full-page** per-user detail (account,
 pockets, cards, bills,
 pools, recent transactions) reached by clicking a row. Write actions:
-edit a user, freeze/unfreeze a card, and create / edit / enable / disable
-admins — all recorded to the audit log. Users, transactions, and the audit log
-can be exported to CSV.
+edit a user, freeze/unfreeze a card, broadcast a notification to all users, and
+create / edit / enable / disable admins — all recorded to the audit log. Users,
+transactions, and the audit log can be exported to CSV.
 
 > The customer-facing product is the Flutter [`mobile-app`](../mobile-app). This
 > web app is the **internal admin** surface only.
@@ -84,6 +84,7 @@ src/
     PoolsTable.tsx     # paginated money pools (+ owner name)
     CardsTable.tsx     # all cards (owner + masked PAN) + freeze toggle/filter
     ChartsPage.tsx     # daily cash-flow bars + top categories (hand-rolled SVG/CSS)
+    NotificationsPage.tsx # broadcast an in-app notification to all users
     AdminsTable.tsx    # superadmin: list/create + edit + enable/disable admins
     AdminEditModal.tsx # edit an admin's name/phone/role (role locked on self)
     AuditTable.tsx     # superadmin: audit log + action filter + CSV export
@@ -100,7 +101,8 @@ src/
 ```
 
 Routes: `/` (users) · `/transactions` · `/pools` · `/cards` · `/charts` ·
-`/admins` + `/audit` (superadmin) · `/users/:id` (detail). All sit under `AppLayout`; the list tabs
+`/notifications` · `/admins` + `/audit` (superadmin) · `/users/:id` (detail). All
+sit under `AppLayout`; the list tabs
 also share `DashboardShell` (stats + tab nav). The `/admins` and `/audit` tabs
 are shown only when the signed-in admin's role is `superadmin`. Tests live next
 to the code they cover (`*.test.ts[x]`).

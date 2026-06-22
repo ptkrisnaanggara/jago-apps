@@ -125,6 +125,17 @@ export interface AdminPool extends Pool {
   ownerName: string;
 }
 
+export interface AdminCard {
+  id: string;
+  userId: string;
+  userName: string;
+  label: string;
+  type: "virtual" | "physical";
+  last4: string;
+  isFrozen: boolean;
+  createdAt: string;
+}
+
 export interface UserDetail {
   user: { id: string; name: string; phone: string; createdAt: string };
   account: { accountNumber: string; balance: number } | null;

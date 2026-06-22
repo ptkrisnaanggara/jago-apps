@@ -141,6 +141,18 @@ export interface AdminCard {
   createdAt: string;
 }
 
+export interface AdminBill {
+  id: string;
+  userId: string;
+  userName: string;
+  biller: string;
+  category: string;
+  amount: number;
+  dueDate: string;
+  isPaid: boolean;
+  recurrence: string;
+}
+
 export interface UserDetail {
   user: {
     id: string;

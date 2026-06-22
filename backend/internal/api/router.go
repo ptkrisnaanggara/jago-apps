@@ -92,6 +92,7 @@ func (s *Server) Router() *gin.Engine {
 			admin.GET("/pools", s.listAdminPools)
 			admin.GET("/cards", s.listAdminCards)
 			admin.GET("/bills", s.listAdminBills)
+			admin.GET("/transfers", s.listAdminTransfers)
 			admin.GET("/audit-logs", s.listAuditLogs)
 			admin.POST("/cards/:id/freeze", s.adminSetCardFrozen)
 			admin.POST("/notifications", s.sendAdminNotification)
@@ -99,6 +100,7 @@ func (s *Server) Router() *gin.Engine {
 			// CSV exports.
 			admin.GET("/export/users", s.exportUsersCSV)
 			admin.GET("/export/transactions", s.exportTransactionsCSV)
+			admin.GET("/export/transfers", s.exportTransfersCSV)
 			admin.GET("/export/audit-logs", s.exportAuditLogsCSV)
 
 			// Admin management (superadmin only).

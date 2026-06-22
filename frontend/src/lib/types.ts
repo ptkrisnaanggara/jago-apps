@@ -153,6 +153,19 @@ export interface AdminBill {
   recurrence: string;
 }
 
+export interface AdminTransfer {
+  id: string;
+  userId: string;
+  userName: string;
+  recipientName: string;
+  recipientBank: string;
+  recipientAccount: string;
+  amount: number;
+  note: string;
+  referenceId: string;
+  createdAt: string;
+}
+
 export interface UserDetail {
   user: {
     id: string;

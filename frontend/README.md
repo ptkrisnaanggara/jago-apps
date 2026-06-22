@@ -3,7 +3,7 @@
 An **operator dashboard** for JAGO, built with **Vite + React + TypeScript**. It
 consumes the [`backend`](../backend) admin API and gives an operator a cross-user
 view: headline stats; URL-routed tabs for users, transactions (with type and
-date-range filters), money pools, cards, bills, charts, and — for superadmins — admin
+date-range filters), transfers, money pools, cards, bills, charts, and — for superadmins — admin
 management and an audit log; plus a **full-page** per-user detail (account,
 pockets, cards, bills,
 pools, recent transactions) reached by clicking a row. Write actions:
@@ -84,6 +84,7 @@ src/
     DashboardShell.tsx # stat cards + NavLink tabs + <Outlet/> for list routes
     UsersTable.tsx     # paginated users; rows navigate to /users/:id
     TransactionsTable.tsx # paginated cross-user transactions + type filter
+    TransfersTable.tsx # all transfers (sender → recipient) + CSV export
     PoolsTable.tsx     # paginated money pools (+ owner name)
     CardsTable.tsx     # all cards (owner + masked PAN) + freeze toggle/filter
     BillsTable.tsx     # all bills (owner, due, status) + paid/unpaid filter
@@ -105,7 +106,7 @@ src/
   test/setup.ts        # Testing Library / jsdom setup
 ```
 
-Routes: `/` (users) · `/transactions` · `/pools` · `/cards` · `/bills` · `/charts` ·
+Routes: `/` (users) · `/transactions` · `/transfers` · `/pools` · `/cards` · `/bills` · `/charts` ·
 `/notifications` · `/admins` + `/audit` (superadmin) · `/users/:id` (detail). All
 sit under `AppLayout`; the list tabs
 also share `DashboardShell` (stats + tab nav). The `/admins` and `/audit` tabs
@@ -117,7 +118,7 @@ to the code they cover (`*.test.ts[x]`).
 See [`backend/README.md`](../backend/README.md) → **Admin**: the public
 `POST /api/v1/admin/auth/otp/{request,verify}` login pair, plus the bearer-token
 `GET /api/v1/admin/{me,stats,stats/charts,users,users/:id,transactions,pools,admins,audit-logs}`,
-the CSV `GET /api/v1/admin/export/{users,transactions,audit-logs}`,
+the CSV `GET /api/v1/admin/export/{users,transactions,transfers,audit-logs}`,
 `PATCH /api/v1/admin/users/:id`,
 `POST /api/v1/admin/cards/:id/freeze`, and the superadmin
 `POST /api/v1/admin/admins`, `PATCH /api/v1/admin/admins/:id`, and

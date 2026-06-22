@@ -97,3 +97,29 @@ func (s *Server) exportAuditLogsCSV(c *gin.Context) {
 		})
 	}
 }
+
+// exportTransfersCSV streams transfers across all users with the sender's name.
+// Honors the same `?userId=`, `?from=&to=` filters as the list.
+func (s *Server) exportTransfersCSV(c *gin.Context) {
+	var rows []adminTransfer
+	if err := s.transferBase(c).
+		Select(transferSelect).
+		Joins("LEFT JOIN users ON users.id::text = transfers.user_id").
+		Where("transfers.deleted_at IS NULL").
+		Order("transfers.created_at DESC").
+		Limit(exportMaxRows).
+		Scan(&rows).Error; err != nil {
+		respondError(c, 500, "internal", "failed to export transfers")
+		return
+	}
+
+	w := csvDownload(c, "transfers")
+	defer w.Flush()
+	_ = w.Write([]string{"id", "userId", "userName", "recipientName", "recipientBank", "recipientAccount", "amount", "note", "referenceId", "createdAt"})
+	for _, t := range rows {
+		_ = w.Write([]string{
+			t.ID, t.UserID, t.UserName, t.RecipientName, t.RecipientBank,
+			t.RecipientAccount, itoa(t.Amount), t.Note, t.ReferenceID, t.CreatedAt,
+		})
+	}
+}

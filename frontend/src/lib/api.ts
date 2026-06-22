@@ -7,6 +7,7 @@ import type {
   AdminBill,
   AdminCard,
   AdminInfo,
+  AdminTransfer,
   AdminPool,
   AdminTransaction,
   AdminUser,
@@ -164,6 +165,12 @@ export const api = {
       `/admin/bills?${qs({ page, limit, status })}`,
     ),
 
+  transfers: (creds: Credentials, page = 1, limit = 20) =>
+    request<Page<AdminTransfer>>(
+      creds,
+      `/admin/transfers?${qs({ page, limit })}`,
+    ),
+
   auditLogs: (
     creds: Credentials,
     page = 1,
@@ -208,7 +215,7 @@ export const api = {
   // params (type/action/from/to) are forwarded so the export matches the view.
   exportCsv: (
     creds: Credentials,
-    kind: "users" | "transactions" | "audit-logs",
+    kind: "users" | "transactions" | "transfers" | "audit-logs",
     params: Record<string, string> = {},
   ) => {
     const query = qs(params);

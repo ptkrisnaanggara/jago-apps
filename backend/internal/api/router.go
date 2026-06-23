@@ -90,6 +90,7 @@ func (s *Server) Router() *gin.Engine {
 			admin.POST("/users/:id/adjust", s.adjustUserBalance)
 			admin.GET("/transactions", s.listAdminTransactions)
 			admin.GET("/pools", s.listAdminPools)
+			admin.GET("/pockets", s.listAdminPockets)
 			admin.GET("/cards", s.listAdminCards)
 			admin.GET("/bills", s.listAdminBills)
 			admin.GET("/transfers", s.listAdminTransfers)

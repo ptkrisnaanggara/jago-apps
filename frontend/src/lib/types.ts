@@ -130,6 +130,19 @@ export interface AdminPool extends Pool {
   ownerName: string;
 }
 
+export interface AdminPocket {
+  id: string;
+  userId: string;
+  userName: string;
+  name: string;
+  type: "main" | "spending" | "saving";
+  balance: number;
+  target?: number;
+  isMain: boolean;
+  locked: boolean;
+  shared: boolean;
+}
+
 export interface AdminCard {
   id: string;
   userId: string;

@@ -7,6 +7,7 @@ import type {
   AdminBill,
   AdminCard,
   AdminInfo,
+  AdminPocket,
   AdminTransfer,
   AdminPool,
   AdminTransaction,
@@ -152,6 +153,12 @@ export const api = {
 
   pools: (creds: Credentials, page = 1, limit = 20) =>
     request<Page<AdminPool>>(creds, `/admin/pools?${qs({ page, limit })}`),
+
+  pockets: (creds: Credentials, page = 1, limit = 20, type = "") =>
+    request<Page<AdminPocket>>(
+      creds,
+      `/admin/pockets?${qs({ page, limit, type })}`,
+    ),
 
   cards: (creds: Credentials, page = 1, limit = 20, frozen = "") =>
     request<Page<AdminCard>>(

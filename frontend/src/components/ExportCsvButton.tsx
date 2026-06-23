@@ -4,7 +4,7 @@ import { useAuth } from "@/context/auth";
 import { downloadBlob } from "@/lib/download";
 
 interface Props {
-  kind: "users" | "transactions" | "audit-logs";
+  kind: "users" | "transactions" | "transfers" | "audit-logs";
   params?: Record<string, string>;
 }
 

@@ -16,6 +16,7 @@ import TransactionsTable from "@/components/TransactionsTable";
 import PoolsTable from "@/components/PoolsTable";
 import CardsTable from "@/components/CardsTable";
 import BillsTable from "@/components/BillsTable";
+import TransfersTable from "@/components/TransfersTable";
 import ChartsPage from "@/components/ChartsPage";
 import NotificationsPage from "@/components/NotificationsPage";
 import AdminsTable from "@/components/AdminsTable";
@@ -72,6 +73,7 @@ export default function App() {
               <Route path="pools" element={<PoolsTable />} />
               <Route path="cards" element={<CardsTable />} />
               <Route path="bills" element={<BillsTable />} />
+              <Route path="transfers" element={<TransfersTable />} />
               <Route path="charts" element={<ChartsPage />} />
               <Route path="notifications" element={<NotificationsPage />} />
               <Route path="admins" element={<AdminsTable />} />

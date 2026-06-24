@@ -141,6 +141,7 @@ a bearer admin token (from the OTP login) **or** an `X-Admin-Key` header matchin
 | `POST` | `/api/v1/admin/users/:id/adjust` | Credit/debit balance (`{type:"credit\|debit",amount,reason}`; records a transaction; 400 if debit > balance). |
 | `GET` | `/api/v1/admin/transactions` | Transactions across all users (paginated; `?type=income\|expense`, `?userId=`, `?from=&to=` YYYY-MM-DD). |
 | `GET` | `/api/v1/admin/pools` | Money pools across all users with owner name (paginated). |
+| `GET` | `/api/v1/admin/pockets` | Pockets (Kantong) across all users with owner name (paginated; `?type=main\|spending\|saving`). |
 | `GET` | `/api/v1/admin/cards` | Cards across all users with owner + masked PAN (paginated; `?frozen=true\|false`). |
 | `GET` | `/api/v1/admin/bills` | Bills across all users with owner name (paginated; `?status=paid\|unpaid`). |
 | `GET` | `/api/v1/admin/transfers` | Transfers across all users with sender name (paginated; `?userId=`, `?from=&to=`). |

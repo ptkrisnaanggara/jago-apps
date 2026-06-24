@@ -57,6 +57,7 @@ export default function DashboardShell() {
         <NavLink to="/transactions">Transaksi</NavLink>
         <NavLink to="/transfers">Transfer</NavLink>
         <NavLink to="/pools">Patungan</NavLink>
+        <NavLink to="/pockets">Kantong</NavLink>
         <NavLink to="/cards">Kartu</NavLink>
         <NavLink to="/bills">Tagihan</NavLink>
         <NavLink to="/charts">Grafik</NavLink>
